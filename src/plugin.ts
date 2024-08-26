@@ -154,7 +154,34 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
       )
     : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true);
 
-  return factory.createArrayLiteralExpression([entityKeyExpression]);
+  const expressions: ts.Expression[] = [entityKeyExpression];
+
+  switch (config.queryHookName) {
+    case REACT_QUERY_QUERY_HOOK_NAME:
+    case REACT_QUERY_INFINITE_QUERY_HOOK_NAME:
+      if (config.parameterNameMap) {
+        if ('merged' in config.parameterNameMap) {
+          expressions.push(factory.createIdentifier(config.parameterNameMap.merged));
+        } else {
+          if ('path' in config.parameterNameMap && config.parameterNameMap.path) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.path));
+          }
+
+          if ('query' in config.parameterNameMap && config.parameterNameMap.query) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.query));
+          }
+
+          if ('body' in config.parameterNameMap && config.parameterNameMap.body) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.body));
+          }
+        }
+      }
+      break;
+    default:
+      break;
+  }
+
+  return factory.createArrayLiteralExpression(expressions);
 };
 
 export type ReactQueryOptionsGetter = (
