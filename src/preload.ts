@@ -8,7 +8,7 @@ export const NORMALIZED_QUERY_CACHE_IMPORT_PATH = '@pentops/normalized-query-cac
 export const NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME = 'usePreloadDataFromNormalizedCache';
 export const PRELOAD_DATA_VARIABLE_NAME = 'preloadData';
 
-export function buildPreload(generatorConfig: MethodGeneratorConfig) {
+export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true) {
   if (!generatorConfig.method.method.responseBodySchema || !generatorConfig.responseEntity?.references?.size) {
     return undefined;
   }
@@ -25,7 +25,13 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig) {
           const properties = getObjectProperties(s.method.mergedRequestSchema.rawSchema);
 
           for (const primaryKey of r.entity.primaryKeys || []) {
-            const matchingProperty = findEntityPropertyReference(properties || new Map(), s.parameterNames.merged, r.entity.entityName, primaryKey);
+            const matchingProperty = findEntityPropertyReference(
+              properties || new Map(),
+              s.parameterNames.merged,
+              r.entity.entityName,
+              primaryKey,
+              allowStringKeys,
+            );
 
             if (matchingProperty) {
               refKeyPreloadObjectLiteralProperties.push(factory.createPropertyAssignment(key, matchingProperty));

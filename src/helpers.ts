@@ -1,5 +1,5 @@
 import { Statement, SyntaxKind, ts } from 'ts-morph';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { getObjectProperties, ParsedObjectProperty } from '@pentops/jsonapi-jdef-ts-generator';
 
 const { factory } = ts;
@@ -47,6 +47,7 @@ export function findEntityPropertyReference(
   accessVariableName: string,
   entityName: string,
   primaryKey: string,
+  allowStringKeys = true,
 ): ts.PropertyAccessExpression | undefined {
   const parts = primaryKey.split('.');
   let currentProperties = properties;
@@ -60,8 +61,9 @@ export function findEntityPropertyReference(
       consumedParts.push(part);
 
       if (property) {
-        const keySchema = match(property.schema)
-          .with({ key: { entity: entityName } }, (s) => s)
+        const keySchema = match({ allowStringKeys, property })
+          .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
+          .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
           .otherwise(() => undefined);
 
         if (keySchema) {

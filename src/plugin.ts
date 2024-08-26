@@ -184,6 +184,7 @@ export interface NormalizerEntity extends GeneratedSchema<ParsedObject> {
 }
 
 export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, PluginFileGeneratorConfig<SourceFile>> {
+  allowStringKeyReferences?: boolean;
   entity: {
     nameWriter: EntityNameWriter;
     schemaNameConstNameWriter: EntitySchemaNameConstNameWriter;
@@ -287,6 +288,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   private static buildConfig(config: NormalizedQueryPluginConfigInput) {
     const baseConfig: Omit<NormalizedQueryPluginConfig, 'defaultFileHooks'> = {
       ...config,
+      allowStringKeyReferences: config.allowStringKeyReferences ?? true,
       entity: {
         nameWriter: config.entity?.nameWriter ?? defaultEntityNameWriter,
         schemaNameConstNameWriter: config.entity?.schemaNameConstNameWriter ?? defaultEntitySchemaNameConstNameWriter,
@@ -1368,7 +1370,10 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       }
     }
 
-    const preload = generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? buildPreload(generatorConfig) : undefined;
+    const preload =
+      generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME
+        ? buildPreload(generatorConfig, this.pluginConfig.allowStringKeyReferences)
+        : undefined;
 
     if (preload) {
       queryOptions.push(
