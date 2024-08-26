@@ -1297,8 +1297,11 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
           factory.createCallExpression(factory.createIdentifier(generatorConfig.method.generatedName), undefined, clientFnArgs),
         ),
       ),
-      factory.createPropertyAssignment(REACT_QUERY_ENABLED_PARAM_NAME, this.buildRequestEnabled(generatorConfig)),
     ];
+
+    if (generatorConfig.queryHookName !== REACT_QUERY_MUTATION_HOOK_NAME) {
+      queryOptions.push(factory.createPropertyAssignment(REACT_QUERY_ENABLED_PARAM_NAME, this.buildRequestEnabled(generatorConfig)));
+    }
 
     if (generatorConfig.responseEntity) {
       queryOptions.push(
