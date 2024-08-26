@@ -513,29 +513,37 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       .otherwise(() => false);
   }
 
-  private findEntityReferences(schema: ParsedSchemaWithRef) {
+  private findEntityReferences(schema: ParsedSchemaWithRef): Map<string, EntityReference> {
+    const visited = new Set<string>();
+
     const digForEntityReferences = (properties: Map<string, ParsedObjectProperty>): Map<string, EntityReference> => {
       const subRefs = new Map<string, EntityReference>();
 
       for (const [propertyName, property] of properties) {
+        const fullGrpcName = getFullGRPCName(property.schema);
         const isArray = NormalizedQueryPlugin.isSchemaArray(property.schema);
         const entityReference = this.getEntityReference(property.schema);
 
         if (entityReference) {
-          let generatedEntity = this.generatedEntities.get(entityReference.generatedName);
+          if (!visited.has(fullGrpcName)) {
+            visited.add(fullGrpcName);
 
-          if (!generatedEntity) {
-            const fileForSubSchema = this.getFileForSchema(entityReference);
+            let generatedEntity = this.generatedEntities.get(entityReference.generatedName);
 
-            if (fileForSubSchema) {
-              generatedEntity = this.generateEntity(fileForSubSchema, entityReference);
+            if (!generatedEntity) {
+              const fileForSubSchema = this.getFileForSchema(entityReference);
+
+              if (fileForSubSchema) {
+                generatedEntity = this.generateEntity(fileForSubSchema, entityReference);
+              }
+            }
+
+            if (generatedEntity) {
+              subRefs.set(propertyName, { isArray, entity: generatedEntity });
             }
           }
-
-          if (generatedEntity) {
-            subRefs.set(propertyName, { isArray, entity: generatedEntity });
-          }
-        } else {
+        } else if (fullGrpcName && !visited.has(fullGrpcName)) {
+          visited.add(fullGrpcName);
           const subProperties = this.findSchemaProperties(property.schema);
 
           if (subProperties.size) {
