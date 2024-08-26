@@ -82,6 +82,7 @@ export const NORMALIZR_SCHEMA_NAME = 'schema';
 export const NORMALIZR_ENTITY_NAME = 'Entity';
 export const NORMALIZR_OBJECT_NAME = 'Object';
 export const NORMALIZR_SCHEMA_KEY_PARAM = 'key';
+export const NORMALIZR_ID_ATTRIBUTE_PARAM = 'idAttribute';
 
 export const GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME = 'request';
 export const GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME = 'pathParameters';
@@ -401,12 +402,12 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     }
   }
 
-  private generateEntity(schema: GeneratedSchema): NormalizerEntity | undefined {
-    const fileForSchema = match(schema.rawSchema)
-      .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, () => this.getFileForSchema(schema))
-      .otherwise(() => undefined);
+  private generateEntity(fileForSchema: PluginFile<SourceFile>, schema: GeneratedSchema): NormalizerEntity | undefined {
+    const isEntity = match(schema.rawSchema)
+      .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, () => true)
+      .otherwise(() => false);
 
-    if (!fileForSchema) {
+    if (!isEntity) {
       return undefined;
     }
 
@@ -471,7 +472,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
                 [
                   factory.createIdentifier(entityNameConstName),
                   NormalizedQueryPlugin.buildEntityReferenceMap(generatedEntity.references),
-                  factory.createObjectLiteralExpression([factory.createPropertyAssignment('idAttribute', idAttribute)]),
+                  factory.createObjectLiteralExpression([factory.createPropertyAssignment(NORMALIZR_ID_ATTRIBUTE_PARAM, idAttribute)]),
                 ],
               ),
             ),
@@ -513,7 +514,15 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
         const entityReference = this.getEntityReference(property.schema);
 
         if (entityReference) {
-          const generatedEntity = this.generatedEntities.get(entityReference.generatedName) || this.generateEntity(entityReference);
+          let generatedEntity = this.generatedEntities.get(entityReference.generatedName);
+
+          if (!generatedEntity) {
+            const fileForSubSchema = this.getFileForSchema(entityReference);
+
+            if (fileForSubSchema) {
+              generatedEntity = this.generateEntity(fileForSubSchema, entityReference);
+            }
+          }
 
           if (generatedEntity) {
             subRefs.set(propertyName, { isArray, entity: generatedEntity });
@@ -1103,13 +1112,8 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     return undefined;
   }
 
-  private buildGeneratorConfig(generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
+  private buildGeneratorConfig(file: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
     const queryHookName = NormalizedQueryPlugin.getMethodReactQueryHookName(generatedMethod);
-    const file = this.getFileForClientFunction(generatedMethod);
-
-    if (!file) {
-      return undefined;
-    }
 
     const relatedEntity = generatedMethod.method.relatedEntity?.generatedName
       ? this.generatedEntities.get(generatedMethod.method.relatedEntity.generatedName)
@@ -1392,8 +1396,8 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     });
   }
 
-  private generateDataHook(generatedMethod: GeneratedClientFunction) {
-    const generatorConfig = this.buildGeneratorConfig(generatedMethod);
+  private generateDataHook(fileForMethod: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
+    const generatorConfig = this.buildGeneratorConfig(fileForMethod, generatedMethod);
 
     if (!generatorConfig) {
       return;
@@ -1414,18 +1418,34 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   }
 
   public async run() {
-    for (const [, schema] of this.generatedSchemas) {
-      this.generateEntity(schema);
-    }
+    for (const file of this.files) {
+      for (const [, schema] of this.generatedSchemas) {
+        if (file.isFileForSchema(schema)) {
+          this.generateEntity(file, schema);
+        }
+      }
 
-    for (const method of this.generatedClientFunctions) {
-      this.generateDataHook(method);
-    }
+      for (const method of this.generatedClientFunctions) {
+        [
+          method.method.responseBodySchema,
+          method.method.mergedRequestSchema,
+          method.method.requestBodySchema,
+          method.method.pathParametersSchema,
+          method.method.queryParametersSchema,
+        ].forEach((schema) => {
+          if (schema && file.isFileForSchema(schema)) {
+            this.generateResponseEntity(file, schema);
+          }
+        });
 
-    this.files.forEach((file) => {
+        if (file.isFileForGeneratedClientFunction(method)) {
+          this.generateDataHook(file, method);
+        }
+      }
+
       if (file.getHasContent()) {
         file.generateHeading();
       }
-    });
+    }
   }
 }
