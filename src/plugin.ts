@@ -8,13 +8,18 @@ import {
   GeneratedSchema,
   getFullGRPCName,
   getImportPath,
-  getObjectProperties, Optional, ParsedAuthType,
+  getObjectProperties,
+  Optional,
+  ParsedAuthType,
   ParsedObject,
   ParsedObjectProperty,
   ParsedSchemaWithRef,
   PluginBase,
   PluginConfig,
-  PluginFile, PluginFileGeneratorConfig, PluginFilePostBuildHook, PluginFileReader,
+  PluginFile,
+  PluginFileGeneratorConfig,
+  PluginFilePostBuildHook,
+  PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import { createLogicalAndChain, findMatchingVariableStatement } from './helpers';
 import { buildPreload } from './preload';
@@ -27,7 +32,7 @@ export const pluginFileReader: PluginFileReader<SourceFile> = async (filePath) =
   } catch {
     return undefined;
   }
-}
+};
 
 type EntityReferenceDetail = { entity: NormalizerEntity; isArray: boolean };
 type EntityReference = EntityReferenceDetail | { isArray: boolean; schema: Map<string, EntityReference> };
@@ -117,10 +122,10 @@ export type RequestEnabledOrGetter =
   | boolean
   | ts.Expression
   | ((
-  config: MethodGeneratorConfig,
-  defaultEnabledExpression: ts.Expression,
-  requiredParameterAccessProperties: ts.PropertyAccessExpression[],
-) => ts.Expression | boolean | undefined);
+      config: MethodGeneratorConfig,
+      defaultEnabledExpression: ts.Expression,
+      requiredParameterAccessProperties: ts.PropertyAccessExpression[],
+    ) => ts.Expression | boolean | undefined);
 
 export const defaultRequestEnabledOrGetter: RequestEnabledOrGetter = true;
 
@@ -132,18 +137,22 @@ export type HookNameWriter = (generatedMethod: GeneratedClientFunction) => strin
 
 export const defaultHookNameWriter: HookNameWriter = (generatedMethod: GeneratedClientFunction) => camelCase(`use-${generatedMethod.generatedName}`);
 
-export type ReactQueryKeyGetter = (config: MethodGeneratorConfig, defaultGeneratedKey: ts.Expression) => ts.Expression;
+export type ReactQueryKeyGetter = (config: MethodGeneratorConfig, defaultGeneratedKey: ts.Expression | undefined) => ts.Expression;
 
-export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config) => {
+export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generatedKey) => {
+  if (generatedKey) {
+    return generatedKey;
+  }
+
   const entityKeyExpression = config.relatedEntity
     ? factory.createPropertyAccessExpression(
-      factory.createIdentifier(config.relatedEntity.entityVariableName),
-      factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
-    )
+        factory.createIdentifier(config.relatedEntity.entityVariableName),
+        factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
+      )
     : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true);
 
   return factory.createArrayLiteralExpression([entityKeyExpression]);
-}
+};
 
 export type ReactQueryOptionsGetter = (
   config: MethodGeneratorConfig,
@@ -151,7 +160,7 @@ export type ReactQueryOptionsGetter = (
   head: ts.Statement[],
 ) => ts.ObjectLiteralElementLike[];
 
-export const defaultReactQueryOptionsGetter: ReactQueryOptionsGetter = () => [];
+export const defaultReactQueryOptionsGetter: ReactQueryOptionsGetter = (_, builtOptions) => builtOptions;
 
 export type EntityNameWriter = (schema: GeneratedSchema) => string;
 
@@ -175,7 +184,7 @@ export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, Pl
   entity: {
     nameWriter: EntityNameWriter;
     schemaNameConstNameWriter: EntitySchemaNameConstNameWriter;
-  },
+  };
   hook: {
     baseUrlOrGetter: BaseUrlOrGetter;
     headOrGetter: HookHeadOrGetter;
@@ -194,9 +203,9 @@ export type NormalizedQueryPluginEntityConfigInput = Partial<NormalizedQueryPlug
 
 export type NormalizedQueryPluginConfigInput = Optional<
   Omit<NormalizedQueryPluginConfig, 'hook' | 'entity' | 'defaultExistingFileReader' | 'defaultFileHooks'> & {
-  hook?: NormalizedQueryPluginHookConfigInput,
-  entity?: NormalizedQueryPluginEntityConfigInput,
-},
+    hook?: NormalizedQueryPluginHookConfigInput;
+    entity?: NormalizedQueryPluginEntityConfigInput;
+  },
   'entity' | 'hook'
 >;
 
@@ -298,7 +307,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       defaultFileHooks: {
         postBuildHook: NormalizedQueryPlugin.getPostBuildHook(baseConfig),
       },
-    }
+    };
   }
 
   constructor(config: NormalizedQueryPluginConfigInput) {
@@ -749,9 +758,9 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   private buildReactQueryOptionsParameter(generatorConfig: MethodGeneratorConfig) {
     const returnType = generatorConfig.method.method.responseBodySchema
       ? factory.createUnionTypeNode([
-        factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
-        factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword),
-      ])
+          factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
+          factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword),
+        ])
       : factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword);
 
     const typeArgs = match(generatorConfig.queryHookName)
@@ -884,10 +893,15 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   }
 
   private buildClientFnArgs(generatorConfig: MethodGeneratorConfig, parameters: ts.ParameterDeclaration[]) {
-    const baseUrl = typeof this.pluginConfig.hook.baseUrlOrGetter === 'function' ? this.pluginConfig.hook.baseUrlOrGetter(generatorConfig) : this.pluginConfig.hook.baseUrlOrGetter || '';
+    const baseUrl =
+      typeof this.pluginConfig.hook.baseUrlOrGetter === 'function'
+        ? this.pluginConfig.hook.baseUrlOrGetter(generatorConfig)
+        : this.pluginConfig.hook.baseUrlOrGetter || '';
     const baseUrlArg = typeof baseUrl === 'string' ? factory.createStringLiteral(baseUrl, true) : baseUrl;
     const requestInit =
-      typeof this.pluginConfig.hook.requestInitOrGetter === 'function' ? this.pluginConfig.hook.requestInitOrGetter(generatorConfig) : this.pluginConfig.hook.requestInitOrGetter || undefined;
+      typeof this.pluginConfig.hook.requestInitOrGetter === 'function'
+        ? this.pluginConfig.hook.requestInitOrGetter(generatorConfig)
+        : this.pluginConfig.hook.requestInitOrGetter || undefined;
 
     const args: ts.Expression[] = [baseUrlArg];
 
@@ -1001,21 +1015,21 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
             args.push(
               generatorConfig.method.method.pathParametersSchema
                 ? factory.createPropertyAccessExpression(
-                  factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                  factory.createIdentifier(GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME),
-                )
+                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
+                    factory.createIdentifier(GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME),
+                  )
                 : factory.createIdentifier('undefined'),
               generatorConfig.method.method.queryParametersSchema
                 ? factory.createPropertyAccessExpression(
-                  factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                  factory.createIdentifier(GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME),
-                )
+                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
+                    factory.createIdentifier(GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME),
+                  )
                 : factory.createIdentifier('undefined'),
               generatorConfig.method.method.requestBodySchema
                 ? factory.createPropertyAccessExpression(
-                  factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                  factory.createIdentifier(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME),
-                )
+                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
+                    factory.createIdentifier(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME),
+                  )
                 : factory.createIdentifier('undefined'),
             );
 
@@ -1261,9 +1275,13 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   private generateHook(generatorConfig: MethodGeneratorConfig) {
     const parameters = this.buildBaseParameters(generatorConfig);
     const clientFnArgs = this.buildClientFnArgs(generatorConfig, parameters);
+    const defaultQueryKey = defaultReactQueryKeyGetter(generatorConfig, undefined);
 
     const queryOptions: ts.ObjectLiteralElementLike[] = [
-      factory.createPropertyAssignment(generatorConfig.queryKeyParameterName, this.pluginConfig.hook.reactQueryKeyGetter(generatorConfig, (defaultReactQueryKeyGetter as any)(generatorConfig))),
+      factory.createPropertyAssignment(
+        generatorConfig.queryKeyParameterName,
+        this.pluginConfig.hook.reactQueryKeyGetter(generatorConfig, defaultQueryKey),
+      ),
       factory.createPropertyAssignment(
         generatorConfig.queryFnParameterName,
         factory.createArrowFunction(
@@ -1327,15 +1345,20 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       }
     }
 
-    const preload =  generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? buildPreload(generatorConfig) : undefined;
+    const preload = generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? buildPreload(generatorConfig) : undefined;
     const defaultHead: ts.Statement[] = preload ? [preload] : [];
-    const head = typeof this.pluginConfig.hook.headOrGetter === 'function' ? this.pluginConfig.hook.headOrGetter(generatorConfig, defaultHead) : this.pluginConfig.hook.headOrGetter ?? defaultHead;
+    const head =
+      typeof this.pluginConfig.hook.headOrGetter === 'function'
+        ? this.pluginConfig.hook.headOrGetter(generatorConfig, defaultHead)
+        : (this.pluginConfig.hook.headOrGetter ?? defaultHead);
 
     if (head) {
       head.push(factory.createIdentifier('\n') as unknown as ts.Statement);
     }
 
-    const finalOptions = this.pluginConfig.hook.reactQueryOptionsGetter ? this.pluginConfig.hook.reactQueryOptionsGetter(generatorConfig, queryOptions, head || []) : queryOptions;
+    const finalOptions = this.pluginConfig.hook.reactQueryOptionsGetter
+      ? this.pluginConfig.hook.reactQueryOptionsGetter(generatorConfig, queryOptions, head || [])
+      : queryOptions;
     finalOptions.push(factory.createSpreadAssignment(factory.createIdentifier(GENERATED_HOOK_REACT_QUERY_OPTIONS_PARAMETER_NAME)));
 
     return factory.createFunctionDeclaration(
