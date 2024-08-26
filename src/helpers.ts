@@ -74,7 +74,7 @@ export function findEntityPropertyReference(
 
         const prospectiveProperties = getObjectProperties(property.schema);
 
-        if (prospectiveProperties) {
+        if (prospectiveProperties?.size) {
           currentProperties = prospectiveProperties;
         } else {
           return undefined;

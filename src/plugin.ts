@@ -399,7 +399,8 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
             file.addImportToOtherGeneratedFile(entityFile, [r.entity.entityVariableName]);
           }
         })
-        .with({ schema: P.not(P.nullish) }, (r) => this.addEntityReferenceImports(file, r.schema));
+        .with({ schema: P.not(P.nullish) }, (r) => this.addEntityReferenceImports(file, r.schema))
+        .otherwise(() => {});
     }
   }
 
