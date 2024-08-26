@@ -13,6 +13,7 @@ import {
   ParsedAuthType,
   ParsedObject,
   ParsedObjectProperty,
+  ParsedSchema,
   ParsedSchemaWithRef,
   PluginBase,
   PluginConfig,
@@ -491,14 +492,19 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   }
 
   private getEntityReference(schema: ParsedSchemaWithRef): GeneratedSchema | undefined {
+    const getEntityGeneratedSchema = (schema: ParsedSchema): GeneratedSchema | undefined => {
+      return match(schema)
+        .with({ object: { entity: P.not(P.nullish) } }, (r) => this.generatedSchemas.get(r.object.fullGrpcName))
+        .otherwise(() => undefined);
+    };
+
     return match(schema)
-      .with({ object: { entity: P.not(P.nullish) } }, (r) => this.generatedSchemas.get(r.object.fullGrpcName))
       .with({ $ref: P.string }, (r) => {
         const refValue = this.generatedSchemas.get(cleanRefName(r));
-        return refValue ? this.getEntityReference(refValue.rawSchema) : undefined;
+        return refValue ? getEntityGeneratedSchema(refValue.rawSchema) : undefined;
       })
       .with({ array: { itemSchema: P.not(P.nullish) } }, (r) => this.getEntityReference(r.array.itemSchema))
-      .otherwise(() => undefined);
+      .otherwise((s) => getEntityGeneratedSchema(s));
   }
 
   private static isSchemaArray(schema: ParsedSchemaWithRef) {

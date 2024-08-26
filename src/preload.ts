@@ -13,8 +13,6 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig) {
     return undefined;
   }
 
-  generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME]);
-
   const refKeyUnionTypeNodes: ts.TypeNode[] = [];
   const refKeyPreloadObjectLiteralProperties: ts.ObjectLiteralElementLike[] = [];
 
@@ -46,6 +44,8 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig) {
   if (!refKeyPreloadObjectLiteralProperties.length) {
     return undefined;
   }
+
+  generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME]);
 
   return factory.createVariableStatement(
     undefined,
