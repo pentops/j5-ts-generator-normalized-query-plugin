@@ -22,7 +22,7 @@ import {
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import { createLogicalAndChain, findMatchingVariableStatement } from './helpers';
-import { buildPreload } from './preload';
+import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
 
@@ -54,6 +54,7 @@ export const REACT_QUERY_ENABLED_PARAM_NAME = 'enabled';
 export const REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME = 'initialPageParam';
 export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_PARAM_NAME = 'getNextPageParam';
 export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME = 'response';
+export const REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME = 'placeholderData';
 export const REACT_QUERY_INFINITE_DATA_TYPE_NAME = 'InfiniteData';
 export const REACT_QUERY_QUERY_KEY_TYPE_NAME = 'QueryKey';
 
@@ -1353,6 +1354,13 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     }
 
     const preload = generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? buildPreload(generatorConfig) : undefined;
+
+    if (preload) {
+      queryOptions.push(
+        factory.createPropertyAssignment(REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME, factory.createIdentifier(PRELOAD_DATA_VARIABLE_NAME)),
+      );
+    }
+
     const defaultHead: ts.Statement[] = preload ? [preload] : [];
     const head =
       typeof this.pluginConfig.hook.headOrGetter === 'function'
