@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@pentops/jsonapi-jdef-ts-generator':
-    specifier: ^0.0.78
-    version: 0.0.78(@pentops/jsonapi-request@0.0.4)
+    specifier: ^0.0.79
+    version: 0.0.79(@pentops/jsonapi-request@0.0.4)
   '@pentops/normalized-query-cache':
     specifier: '>=0.0.1 < 0.1.0'
     version: 0.0.2(@tanstack/react-query@5.52.1)(normalizr@3.6.2)(react@18.3.1)
@@ -696,8 +696,8 @@ packages:
       fastq: 1.17.1
     dev: false
 
-  /@pentops/jsonapi-jdef-ts-generator@0.0.78(@pentops/jsonapi-request@0.0.4):
-    resolution: {integrity: sha512-F+OGq5oEws1BlrDGiESwYMd8YRqDUoot5DF9GrfDCdOr86X6zFufRUq4DOxAoqlTsWJ8zAchI56sxdoFILo4ng==}
+  /@pentops/jsonapi-jdef-ts-generator@0.0.79(@pentops/jsonapi-request@0.0.4):
+    resolution: {integrity: sha512-DaJ8We2p1NfxbumeMSDrEb0K7Bsa9HwrjqKf4vjDDI+vKnlVIytLPg5ySgkN8cE1Oo1sZFGU4Je6DoSwJuHtKg==}
     hasBin: true
     peerDependencies:
       '@pentops/jsonapi-request': '>=0.0.4'
