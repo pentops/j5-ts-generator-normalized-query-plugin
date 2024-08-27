@@ -1,8 +1,6 @@
 import { Statement, SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
-import { getObjectProperties, ParsedObjectProperty } from '@pentops/jsonapi-jdef-ts-generator';
-
-const { factory } = ts;
+import { createPropertyAccessChain, getObjectProperties, ParsedObjectProperty, PropertyAccessPart } from '@pentops/jsonapi-jdef-ts-generator';
 
 export function findMatchingVariableStatement(needle: Statement, haystack: Statement[]) {
   if (needle.isKind(SyntaxKind.VariableStatement)) {
@@ -26,47 +24,6 @@ export function findMatchingVariableStatement(needle: Statement, haystack: State
   }
 
   return undefined;
-}
-
-export function createLogicalAndChain(expressions: ts.Expression[]) {
-  let logicalAnd: ts.Expression | undefined;
-
-  expressions.forEach((expression) => {
-    if (!logicalAnd) {
-      logicalAnd = expression;
-    } else {
-      logicalAnd = factory.createLogicalAnd(logicalAnd, expression);
-    }
-  });
-
-  return logicalAnd;
-}
-
-export interface PropertyAccessPart {
-  name: string;
-  optional: boolean;
-}
-
-export function createPropertyAccessChain(accessor: string, accessorIsOptional: boolean, parts: PropertyAccessPart[]) {
-  let accessChain: ts.PropertyAccessExpression | undefined;
-
-  parts.forEach((part, i) => {
-    if (!accessChain) {
-      accessChain = factory.createPropertyAccessChain(
-        factory.createIdentifier(accessor),
-        accessorIsOptional ? factory.createToken(ts.SyntaxKind.QuestionDotToken) : undefined,
-        part.name,
-      );
-    } else {
-      accessChain = factory.createPropertyAccessChain(
-        accessChain,
-        parts[i - 1]?.optional ? factory.createToken(ts.SyntaxKind.QuestionDotToken) : undefined,
-        part.name,
-      );
-    }
-  });
-
-  return accessChain;
 }
 
 export function findEntityPropertyReference(

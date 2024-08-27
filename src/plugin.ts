@@ -3,6 +3,8 @@ import { camelCase, constantCase } from 'change-case';
 import { match, P } from 'ts-pattern';
 import {
   cleanRefName,
+  createLogicalAndChain,
+  createPropertyAccessChain,
   GeneratedClientFunction,
   GeneratedImportPath,
   GeneratedSchema,
@@ -22,7 +24,7 @@ import {
   PluginFilePostBuildHook,
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { createLogicalAndChain, createPropertyAccessChain, findMatchingVariableStatement } from './helpers';
+import { findMatchingVariableStatement } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
