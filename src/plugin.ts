@@ -170,7 +170,11 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
                   NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
                 ),
                 undefined,
-                [factory.createIdentifier(config.parameterNameMap.merged)],
+                [
+                  factory.createIdentifier(config.parameterNameMap.merged),
+                  factory.createObjectLiteralExpression([]),
+                  factory.createStringLiteral('', true),
+                ],
               ),
             );
           } else {
