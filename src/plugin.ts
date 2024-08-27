@@ -220,7 +220,7 @@ export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, Pl
     baseUrlOrGetter: BaseUrlOrGetter;
     headOrGetter: HookHeadOrGetter;
     nameWriter: HookNameWriter;
-    nullRequestForSkip?: boolean;
+    undefinedRequestForSkip?: boolean;
     requestEnabledOrGetter: RequestEnabledOrGetter;
     reactQueryKeyGetter: ReactQueryKeyGetter;
     reactQueryOptionsGetter: ReactQueryOptionsGetter;
@@ -326,7 +326,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
         baseUrlOrGetter: config.hook?.baseUrlOrGetter ?? defaultBaseUrlOrGetter,
         headOrGetter: config.hook?.headOrGetter ?? defaultHookHeaderOrGetter,
         nameWriter: config.hook?.nameWriter ?? defaultHookNameWriter,
-        nullRequestForSkip: config.hook?.nullRequestForSkip ?? true,
+        undefinedRequestForSkip: config.hook?.undefinedRequestForSkip ?? true,
         requestEnabledOrGetter: config.hook?.requestEnabledOrGetter ?? defaultRequestEnabledOrGetter,
         reactQueryKeyGetter: config.hook?.reactQueryKeyGetter ?? defaultReactQueryKeyGetter,
         reactQueryOptionsGetter: config.hook?.reactQueryOptionsGetter ?? defaultReactQueryOptionsGetter,
@@ -748,7 +748,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       undefined,
       parameterName,
       hasARequiredParameter || addedNonOptionalParameter ? undefined : optionalQuestionToken,
-      nullable ? factory.createUnionTypeNode([baseTypeReference, factory.createTypeReferenceNode('null')]) : baseTypeReference,
+      nullable ? factory.createUnionTypeNode([baseTypeReference, factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)]) : baseTypeReference,
     );
   }
 
@@ -898,7 +898,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
               GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME,
               generatorConfig.method.method.pathParametersSchema,
               addedNonOptionalParameter,
-              this.pluginConfig.hook.nullRequestForSkip,
+              this.pluginConfig.hook.undefinedRequestForSkip,
             );
 
             parameters.push(parameter);
@@ -911,7 +911,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
               GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME,
               generatorConfig.method.method.queryParametersSchema,
               addedNonOptionalParameter,
-              this.pluginConfig.hook.nullRequestForSkip,
+              this.pluginConfig.hook.undefinedRequestForSkip,
             );
 
             parameters.push(parameter);
@@ -924,7 +924,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
               GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME,
               generatorConfig.method.method.requestBodySchema,
               addedNonOptionalParameter,
-              this.pluginConfig.hook.nullRequestForSkip,
+              this.pluginConfig.hook.undefinedRequestForSkip,
             );
 
             parameters.push(parameter);
@@ -940,7 +940,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
                 GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
                 generatorConfig.method.method.mergedRequestSchema,
                 false,
-                this.pluginConfig.hook.nullRequestForSkip,
+                this.pluginConfig.hook.undefinedRequestForSkip,
               ),
             );
           }
@@ -1244,7 +1244,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
           requiredProperties.push(
             factory.createPropertyAccessChain(
               factory.createIdentifier(parameterName),
-              this.pluginConfig.hook.nullRequestForSkip ? factory.createToken(SyntaxKind.QuestionDotToken) : undefined,
+              this.pluginConfig.hook.undefinedRequestForSkip ? factory.createToken(SyntaxKind.QuestionDotToken) : undefined,
               propertyName,
             ),
           );
