@@ -2,6 +2,8 @@ import { Statement, SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
 import { createPropertyAccessChain, getObjectProperties, ParsedObjectProperty, PropertyAccessPart } from '@pentops/jsonapi-jdef-ts-generator';
 
+export const NORMALIZR_ENTITY_GET_ID_METHOD_NAME = 'getId';
+
 export function findMatchingVariableStatement(needle: Statement, haystack: Statement[]) {
   if (needle.isKind(SyntaxKind.VariableStatement)) {
     const needleName = needle.getDeclarations()[0]?.getName();

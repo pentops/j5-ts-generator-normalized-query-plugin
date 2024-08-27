@@ -24,7 +24,7 @@ import {
   PluginFilePostBuildHook,
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { findMatchingVariableStatement } from './helpers';
+import { findMatchingVariableStatement, NORMALIZR_ENTITY_GET_ID_METHOD_NAME } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
@@ -160,6 +160,38 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
 
   switch (config.queryHookName) {
     case REACT_QUERY_QUERY_HOOK_NAME:
+      if (config.parameterNameMap) {
+        if ('merged' in config.parameterNameMap) {
+          if (config.relatedEntity) {
+            expressions.push(
+              factory.createCallExpression(
+                factory.createPropertyAccessExpression(
+                  factory.createIdentifier(config.relatedEntity.entityVariableName),
+                  NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
+                ),
+                undefined,
+                [factory.createIdentifier(config.parameterNameMap.merged)],
+              ),
+            );
+          } else {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.merged));
+          }
+        } else {
+          if ('path' in config.parameterNameMap && config.parameterNameMap.path) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.path));
+          }
+
+          if ('query' in config.parameterNameMap && config.parameterNameMap.query) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.query));
+          }
+
+          if ('body' in config.parameterNameMap && config.parameterNameMap.body) {
+            expressions.push(factory.createIdentifier(config.parameterNameMap.body));
+          }
+        }
+      }
+
+      break;
     case REACT_QUERY_INFINITE_QUERY_HOOK_NAME:
       if (config.parameterNameMap) {
         if ('merged' in config.parameterNameMap) {
@@ -178,6 +210,7 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
           }
         }
       }
+
       break;
     default:
       break;
