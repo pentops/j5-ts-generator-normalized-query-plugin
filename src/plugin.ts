@@ -22,7 +22,7 @@ import {
   PluginFilePostBuildHook,
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { createLogicalAndChain, findMatchingVariableStatement } from './helpers';
+import { createLogicalAndChain, createPropertyAccessChain, findMatchingVariableStatement } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
@@ -1032,31 +1032,41 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
             const matchingProp = NormalizedQueryPlugin.findMatchingProperty(argNameProperties || new Map(), J5_LIST_PAGE_REQUEST_TYPE);
 
             if (matchingProp) {
-              args.push(
-                factory.createObjectLiteralExpression(
-                  [
-                    factory.createSpreadAssignment(factory.createIdentifier(argName)),
-                    factory.createPropertyAssignment(
-                      matchingProp[0],
-                      factory.createConditionalExpression(
-                        factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
-                        factory.createToken(SyntaxKind.QuestionToken),
-                        factory.createObjectLiteralExpression(
-                          [
-                            factory.createPropertyAssignment(
-                              factory.createIdentifier(J5_LIST_PAGE_REQUEST_PAGINATION_TOKEN_PARAM_NAME),
-                              factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
-                            ),
-                          ],
-                          false,
-                        ),
-                        factory.createToken(SyntaxKind.ColonToken),
-                        factory.createIdentifier('undefined'),
+              const objectLiteralExpression = factory.createObjectLiteralExpression(
+                [
+                  factory.createSpreadAssignment(factory.createIdentifier(argName)),
+                  factory.createPropertyAssignment(
+                    matchingProp[0],
+                    factory.createConditionalExpression(
+                      factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
+                      factory.createToken(SyntaxKind.QuestionToken),
+                      factory.createObjectLiteralExpression(
+                        [
+                          factory.createPropertyAssignment(
+                            factory.createIdentifier(J5_LIST_PAGE_REQUEST_PAGINATION_TOKEN_PARAM_NAME),
+                            factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
+                          ),
+                        ],
+                        false,
                       ),
+                      factory.createToken(SyntaxKind.ColonToken),
+                      factory.createIdentifier('undefined'),
                     ),
-                  ],
-                  false,
-                ),
+                  ),
+                ],
+                false,
+              );
+
+              args.push(
+                this.pluginConfig.hook.undefinedRequestForSkip
+                  ? factory.createConditionalExpression(
+                      factory.createIdentifier(argName),
+                      factory.createToken(SyntaxKind.QuestionToken),
+                      objectLiteralExpression,
+                      factory.createToken(SyntaxKind.ColonToken),
+                      factory.createIdentifier('undefined'),
+                    )
+                  : objectLiteralExpression,
               );
 
               createdSpreadElement = true;
@@ -1389,15 +1399,10 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
               [factory.createParameterDeclaration(undefined, undefined, REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME)],
               undefined,
               factory.createToken(SyntaxKind.EqualsGreaterThanToken),
-              factory.createPropertyAccessChain(
-                factory.createPropertyAccessChain(
-                  factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME),
-                  factory.createToken(SyntaxKind.QuestionDotToken),
-                  factory.createIdentifier(pageParam[0]),
-                ),
-                factory.createToken(SyntaxKind.QuestionDotToken),
-                factory.createIdentifier(J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME),
-              ),
+              createPropertyAccessChain(REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME, true, [
+                { name: pageParam[0], optional: true },
+                { name: J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME, optional: true },
+              ])!,
             ),
           ),
         );

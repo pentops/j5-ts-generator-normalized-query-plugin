@@ -42,6 +42,33 @@ export function createLogicalAndChain(expressions: ts.Expression[]) {
   return logicalAnd;
 }
 
+export interface PropertyAccessPart {
+  name: string;
+  optional: boolean;
+}
+
+export function createPropertyAccessChain(accessor: string, accessorIsOptional: boolean, parts: PropertyAccessPart[]) {
+  let accessChain: ts.PropertyAccessExpression | undefined;
+
+  parts.forEach((part, i) => {
+    if (!accessChain) {
+      accessChain = factory.createPropertyAccessChain(
+        factory.createIdentifier(accessor),
+        accessorIsOptional ? factory.createToken(ts.SyntaxKind.QuestionDotToken) : undefined,
+        part.name,
+      );
+    } else {
+      accessChain = factory.createPropertyAccessChain(
+        accessChain,
+        parts[i - 1]?.optional ? factory.createToken(ts.SyntaxKind.QuestionDotToken) : undefined,
+        part.name,
+      );
+    }
+  });
+
+  return accessChain;
+}
+
 export function findEntityPropertyReference(
   properties: Map<string, ParsedObjectProperty>,
   accessVariableName: string,
@@ -51,14 +78,17 @@ export function findEntityPropertyReference(
 ): ts.PropertyAccessExpression | undefined {
   const parts = primaryKey.split('.');
   let currentProperties = properties;
-  const consumedParts: string[] = [];
+  const consumedParts: PropertyAccessPart[] = [];
 
   for (let i = 0; i < parts.length; i += 1) {
     const part = parts[i];
 
     if (currentProperties.has(part)) {
       const property = currentProperties.get(part);
-      consumedParts.push(part);
+      consumedParts.push({
+        name: part,
+        optional: !property?.required,
+      });
 
       if (property) {
         const keySchema = match({ allowStringKeys, property })
@@ -67,11 +97,7 @@ export function findEntityPropertyReference(
           .otherwise(() => undefined);
 
         if (keySchema) {
-          return factory.createPropertyAccessChain(
-            factory.createIdentifier(accessVariableName),
-            factory.createToken(ts.SyntaxKind.QuestionDotToken),
-            consumedParts.join('?.'),
-          );
+          return createPropertyAccessChain(accessVariableName, true, consumedParts);
         }
 
         const prospectiveProperties = getObjectProperties(property.schema);
