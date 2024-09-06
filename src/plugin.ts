@@ -277,7 +277,7 @@ export type NormalizedQueryPluginConfigInput = Optional<
     hook?: NormalizedQueryPluginHookConfigInput;
     entity?: NormalizedQueryPluginEntityConfigInput;
   },
-  'entity' | 'hook'
+  'entity' | 'hook' | 'statementConflictHandler'
 >;
 
 export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGeneratorConfig<SourceFile>, NormalizedQueryPluginConfig> {
