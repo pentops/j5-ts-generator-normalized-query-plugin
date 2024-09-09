@@ -29,10 +29,10 @@
     "rollup": "^4.21.2",
     "ts-jest": "^29.2.5",
     "tslib": "^2.7.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.84",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.85",
     "change-case": "^5.4.4",
     "ts-morph": "^23.0.0",
     "ts-pattern": "^5.3.1"
