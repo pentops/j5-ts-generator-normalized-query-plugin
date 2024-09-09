@@ -287,7 +287,11 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     const mergedPostBuildHook: PluginFilePostBuildHook<SourceFile> = async (file, fileToWrite) => {
       const { content } = fileToWrite;
 
-      const existingFileContent = await file.getExistingFileContent();
+      let existingFileContent: SourceFile | undefined;
+
+      try {
+        existingFileContent = await file.getExistingFileContent();
+      } catch {}
 
       if (!existingFileContent) {
         return content;
