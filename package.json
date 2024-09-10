@@ -1,6 +1,6 @@
 {
   "name": "@pentops/j5-ts-generator-normalized-query-plugin",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "main": "dist/index.js",
   "type": "module",
@@ -38,7 +38,7 @@
     "ts-pattern": "^5.3.1"
   },
   "peerDependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": ">=0.0.83 < 0.1.0",
+    "@pentops/jsonapi-jdef-ts-generator": ">=0.0.87 < 0.1.0",
     "@pentops/normalized-query-cache": ">=0.0.1 < 0.1.0",
     "normalizr": ">=3.0.0 < 4.0.0"
   }
