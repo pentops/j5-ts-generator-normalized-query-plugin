@@ -145,9 +145,17 @@ export const defaultHookNameWriter: HookNameWriter = (generatedMethod: Generated
 
 export type KeyBuilderNameWriter = (generatedMethod: GeneratedClientFunction) => string;
 
-export type ReactQueryKeyGetter = (config: MethodGeneratorConfig, generatedKeyBuilder: ts.FunctionDeclaration | undefined) => ts.Expression;
+export type ReactQueryKeyGetter = (
+  config: MethodGeneratorConfig,
+  generatedKeyBuilder: ts.FunctionDeclaration | undefined,
+  defaultKey: ts.Expression | undefined,
+) => ts.Expression;
 
-export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generatedKeyBuilder) => {
+export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generatedKeyBuilder, defaultKey) => {
+  if (defaultKey) {
+    return defaultKey;
+  }
+
   if (generatedKeyBuilder) {
     return factory.createCallExpression(
       factory.createIdentifier(config.queryKeyBuilderName),
@@ -1456,7 +1464,11 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     const queryOptions: ts.ObjectLiteralElementLike[] = [
       factory.createPropertyAssignment(
         generatorConfig.queryKeyParameterName,
-        this.pluginConfig.hook.reactQueryKeyGetter(generatorConfig, queryKeyBuilder),
+        this.pluginConfig.hook.reactQueryKeyGetter(
+          generatorConfig,
+          queryKeyBuilder,
+          defaultReactQueryKeyGetter(generatorConfig, queryKeyBuilder, undefined),
+        ),
       ),
       factory.createPropertyAssignment(
         generatorConfig.queryFnParameterName,
