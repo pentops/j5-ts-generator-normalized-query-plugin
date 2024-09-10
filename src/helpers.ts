@@ -4,6 +4,14 @@ import { createPropertyAccessChain, getObjectProperties, ParsedObjectProperty, P
 
 export const NORMALIZR_ENTITY_GET_ID_METHOD_NAME = 'getId';
 
+export function arrayLiteralAsConst(arrayLiteral: ts.ArrayLiteralExpression) {
+  return ts.factory.createAsExpression(arrayLiteral, ts.factory.createTypeReferenceNode('const'));
+}
+
+export function returnArrayLiteralAsConst(arrayLiteral: ts.ArrayLiteralExpression) {
+  return ts.factory.createReturnStatement(arrayLiteralAsConst(arrayLiteral));
+}
+
 export function findMatchingVariableStatement(needle: Statement, haystack: Statement[]) {
   if (needle.isKind(SyntaxKind.VariableStatement)) {
     const needleName = needle.getDeclarations()[0]?.getName();

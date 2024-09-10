@@ -24,7 +24,7 @@ import {
   PluginFilePostBuildHook,
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { findMatchingVariableStatement, NORMALIZR_ENTITY_GET_ID_METHOD_NAME } from './helpers';
+import { arrayLiteralAsConst, findMatchingVariableStatement, NORMALIZR_ENTITY_GET_ID_METHOD_NAME, returnArrayLiteralAsConst } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
@@ -113,6 +113,7 @@ export interface MethodGeneratorConfig {
   relatedEntity?: NormalizerEntity;
   responseEntity?: NormalizerEntity;
   parameterNameMap?: MethodParameterNameMap;
+  queryKeyBuilderName: string;
 }
 
 export type BaseUrlOrGetter = string | ts.Expression | ((config: MethodGeneratorConfig) => string | ts.Expression);
@@ -142,85 +143,142 @@ export type HookNameWriter = (generatedMethod: GeneratedClientFunction) => strin
 
 export const defaultHookNameWriter: HookNameWriter = (generatedMethod: GeneratedClientFunction) => camelCase(`use-${generatedMethod.generatedName}`);
 
-export type ReactQueryKeyGetter = (config: MethodGeneratorConfig, defaultGeneratedKey: ts.Expression | undefined) => ts.Expression;
+export type KeyBuilderNameWriter = (generatedMethod: GeneratedClientFunction) => string;
 
-export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generatedKey) => {
-  if (generatedKey) {
-    return generatedKey;
+export type ReactQueryKeyGetter = (config: MethodGeneratorConfig, generatedKeyBuilder: ts.FunctionDeclaration | undefined) => ts.Expression;
+
+export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generatedKeyBuilder) => {
+  if (generatedKeyBuilder) {
+    return factory.createCallExpression(
+      factory.createIdentifier(config.queryKeyBuilderName),
+      undefined,
+      match(config)
+        .with(
+          {
+            queryHookName: P.not(REACT_QUERY_MUTATION_HOOK_NAME),
+            parameterNameMap: { merged: P.string },
+            method: { method: { mergedRequestSchema: P.not(P.nullish) } },
+          },
+          (s) => [factory.createIdentifier(s.parameterNameMap.merged)],
+        )
+        .otherwise(() => []),
+    );
   }
 
-  const entityKeyExpression = config.relatedEntity
-    ? factory.createPropertyAccessExpression(
-        factory.createIdentifier(config.relatedEntity.entityVariableName),
-        factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
-      )
-    : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true);
+  return arrayLiteralAsConst(
+    factory.createArrayLiteralExpression([
+      config.relatedEntity
+        ? factory.createPropertyAccessExpression(
+            factory.createIdentifier(config.relatedEntity.entityVariableName),
+            factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
+          )
+        : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true),
+    ]),
+  );
+};
 
-  const expressions: ts.Expression[] = [entityKeyExpression];
+export const defaultKeyBuilderNameWriter: KeyBuilderNameWriter = (generatedMethod) => camelCase(`build-${generatedMethod.generatedName}-key`);
 
-  switch (config.queryHookName) {
-    case REACT_QUERY_QUERY_HOOK_NAME:
-      if (config.parameterNameMap) {
-        if ('merged' in config.parameterNameMap) {
-          if (config.relatedEntity) {
-            expressions.push(
-              factory.createCallExpression(
-                factory.createPropertyAccessExpression(
-                  factory.createIdentifier(config.relatedEntity.entityVariableName),
-                  NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
-                ),
-                undefined,
-                [
-                  factory.createIdentifier(config.parameterNameMap.merged),
-                  factory.createObjectLiteralExpression([]),
-                  factory.createStringLiteral('', true),
-                ],
+export type ReactQueryKeyBuilderGetter = (config: MethodGeneratorConfig) => ts.FunctionDeclaration;
+
+export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (config) => {
+  const entityIdVariableName = 'entityId';
+
+  const parameterDeclarations: ts.ParameterDeclaration[] = match(config)
+    .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () => [])
+    .with({ parameterNameMap: { merged: P.string }, method: { method: { mergedRequestSchema: P.not(P.nullish) } } }, (s) => [
+      factory.createParameterDeclaration(
+        undefined,
+        undefined,
+        factory.createIdentifier(s.parameterNameMap.merged),
+        factory.createToken(SyntaxKind.QuestionToken),
+        factory.createTypeReferenceNode(s.method.method.mergedRequestSchema.generatedName),
+      ),
+    ])
+    .otherwise(() => []);
+
+  const variableStatements: ts.VariableStatement[] = match(config)
+    .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () => [])
+    .with(
+      { parameterNameMap: { merged: P.string }, method: { method: { mergedRequestSchema: P.not(P.nullish) } }, relatedEntity: P.not(P.nullish) },
+      (s) => [
+        factory.createVariableStatement(undefined, [
+          factory.createVariableDeclaration(
+            entityIdVariableName,
+            undefined,
+            undefined,
+            factory.createCallExpression(
+              factory.createPropertyAccessExpression(
+                factory.createIdentifier(s.relatedEntity.entityVariableName),
+                NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
               ),
-            );
-          } else {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.merged));
-          }
-        } else {
-          if ('path' in config.parameterNameMap && config.parameterNameMap.path) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.path));
-          }
+              undefined,
+              [
+                factory.createBinaryExpression(
+                  factory.createIdentifier(s.parameterNameMap.merged),
+                  ts.SyntaxKind.BarBarToken,
+                  factory.createObjectLiteralExpression(),
+                ),
+                factory.createObjectLiteralExpression(),
+                factory.createStringLiteral('', true),
+              ],
+            ),
+          ),
+        ]),
+      ],
+    )
+    .otherwise(() => []);
 
-          if ('query' in config.parameterNameMap && config.parameterNameMap.query) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.query));
-          }
+  const entityKeyExpression = match(config)
+    .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () =>
+      factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true),
+    )
+    .otherwise((c) =>
+      c.relatedEntity
+        ? factory.createPropertyAccessExpression(
+            factory.createIdentifier(c.relatedEntity.entityVariableName),
+            factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
+          )
+        : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(c.method), true),
+    );
 
-          if ('body' in config.parameterNameMap && config.parameterNameMap.body) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.body));
-          }
-        }
-      }
+  const baseReturnValue = returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression], false));
 
-      break;
-    case REACT_QUERY_INFINITE_QUERY_HOOK_NAME:
-      if (config.parameterNameMap) {
-        if ('merged' in config.parameterNameMap) {
-          expressions.push(factory.createIdentifier(config.parameterNameMap.merged));
-        } else {
-          if ('path' in config.parameterNameMap && config.parameterNameMap.path) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.path));
-          }
+  const statements: ts.Statement[] = match(config)
+    .with(
+      {
+        queryHookName: P.not(REACT_QUERY_MUTATION_HOOK_NAME),
+        parameterNameMap: { merged: P.string },
+        method: { method: { mergedRequestSchema: P.not(P.nullish) } },
+      },
+      (s) => {
+        return [
+          ...variableStatements,
+          factory.createIfStatement(
+            factory.createIdentifier(entityIdVariableName),
+            returnArrayLiteralAsConst(
+              factory.createArrayLiteralExpression([
+                entityKeyExpression,
+                factory.createStringLiteral(s.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? 'detail' : 'list', true),
+                factory.createIdentifier(entityIdVariableName),
+              ]),
+            ),
+          ),
+          baseReturnValue,
+        ];
+      },
+    )
+    .otherwise(() => [...variableStatements, baseReturnValue]);
 
-          if ('query' in config.parameterNameMap && config.parameterNameMap.query) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.query));
-          }
-
-          if ('body' in config.parameterNameMap && config.parameterNameMap.body) {
-            expressions.push(factory.createIdentifier(config.parameterNameMap.body));
-          }
-        }
-      }
-
-      break;
-    default:
-      break;
-  }
-
-  return factory.createArrayLiteralExpression(expressions);
+  return factory.createFunctionDeclaration(
+    [factory.createModifier(SyntaxKind.ExportKeyword)],
+    undefined,
+    config.queryKeyBuilderName,
+    undefined,
+    parameterDeclarations,
+    undefined,
+    factory.createBlock(statements),
+  );
 };
 
 export type ReactQueryOptionsGetter = (
@@ -261,7 +319,9 @@ export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, Pl
     nameWriter: HookNameWriter;
     undefinedRequestForSkip?: boolean;
     requestEnabledOrGetter: RequestEnabledOrGetter;
+    reactQueryKeyNameWriter: KeyBuilderNameWriter;
     reactQueryKeyGetter: ReactQueryKeyGetter;
+    reactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter;
     reactQueryOptionsGetter: ReactQueryOptionsGetter;
     requestInitOrGetter: RequestInitOrGetter;
   };
@@ -371,7 +431,9 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
         nameWriter: config.hook?.nameWriter ?? defaultHookNameWriter,
         undefinedRequestForSkip: config.hook?.undefinedRequestForSkip ?? true,
         requestEnabledOrGetter: config.hook?.requestEnabledOrGetter ?? defaultRequestEnabledOrGetter,
+        reactQueryKeyNameWriter: config.hook?.reactQueryKeyNameWriter ?? defaultKeyBuilderNameWriter,
         reactQueryKeyGetter: config.hook?.reactQueryKeyGetter ?? defaultReactQueryKeyGetter,
+        reactQueryKeyBuilderGetter: config.hook?.reactQueryKeyBuilderGetter ?? defaultReactQueryKeyBuilderGetter,
         reactQueryOptionsGetter: config.hook?.reactQueryOptionsGetter ?? defaultReactQueryOptionsGetter,
         requestInitOrGetter: config.hook?.requestInitOrGetter || defaultRequestInitOrGetter,
       },
@@ -1259,6 +1321,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       queryFnParameterName: REACT_QUERY_FN_PARAMETER_NAME_BY_HOOK_NAME[queryHookName],
       file,
       hookName: this.pluginConfig.hook.nameWriter(generatedMethod),
+      queryKeyBuilderName: this.pluginConfig.hook.reactQueryKeyNameWriter(generatedMethod),
       relatedEntity,
       responseEntity: this.generateAndAddResponseEntity(generatedMethod, file),
       parameterNameMap: match({ type: this.config?.types.requestType, ...generatedMethod.method })
@@ -1386,15 +1449,14 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       });
   }
 
-  private generateHook(generatorConfig: MethodGeneratorConfig) {
+  private generateHook(generatorConfig: MethodGeneratorConfig, queryKeyBuilder: ts.FunctionDeclaration) {
     const parameters = this.buildBaseParameters(generatorConfig);
     const clientFnArgs = this.buildClientFnArgs(generatorConfig, parameters);
-    const defaultQueryKey = defaultReactQueryKeyGetter(generatorConfig, undefined);
 
     const queryOptions: ts.ObjectLiteralElementLike[] = [
       factory.createPropertyAssignment(
         generatorConfig.queryKeyParameterName,
-        this.pluginConfig.hook.reactQueryKeyGetter(generatorConfig, defaultQueryKey),
+        this.pluginConfig.hook.reactQueryKeyGetter(generatorConfig, queryKeyBuilder),
       ),
       factory.createPropertyAssignment(
         generatorConfig.queryFnParameterName,
@@ -1527,11 +1589,17 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     // Import request/response types
     NormalizedQueryPlugin.addMethodTypeImports(generatorConfig.file, generatedMethod);
 
+    // Create the query key builder
+    const queryKeyBuilder = this.pluginConfig.hook.reactQueryKeyBuilderGetter(generatorConfig);
+
     generatorConfig.file.addNodes(
       factory.createJSDocComment(
         `@generated by ${this.name} (${generatedMethod.method.rawMethod.httpMethod} ${generatedMethod.method.rawMethod.httpPath})`,
       ),
-      this.generateHook(generatorConfig),
+      factory.createIdentifier('\n'),
+      queryKeyBuilder,
+      factory.createIdentifier('\n'),
+      this.generateHook(generatorConfig, queryKeyBuilder),
     );
   }
 
