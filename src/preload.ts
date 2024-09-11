@@ -65,11 +65,7 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
                     ),
                     undefined,
                     [
-                      factory.createBinaryExpression(
-                        factory.createObjectLiteralExpression(assignments),
-                        ts.SyntaxKind.BarBarToken,
-                        factory.createObjectLiteralExpression(),
-                      ),
+                      factory.createObjectLiteralExpression(assignments),
                       factory.createObjectLiteralExpression([]),
                       factory.createStringLiteral('', true),
                     ],
