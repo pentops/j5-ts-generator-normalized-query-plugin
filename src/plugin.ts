@@ -24,7 +24,13 @@ import {
   PluginFilePostBuildHook,
   PluginFileReader,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { arrayLiteralAsConst, findMatchingVariableStatement, NORMALIZR_ENTITY_GET_ID_METHOD_NAME, returnArrayLiteralAsConst } from './helpers';
+import {
+  arrayLiteralAsConst,
+  findMatchingVariableStatement,
+  guessIsEventMethod,
+  NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
+  returnArrayLiteralAsConst,
+} from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
 const { factory } = ts;
