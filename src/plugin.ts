@@ -27,6 +27,8 @@ import {
 import {
   arrayLiteralAsConst,
   findMatchingVariableStatement,
+  getRequiredRequestParameterNames,
+  getRequiredRequestParameters,
   guessIsEventMethod,
   NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
   returnArrayLiteralAsConst,
@@ -121,6 +123,7 @@ export interface MethodGeneratorConfig {
   responseEntity?: NormalizerEntity;
   parameterNameMap?: MethodParameterNameMap;
   queryKeyBuilderName: string;
+  undefinedRequestForSkip: boolean;
 }
 
 export type BaseUrlOrGetter = string | ts.Expression | ((config: MethodGeneratorConfig) => string | ts.Expression);
@@ -228,7 +231,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
             [
               factory.createVariableDeclaration(
                 factory.createObjectBindingPattern([
-                  factory.createBindingElement(undefined, pageProp[0], '_'),
+                  factory.createBindingElement(undefined, undefined, pageProp[0]),
                   factory.createBindingElement(factory.createToken(SyntaxKind.DotDotDotToken), undefined, GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
                 ]),
                 undefined,
@@ -364,8 +367,8 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
             factory.createIfStatement(
               factory.createIdentifier(reqKeyName),
               returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression, listName, factory.createIdentifier(reqKeyName)])),
-              baseReturnValue,
             ),
+            baseReturnValue,
           ];
         }
 
@@ -1294,21 +1297,29 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
                 false,
               );
 
-              args.push(
-                this.pluginConfig.hook.undefinedRequestForSkip
-                  ? factory.createConditionalExpression(
-                      factory.createBinaryExpression(
-                        factory.createIdentifier(argName),
-                        SyntaxKind.BarBarToken,
-                        factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
-                      ),
-                      factory.createToken(SyntaxKind.QuestionToken),
-                      objectLiteralExpression,
-                      factory.createToken(SyntaxKind.ColonToken),
-                      factory.createIdentifier('undefined'),
-                    )
-                  : objectLiteralExpression,
-              );
+              // TODO: refactor this when there's more time to support split request types
+              if (this.pluginConfig.hook.undefinedRequestForSkip) {
+                const requiredParams = getRequiredRequestParameterNames(generatorConfig);
+                const requestCondition = requiredParams.merged?.length
+                  ? createLogicalAndChain(requiredParams.merged.map((p) => factory.createIdentifier(p)))!
+                  : factory.createBinaryExpression(
+                      factory.createIdentifier(argName),
+                      SyntaxKind.BarBarToken,
+                      factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
+                    );
+
+                args.push(
+                  factory.createConditionalExpression(
+                    requestCondition,
+                    factory.createToken(SyntaxKind.QuestionToken),
+                    objectLiteralExpression,
+                    factory.createToken(SyntaxKind.ColonToken),
+                    factory.createIdentifier('undefined'),
+                  ),
+                );
+              } else {
+                args.push(objectLiteralExpression);
+              }
 
               createdSpreadElement = true;
             }
@@ -1460,6 +1471,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       queryKeyBuilderName: this.pluginConfig.hook.reactQueryKeyNameWriter(generatedMethod),
       relatedEntity,
       responseEntity: this.generateAndAddResponseEntity(generatedMethod, file),
+      undefinedRequestForSkip: Boolean(this.pluginConfig.hook.undefinedRequestForSkip),
       parameterNameMap: match({ type: this.config?.types.requestType, ...generatedMethod.method })
         .returnType<MethodParameterNameMap | undefined>()
         .with({ type: 'split' }, (s) =>
@@ -1486,78 +1498,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   }
 
   private getRequiredRequestParameters(generatorConfig: MethodGeneratorConfig) {
-    const { method: generatedMethod } = generatorConfig.method;
-
-    const collectRequired = (parameterName: string, properties: Map<string, ParsedObjectProperty>) => {
-      const requiredProperties: ts.PropertyAccessExpression[] = [];
-
-      for (const [propertyName, property] of properties || []) {
-        if (property.required) {
-          requiredProperties.push(
-            factory.createPropertyAccessChain(
-              factory.createIdentifier(parameterName),
-              this.pluginConfig.hook.undefinedRequestForSkip ? factory.createToken(SyntaxKind.QuestionDotToken) : undefined,
-              propertyName,
-            ),
-          );
-        }
-      }
-
-      return requiredProperties;
-    };
-
-    switch (this.config?.types.requestType) {
-      case 'split': {
-        let required: ts.PropertyAccessExpression[] = [];
-
-        const pathParameterName = match(generatorConfig.parameterNameMap)
-          .with({ path: P.string.select() }, (s) => s)
-          .otherwise(() => undefined);
-
-        if (generatedMethod?.pathParametersSchema && pathParameterName) {
-          required = [
-            ...required,
-            ...collectRequired(pathParameterName, getObjectProperties(generatedMethod.pathParametersSchema.rawSchema) || new Map()),
-          ];
-        }
-
-        const queryParameterName = match(generatorConfig.parameterNameMap)
-          .with({ query: P.string.select() }, (s) => s)
-          .otherwise(() => undefined);
-
-        if (generatedMethod?.queryParametersSchema && queryParameterName) {
-          required = [
-            ...required,
-            ...collectRequired(queryParameterName, getObjectProperties(generatedMethod.queryParametersSchema.rawSchema) || new Map()),
-          ];
-        }
-
-        const bodyParameterName = match(generatorConfig.parameterNameMap)
-          .with({ body: P.string.select() }, (s) => s)
-          .otherwise(() => undefined);
-
-        if (generatedMethod?.requestBodySchema && bodyParameterName) {
-          required = [
-            ...required,
-            ...collectRequired(bodyParameterName, getObjectProperties(generatedMethod.requestBodySchema.rawSchema) || new Map()),
-          ];
-        }
-
-        return required;
-      }
-      case 'merged':
-      default: {
-        const mergedRequestParameterName = match(generatorConfig.parameterNameMap)
-          .with({ merged: P.string.select() }, (s) => s)
-          .otherwise(() => undefined);
-
-        if (generatedMethod?.mergedRequestSchema && mergedRequestParameterName) {
-          return collectRequired(mergedRequestParameterName, getObjectProperties(generatedMethod.mergedRequestSchema.rawSchema) || new Map());
-        }
-
-        return [];
-      }
-    }
+    return getRequiredRequestParameters(generatorConfig);
   }
 
   private buildRequestEnabled(generatorConfig: MethodGeneratorConfig) {
