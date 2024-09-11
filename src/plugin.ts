@@ -188,6 +188,12 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
 
 export const defaultKeyBuilderNameWriter: KeyBuilderNameWriter = (generatedMethod) => camelCase(`build-${generatedMethod.generatedName}-key`);
 
+export function guessIsEventMethod(method: GeneratedClientFunction) {
+  const lowerCasedName = method.generatedName.toLowerCase();
+
+  return lowerCasedName.endsWith('event') || lowerCasedName.endsWith('events');
+}
+
 export type ReactQueryKeyBuilderGetter = (config: MethodGeneratorConfig) => ts.FunctionDeclaration;
 
 export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (config) => {
@@ -244,39 +250,44 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
         queryHookName: REACT_QUERY_QUERY_HOOK_NAME,
         parameterNameMap: { merged: P.string },
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
-        relatedEntity: P.not(P.nullish),
       },
-      (s) => [
-        factory.createVariableStatement(
-          undefined,
-          factory.createVariableDeclarationList(
-            [
-              factory.createVariableDeclaration(
-                entityIdVariableName,
-                undefined,
-                undefined,
-                factory.createCallExpression(
-                  factory.createPropertyAccessExpression(
-                    factory.createIdentifier(s.relatedEntity.entityVariableName),
-                    NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
-                  ),
-                  undefined,
-                  [
-                    factory.createBinaryExpression(
-                      factory.createIdentifier(s.parameterNameMap.merged),
-                      ts.SyntaxKind.BarBarToken,
-                      factory.createObjectLiteralExpression(),
+      (s) => {
+        if (!guessIsEventMethod(s.method) && s.relatedEntity) {
+          return [
+            factory.createVariableStatement(
+              undefined,
+              factory.createVariableDeclarationList(
+                [
+                  factory.createVariableDeclaration(
+                    entityIdVariableName,
+                    undefined,
+                    undefined,
+                    factory.createCallExpression(
+                      factory.createPropertyAccessExpression(
+                        factory.createIdentifier(s.relatedEntity.entityVariableName),
+                        NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
+                      ),
+                      undefined,
+                      [
+                        factory.createBinaryExpression(
+                          factory.createIdentifier(s.parameterNameMap.merged),
+                          ts.SyntaxKind.BarBarToken,
+                          factory.createObjectLiteralExpression(),
+                        ),
+                        factory.createObjectLiteralExpression(),
+                        factory.createStringLiteral('', true),
+                      ],
                     ),
-                    factory.createObjectLiteralExpression(),
-                    factory.createStringLiteral('', true),
-                  ],
-                ),
+                  ),
+                ],
+                ts.NodeFlags.Const,
               ),
-            ],
-            ts.NodeFlags.Const,
-          ),
-        ),
-      ],
+            ),
+          ];
+        }
+
+        return [];
+      },
     )
     .otherwise(() => []);
 
@@ -290,55 +301,76 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
             factory.createIdentifier(c.relatedEntity.entityVariableName),
             factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
           )
-        : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(c.method), true),
+        : guessIsEventMethod(config.method) && c.method.method.rootEntitySchema
+          ? factory.createStringLiteral(c.method.method.rootEntitySchema.generatedName, true)
+          : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(c.method), true),
     );
 
   const baseReturnValue = returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression], false));
 
   const statements: ts.Statement[] = match(config)
+    .returnType<ts.Statement[]>()
     .with(
       {
         queryHookName: REACT_QUERY_QUERY_HOOK_NAME,
         parameterNameMap: { merged: P.string },
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
-        relatedEntity: P.not(P.nullish),
       },
-      () => [
-        ...variableStatements,
-        factory.createIfStatement(
-          factory.createIdentifier(entityIdVariableName),
+      (s) => {
+        const detailName = factory.createStringLiteral('detail', true);
+        const isEventMethod = guessIsEventMethod(s.method);
+
+        if (!isEventMethod) {
+          if (s.relatedEntity) {
+            return [
+              ...variableStatements,
+              factory.createIfStatement(
+                factory.createIdentifier(entityIdVariableName),
+                returnArrayLiteralAsConst(
+                  factory.createArrayLiteralExpression([entityKeyExpression, detailName, factory.createIdentifier(entityIdVariableName)]),
+                ),
+              ),
+              baseReturnValue,
+            ];
+          }
+
+          return [...variableStatements, baseReturnValue];
+        }
+
+        // If it's an event method, add the detail key and request
+        return [
+          ...variableStatements,
           returnArrayLiteralAsConst(
-            factory.createArrayLiteralExpression([
-              entityKeyExpression,
-              factory.createStringLiteral('detail', true),
-              factory.createIdentifier(entityIdVariableName),
-            ]),
+            factory.createArrayLiteralExpression([entityKeyExpression, detailName, factory.createIdentifier(s.parameterNameMap.merged)]),
           ),
-        ),
-        baseReturnValue,
-      ],
+        ];
+      },
     )
     .with(
       {
         queryHookName: REACT_QUERY_INFINITE_QUERY_HOOK_NAME,
         parameterNameMap: { merged: P.string },
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
-        relatedEntity: P.not(P.nullish),
       },
-      () => [
-        ...variableStatements,
-        factory.createIfStatement(
-          factory.createIdentifier(GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
-          returnArrayLiteralAsConst(
-            factory.createArrayLiteralExpression([
-              entityKeyExpression,
-              factory.createStringLiteral('list', true),
-              factory.createIdentifier(GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
-            ]),
-          ),
-          baseReturnValue,
-        ),
-      ],
+      (s) => {
+        const listName = factory.createStringLiteral('list', true);
+        const reqKeyName = Boolean(NormalizedQueryPlugin.findPageParameterForConfig(config)?.length)
+          ? GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME
+          : s.parameterNameMap.merged;
+
+        if (reqKeyName) {
+          return [
+            ...variableStatements,
+            factory.createIfStatement(
+              factory.createIdentifier(reqKeyName),
+              returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression, listName, factory.createIdentifier(reqKeyName)])),
+              baseReturnValue,
+            ),
+          ];
+        }
+
+        return [...variableStatements, baseReturnValue];
+      },
     )
     .otherwise(() => [...variableStatements, baseReturnValue]);
 
