@@ -245,7 +245,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
 
   const entityKeyExpression = match(config)
     .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () =>
-      factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(config.method), true),
+      factory.createStringLiteral(config.method.method.rawMethod.fullGrpcName || NormalizedQueryPlugin.getMethodEntityName(config.method), true),
     )
     .otherwise((c) =>
       c.relatedEntity
