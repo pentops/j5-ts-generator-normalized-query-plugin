@@ -9,7 +9,8 @@ import {
   PropertyAccessPart,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import { MethodGeneratorConfig } from './plugin';
-import { factory } from 'typescript';
+
+const { factory } = ts;
 
 export const NORMALIZR_ENTITY_GET_ID_METHOD_NAME = 'getId';
 

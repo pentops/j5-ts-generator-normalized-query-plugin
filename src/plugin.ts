@@ -27,7 +27,6 @@ import {
 import {
   arrayLiteralAsConst,
   findMatchingVariableStatement,
-  getRequiredRequestParameterNames,
   getRequiredRequestParameters,
   guessIsEventMethod,
   NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
@@ -1299,9 +1298,9 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
 
               // TODO: refactor this when there's more time to support split request types
               if (this.pluginConfig.hook.undefinedRequestForSkip) {
-                const requiredParams = getRequiredRequestParameterNames(generatorConfig);
-                const requestCondition = requiredParams.merged?.length
-                  ? createLogicalAndChain(requiredParams.merged.map((p) => factory.createIdentifier(p)))!
+                const requiredParams = createLogicalAndChain(getRequiredRequestParameters(generatorConfig));
+                const requestCondition = requiredParams
+                  ? requiredParams
                   : factory.createBinaryExpression(
                       factory.createIdentifier(argName),
                       SyntaxKind.BarBarToken,
@@ -1497,12 +1496,8 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     };
   }
 
-  private getRequiredRequestParameters(generatorConfig: MethodGeneratorConfig) {
-    return getRequiredRequestParameters(generatorConfig);
-  }
-
   private buildRequestEnabled(generatorConfig: MethodGeneratorConfig) {
-    const requiredParameters = this.getRequiredRequestParameters(generatorConfig);
+    const requiredParameters = getRequiredRequestParameters(generatorConfig);
     const requiredParameterLogicalAnd = createLogicalAndChain(requiredParameters);
     const baseEnabled = requiredParameterLogicalAnd
       ? factory.createCallExpression(factory.createIdentifier('Boolean'), undefined, [requiredParameterLogicalAnd])
