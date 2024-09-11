@@ -264,6 +264,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
         queryHookName: P.not(REACT_QUERY_MUTATION_HOOK_NAME),
         parameterNameMap: { merged: P.string },
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
+        relatedEntity: P.not(P.nullish),
       },
       (s) => {
         return [
