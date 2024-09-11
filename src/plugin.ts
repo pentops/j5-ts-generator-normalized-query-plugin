@@ -210,29 +210,35 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
     .with(
       { parameterNameMap: { merged: P.string }, method: { method: { mergedRequestSchema: P.not(P.nullish) } }, relatedEntity: P.not(P.nullish) },
       (s) => [
-        factory.createVariableStatement(undefined, [
-          factory.createVariableDeclaration(
-            entityIdVariableName,
-            undefined,
-            undefined,
-            factory.createCallExpression(
-              factory.createPropertyAccessExpression(
-                factory.createIdentifier(s.relatedEntity.entityVariableName),
-                NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
-              ),
-              undefined,
-              [
-                factory.createBinaryExpression(
-                  factory.createIdentifier(s.parameterNameMap.merged),
-                  ts.SyntaxKind.BarBarToken,
-                  factory.createObjectLiteralExpression(),
+        factory.createVariableStatement(
+          undefined,
+          factory.createVariableDeclarationList(
+            [
+              factory.createVariableDeclaration(
+                entityIdVariableName,
+                undefined,
+                undefined,
+                factory.createCallExpression(
+                  factory.createPropertyAccessExpression(
+                    factory.createIdentifier(s.relatedEntity.entityVariableName),
+                    NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
+                  ),
+                  undefined,
+                  [
+                    factory.createBinaryExpression(
+                      factory.createIdentifier(s.parameterNameMap.merged),
+                      ts.SyntaxKind.BarBarToken,
+                      factory.createObjectLiteralExpression(),
+                    ),
+                    factory.createObjectLiteralExpression(),
+                    factory.createStringLiteral('', true),
+                  ],
                 ),
-                factory.createObjectLiteralExpression(),
-                factory.createStringLiteral('', true),
-              ],
-            ),
+              ),
+            ],
+            ts.NodeFlags.Const,
           ),
-        ]),
+        ),
       ],
     )
     .otherwise(() => []);
