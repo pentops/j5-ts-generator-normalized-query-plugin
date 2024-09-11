@@ -297,16 +297,32 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
     .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () =>
       factory.createStringLiteral(config.method.method.rawMethod.fullGrpcName || NormalizedQueryPlugin.getMethodEntityName(config.method), true),
     )
-    .otherwise((c) =>
-      c.relatedEntity
+    .with({ relatedEntity: P.not(P.nullish) }, (s) => {
+      if (guessIsEventMethod(s.method)) {
+        return s.method.method.rootEntitySchema
+          ? factory.createStringLiteral(s.method.method.rootEntitySchema.generatedName, true)
+          : factory.createStringLiteral(s.method.method.rawMethod.fullGrpcName, true);
+      }
+
+      return factory.createPropertyAccessExpression(
+        factory.createIdentifier(s.relatedEntity.entityVariableName),
+        factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
+      );
+    })
+    .otherwise((s) => {
+      if (guessIsEventMethod(s.method)) {
+        return s.method.method.rootEntitySchema
+          ? factory.createStringLiteral(s.method.method.rootEntitySchema.generatedName, true)
+          : factory.createStringLiteral(s.method.method.rawMethod.fullGrpcName, true);
+      }
+
+      return s.relatedEntity
         ? factory.createPropertyAccessExpression(
-            factory.createIdentifier(c.relatedEntity.entityVariableName),
+            factory.createIdentifier(s.relatedEntity.entityVariableName),
             factory.createIdentifier(NORMALIZR_SCHEMA_KEY_PARAM),
           )
-        : guessIsEventMethod(config.method) && c.method.method.rootEntitySchema
-          ? factory.createStringLiteral(c.method.method.rootEntitySchema.generatedName, true)
-          : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(c.method), true),
-    );
+        : factory.createStringLiteral(NormalizedQueryPlugin.getMethodEntityName(s.method), true);
+    });
 
   const baseReturnValue = returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression], false));
 
@@ -335,8 +351,6 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
               baseReturnValue,
             ];
           }
-
-          return [...variableStatements, baseReturnValue];
         }
 
         // If it's an event method, add the detail key and request
