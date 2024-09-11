@@ -188,12 +188,6 @@ export const defaultReactQueryKeyGetter: ReactQueryKeyGetter = (config, generate
 
 export const defaultKeyBuilderNameWriter: KeyBuilderNameWriter = (generatedMethod) => camelCase(`build-${generatedMethod.generatedName}-key`);
 
-export function guessIsEventMethod(method: GeneratedClientFunction) {
-  const lowerCasedName = method.generatedName.toLowerCase();
-
-  return lowerCasedName.endsWith('event') || lowerCasedName.endsWith('events');
-}
-
 export type ReactQueryKeyBuilderGetter = (config: MethodGeneratorConfig) => ts.FunctionDeclaration;
 
 export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (config) => {

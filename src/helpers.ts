@@ -1,8 +1,20 @@
 import { Statement, SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
-import { createPropertyAccessChain, getObjectProperties, ParsedObjectProperty, PropertyAccessPart } from '@pentops/jsonapi-jdef-ts-generator';
+import {
+  createPropertyAccessChain,
+  GeneratedClientFunction,
+  getObjectProperties,
+  ParsedObjectProperty,
+  PropertyAccessPart,
+} from '@pentops/jsonapi-jdef-ts-generator';
 
 export const NORMALIZR_ENTITY_GET_ID_METHOD_NAME = 'getId';
+
+export function guessIsEventMethod(method: GeneratedClientFunction) {
+  const lowerCasedName = method.generatedName.toLowerCase();
+
+  return lowerCasedName.endsWith('event') || lowerCasedName.endsWith('events');
+}
 
 export function arrayLiteralAsConst(arrayLiteral: ts.ArrayLiteralExpression) {
   return ts.factory.createAsExpression(arrayLiteral, ts.factory.createTypeReferenceNode('const'));
