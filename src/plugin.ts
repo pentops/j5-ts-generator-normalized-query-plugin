@@ -1179,7 +1179,11 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
               args.push(
                 this.pluginConfig.hook.undefinedRequestForSkip
                   ? factory.createConditionalExpression(
-                      factory.createIdentifier(argName),
+                      factory.createBinaryExpression(
+                        factory.createIdentifier(argName),
+                        SyntaxKind.BarBarToken,
+                        factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
+                      ),
                       factory.createToken(SyntaxKind.QuestionToken),
                       objectLiteralExpression,
                       factory.createToken(SyntaxKind.ColonToken),
