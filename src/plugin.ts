@@ -94,6 +94,7 @@ export const GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME = 'queryParameters';
 export const GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME = 'requestBody';
 export const GENERATED_HOOK_REACT_QUERY_OPTIONS_PARAMETER_NAME = 'options';
 export const GENERATED_HOOK_META_NORMALIZATION_SCHEMA_PARAMETER_NAME = 'normalizationSchema';
+export const GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME = 'rest';
 
 export type StatementConflictHandler = (newSource: Statement | undefined, existingSource: Statement | undefined) => Statement | undefined;
 
@@ -207,8 +208,44 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
 
   const variableStatements: ts.VariableStatement[] = match(config)
     .with({ queryHookName: REACT_QUERY_MUTATION_HOOK_NAME }, () => [])
+    .with({ queryHookName: REACT_QUERY_INFINITE_QUERY_HOOK_NAME, parameterNameMap: { merged: P.string } }, (s) => {
+      const pageProp = NormalizedQueryPlugin.findPageParameterForConfig(config);
+
+      if (!pageProp) {
+        return [];
+      }
+
+      return [
+        factory.createVariableStatement(
+          undefined,
+          factory.createVariableDeclarationList(
+            [
+              factory.createVariableDeclaration(
+                factory.createObjectBindingPattern([
+                  factory.createBindingElement(undefined, pageProp[0], '_'),
+                  factory.createBindingElement(factory.createToken(SyntaxKind.DotDotDotToken), undefined, GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
+                ]),
+                undefined,
+                undefined,
+                factory.createBinaryExpression(
+                  factory.createIdentifier(s.parameterNameMap.merged),
+                  ts.SyntaxKind.BarBarToken,
+                  factory.createObjectLiteralExpression(),
+                ),
+              ),
+            ],
+            ts.NodeFlags.Const,
+          ),
+        ),
+      ];
+    })
     .with(
-      { parameterNameMap: { merged: P.string }, method: { method: { mergedRequestSchema: P.not(P.nullish) } }, relatedEntity: P.not(P.nullish) },
+      {
+        queryHookName: REACT_QUERY_QUERY_HOOK_NAME,
+        parameterNameMap: { merged: P.string },
+        method: { method: { mergedRequestSchema: P.not(P.nullish) } },
+        relatedEntity: P.not(P.nullish),
+      },
       (s) => [
         factory.createVariableStatement(
           undefined,
@@ -261,27 +298,47 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
   const statements: ts.Statement[] = match(config)
     .with(
       {
-        queryHookName: P.not(REACT_QUERY_MUTATION_HOOK_NAME),
+        queryHookName: REACT_QUERY_QUERY_HOOK_NAME,
         parameterNameMap: { merged: P.string },
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
         relatedEntity: P.not(P.nullish),
       },
-      (s) => {
-        return [
-          ...variableStatements,
-          factory.createIfStatement(
-            factory.createIdentifier(entityIdVariableName),
-            returnArrayLiteralAsConst(
-              factory.createArrayLiteralExpression([
-                entityKeyExpression,
-                factory.createStringLiteral(s.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? 'detail' : 'list', true),
-                factory.createIdentifier(entityIdVariableName),
-              ]),
-            ),
+      () => [
+        ...variableStatements,
+        factory.createIfStatement(
+          factory.createIdentifier(entityIdVariableName),
+          returnArrayLiteralAsConst(
+            factory.createArrayLiteralExpression([
+              entityKeyExpression,
+              factory.createStringLiteral('detail', true),
+              factory.createIdentifier(entityIdVariableName),
+            ]),
+          ),
+        ),
+        baseReturnValue,
+      ],
+    )
+    .with(
+      {
+        queryHookName: REACT_QUERY_INFINITE_QUERY_HOOK_NAME,
+        parameterNameMap: { merged: P.string },
+        method: { method: { mergedRequestSchema: P.not(P.nullish) } },
+        relatedEntity: P.not(P.nullish),
+      },
+      () => [
+        ...variableStatements,
+        factory.createIfStatement(
+          factory.createIdentifier(GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
+          returnArrayLiteralAsConst(
+            factory.createArrayLiteralExpression([
+              entityKeyExpression,
+              factory.createStringLiteral('list', true),
+              factory.createIdentifier(GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME),
+            ]),
           ),
           baseReturnValue,
-        ];
-      },
+        ),
+      ],
     )
     .otherwise(() => [...variableStatements, baseReturnValue]);
 
@@ -1079,6 +1136,34 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     return parameters;
   }
 
+  static getPageParameter(requestSchema: ParsedSchemaWithRef | undefined) {
+    return NormalizedQueryPlugin.findMatchingProperty(getObjectProperties(requestSchema) || new Map(), J5_LIST_PAGE_REQUEST_TYPE);
+  }
+
+  static findPageParameterForConfig(config: MethodGeneratorConfig) {
+    return match(config.method.method)
+      .with({ mergedRequestSchema: P.not(P.nullish) }, (r) => NormalizedQueryPlugin.getPageParameter(r.mergedRequestSchema?.rawSchema))
+      .with(
+        P.union({ pathParametersSchema: P.not(P.nullish) }, { queryParametersSchema: P.not(P.nullish) }, { requestBodySchema: P.not(P.nullish) }),
+        (r) => {
+          if (r.pathParametersSchema) {
+            return NormalizedQueryPlugin.getPageParameter(r.pathParametersSchema?.rawSchema);
+          }
+
+          if (r.queryParametersSchema) {
+            return NormalizedQueryPlugin.getPageParameter(r.queryParametersSchema?.rawSchema);
+          }
+
+          if (r.requestBodySchema) {
+            return NormalizedQueryPlugin.getPageParameter(r.requestBodySchema?.rawSchema);
+          }
+
+          return undefined;
+        },
+      )
+      .otherwise(() => undefined);
+  }
+
   private buildClientFnArgs(generatorConfig: MethodGeneratorConfig, parameters: ts.ParameterDeclaration[]) {
     const baseUrl =
       typeof this.pluginConfig.hook.baseUrlOrGetter === 'function'
@@ -1134,29 +1219,29 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
             .otherwise(() => undefined);
 
           if (argName) {
-            const argNameProperties = match(argName)
+            const pageProp = match(argName)
               .with(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME, () =>
-                getObjectProperties(generatorConfig.method.method.mergedRequestSchema?.rawSchema),
+                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.mergedRequestSchema?.rawSchema),
               )
               .with(GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME, () =>
-                getObjectProperties(generatorConfig.method.method.pathParametersSchema?.rawSchema),
+                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.pathParametersSchema?.rawSchema),
               )
               .with(GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME, () =>
-                getObjectProperties(generatorConfig.method.method.queryParametersSchema?.rawSchema),
+                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.queryParametersSchema?.rawSchema),
               )
-              .with(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME, () => getObjectProperties(generatorConfig.method.method.requestBodySchema?.rawSchema))
-              .otherwise(() => new Map());
+              .with(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME, () =>
+                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.requestBodySchema?.rawSchema),
+              )
+              .otherwise(() => undefined);
 
             let createdSpreadElement = false;
 
-            const matchingProp = NormalizedQueryPlugin.findMatchingProperty(argNameProperties || new Map(), J5_LIST_PAGE_REQUEST_TYPE);
-
-            if (matchingProp) {
+            if (pageProp) {
               const objectLiteralExpression = factory.createObjectLiteralExpression(
                 [
                   factory.createSpreadAssignment(factory.createIdentifier(argName)),
                   factory.createPropertyAssignment(
-                    matchingProp[0],
+                    pageProp[0],
                     factory.createConditionalExpression(
                       factory.createIdentifier(REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME),
                       factory.createToken(SyntaxKind.QuestionToken),
