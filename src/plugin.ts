@@ -1452,7 +1452,9 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       ? this.generatedEntities.get(generatedMethod.method.relatedEntity.generatedName)
       : undefined;
 
-    if (relatedEntity) {
+    const isEvent = guessIsEventMethod(generatedMethod);
+
+    if (relatedEntity && !isEvent) {
       const entityFile = this.getEntityFile(relatedEntity);
 
       if (entityFile && entityFile !== file) {
