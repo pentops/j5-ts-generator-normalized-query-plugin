@@ -21,18 +21,18 @@
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.13",
     "@types/node": "^22.5.4",
     "jest": "^29.7.0",
     "normalizr": "^3.6.2",
     "prettier": "^3.3.3",
-    "rollup": "^4.21.2",
+    "rollup": "^4.21.3",
     "ts-jest": "^29.2.5",
     "tslib": "^2.7.0",
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.87",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.89",
     "change-case": "^5.4.4",
     "ts-morph": "^23.0.0",
     "ts-pattern": "^5.3.1"
