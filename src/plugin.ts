@@ -381,7 +381,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
               factory.createIdentifier(reqKeyName),
               returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression, listName, factory.createIdentifier(reqKeyName)])),
             ),
-            baseReturnValue,
+            returnArrayLiteralAsConst(factory.createArrayLiteralExpression([entityKeyExpression, listName])),
           ];
         }
 
@@ -1436,7 +1436,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
 
       // Import the new response entity into the client function file
       if (responseEntity && file && file !== clientFnFile) {
-        clientFnFile.addManualImport(NormalizedQueryPlugin.getImportPathForGeneratedFiles(clientFnFile, file), [responseEntity.entityVariableName]);
+        clientFnFile.addImportToOtherGeneratedFile(file, [responseEntity.entityVariableName]);
       }
 
       return responseEntity;
@@ -1458,7 +1458,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       const entityFile = this.getEntityFile(relatedEntity);
 
       if (entityFile && entityFile !== file) {
-        file.addManualImport(NormalizedQueryPlugin.getImportPathForGeneratedFiles(file, entityFile), [relatedEntity.entityVariableName]);
+        file.addImportToOtherGeneratedFile(entityFile, [relatedEntity.entityVariableName]);
       }
     }
 
