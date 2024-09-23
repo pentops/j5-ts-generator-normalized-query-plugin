@@ -30,7 +30,25 @@ import {
   getRequiredRequestParameters,
   guessIsEventMethod,
   NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
+  REACT_QUERY_INFINITE_QUERY_HOOK_NAME,
+  REACT_QUERY_MUTATION_HOOK_NAME,
+  REACT_QUERY_QUERY_HOOK_NAME,
   returnArrayLiteralAsConst,
+  ReactQueryHookName,
+  REACT_QUERY_INFINITE_DATA_TYPE_NAME,
+  REACT_QUERY_QUERY_KEY_TYPE_NAME,
+  REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME,
+  J5_LIST_PAGE_REQUEST_PAGINATION_TOKEN_PARAM_NAME,
+  J5_LIST_PAGE_RESPONSE_TYPE,
+  J5_LIST_PAGE_REQUEST_TYPE,
+  REACT_QUERY_IMPORT_PATH,
+  REACT_QUERY_META_PARAM_NAME,
+  REACT_QUERY_ENABLED_PARAM_NAME,
+  REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_PARAM_NAME,
+  REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME,
+  J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME,
+  REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME,
+  REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME,
 } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 
@@ -48,27 +66,6 @@ type EntityReferenceDetail = { entity: NormalizerEntity; isArray: boolean };
 type EntityReference = EntityReferenceDetail | { isArray: boolean; schema: Map<string, EntityReference> };
 
 const optionalQuestionToken = factory.createToken(SyntaxKind.QuestionToken);
-
-export const J5_LIST_PAGE_RESPONSE_TYPE = 'j5.list.v1.PageResponse';
-export const J5_LIST_PAGE_REQUEST_TYPE = 'j5.list.v1.PageRequest';
-export const J5_LIST_PAGE_REQUEST_PAGINATION_TOKEN_PARAM_NAME = 'token';
-export const J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME = 'nextToken';
-
-export const REACT_QUERY_IMPORT_PATH = '@tanstack/react-query';
-export const REACT_QUERY_MUTATION_HOOK_NAME = 'useMutation';
-export const REACT_QUERY_QUERY_HOOK_NAME = 'useQuery';
-export const REACT_QUERY_INFINITE_QUERY_HOOK_NAME = 'useInfiniteQuery';
-export const REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME = 'pageParam';
-export const REACT_QUERY_META_PARAM_NAME = 'meta';
-export const REACT_QUERY_ENABLED_PARAM_NAME = 'enabled';
-export const REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME = 'initialPageParam';
-export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_PARAM_NAME = 'getNextPageParam';
-export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME = 'response';
-export const REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME = 'placeholderData';
-export const REACT_QUERY_INFINITE_DATA_TYPE_NAME = 'InfiniteData';
-export const REACT_QUERY_QUERY_KEY_TYPE_NAME = 'QueryKey';
-
-type ReactQueryHookName = typeof REACT_QUERY_QUERY_HOOK_NAME | typeof REACT_QUERY_MUTATION_HOOK_NAME | typeof REACT_QUERY_INFINITE_QUERY_HOOK_NAME;
 
 const REACT_QUERY_OPTIONS_TYPE_BY_HOOK_NAME: Record<ReactQueryHookName, string> = {
   [REACT_QUERY_QUERY_HOOK_NAME]: 'UseQueryOptions',
@@ -153,6 +150,49 @@ export type HookNameWriter = (generatedMethod: GeneratedClientFunction) => strin
 export const defaultHookNameWriter: HookNameWriter = (generatedMethod: GeneratedClientFunction) => camelCase(`use-${generatedMethod.generatedName}`);
 
 export type KeyBuilderNameWriter = (generatedMethod: GeneratedClientFunction) => string;
+
+export type ReactQueryHookNameGetter = (generatedMethod: GeneratedClientFunction) => ReactQueryHookName;
+
+export const defaultGetMethodReactQueryHookName: ReactQueryHookNameGetter = (generatedMethod) => {
+  const { responseBody } = generatedMethod.method.rawMethod;
+  const properties = match(responseBody)
+    .with({ object: { properties: P.not(P.nullish) } }, (r) => r.object.properties)
+    .with({ oneOf: { properties: P.not(P.nullish) } }, (r) => r.oneOf.properties)
+    .otherwise(() => undefined);
+
+  for (const [, property] of properties || []) {
+    if (
+      match(property.schema)
+        .with(
+          P.union(
+            { $ref: P.string.endsWith(J5_LIST_PAGE_RESPONSE_TYPE) },
+            { object: { fullGrpcName: J5_LIST_PAGE_RESPONSE_TYPE } },
+            { oneOf: { fullGrpcName: J5_LIST_PAGE_RESPONSE_TYPE } },
+          ),
+          () => true,
+        )
+        .otherwise(() => false)
+    ) {
+      return REACT_QUERY_INFINITE_QUERY_HOOK_NAME;
+    }
+  }
+
+  if (generatedMethod.method.relatedEntity?.rawSchema?.object?.entity) {
+    if (generatedMethod.method.relatedEntity.rawSchema.object.entity.queryMethods?.includes(generatedMethod.method.rawMethod.fullGrpcName)) {
+      return REACT_QUERY_QUERY_HOOK_NAME;
+    }
+
+    if (generatedMethod.method.relatedEntity.rawSchema.object.entity.commandMethods?.includes(generatedMethod.method.rawMethod.fullGrpcName)) {
+      return REACT_QUERY_MUTATION_HOOK_NAME;
+    }
+  }
+
+  if (['post', 'delete', 'put', 'patch'].includes(generatedMethod.method.rawMethod.httpMethod.toLowerCase())) {
+    return REACT_QUERY_MUTATION_HOOK_NAME;
+  }
+
+  return REACT_QUERY_QUERY_HOOK_NAME;
+};
 
 export type ReactQueryKeyGetter = (
   config: MethodGeneratorConfig,
@@ -439,6 +479,7 @@ export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, Pl
     nameWriter: HookNameWriter;
     undefinedRequestForSkip?: boolean;
     requestEnabledOrGetter: RequestEnabledOrGetter;
+    reactQueryHookNameGetter: ReactQueryHookNameGetter;
     reactQueryKeyNameWriter: KeyBuilderNameWriter;
     reactQueryKeyGetter: ReactQueryKeyGetter;
     reactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter;
@@ -551,6 +592,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
         nameWriter: config.hook?.nameWriter ?? defaultHookNameWriter,
         undefinedRequestForSkip: config.hook?.undefinedRequestForSkip ?? true,
         requestEnabledOrGetter: config.hook?.requestEnabledOrGetter ?? defaultRequestEnabledOrGetter,
+        reactQueryHookNameGetter: config.hook?.reactQueryHookNameGetter ?? defaultGetMethodReactQueryHookName,
         reactQueryKeyNameWriter: config.hook?.reactQueryKeyNameWriter ?? defaultKeyBuilderNameWriter,
         reactQueryKeyGetter: config.hook?.reactQueryKeyGetter ?? defaultReactQueryKeyGetter,
         reactQueryKeyBuilderGetter: config.hook?.reactQueryKeyBuilderGetter ?? defaultReactQueryKeyBuilderGetter,
@@ -896,47 +938,6 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     );
 
     return generatedEntity;
-  }
-
-  private static getMethodReactQueryHookName(generatedMethod: GeneratedClientFunction): ReactQueryHookName {
-    const { responseBody } = generatedMethod.method.rawMethod;
-    const properties = match(responseBody)
-      .with({ object: { properties: P.not(P.nullish) } }, (r) => r.object.properties)
-      .with({ oneOf: { properties: P.not(P.nullish) } }, (r) => r.oneOf.properties)
-      .otherwise(() => undefined);
-
-    for (const [, property] of properties || []) {
-      if (
-        match(property.schema)
-          .with(
-            P.union(
-              { $ref: P.string.endsWith(J5_LIST_PAGE_RESPONSE_TYPE) },
-              { object: { fullGrpcName: J5_LIST_PAGE_RESPONSE_TYPE } },
-              { oneOf: { fullGrpcName: J5_LIST_PAGE_RESPONSE_TYPE } },
-            ),
-            () => true,
-          )
-          .otherwise(() => false)
-      ) {
-        return REACT_QUERY_INFINITE_QUERY_HOOK_NAME;
-      }
-    }
-
-    if (generatedMethod.method.relatedEntity?.rawSchema?.object?.entity) {
-      if (generatedMethod.method.relatedEntity.rawSchema.object.entity.queryMethods?.includes(generatedMethod.method.rawMethod.fullGrpcName)) {
-        return REACT_QUERY_QUERY_HOOK_NAME;
-      }
-
-      if (generatedMethod.method.relatedEntity.rawSchema.object.entity.commandMethods?.includes(generatedMethod.method.rawMethod.fullGrpcName)) {
-        return REACT_QUERY_MUTATION_HOOK_NAME;
-      }
-    }
-
-    if (['post', 'delete', 'put', 'patch'].includes(generatedMethod.method.rawMethod.httpMethod.toLowerCase())) {
-      return REACT_QUERY_MUTATION_HOOK_NAME;
-    }
-
-    return REACT_QUERY_QUERY_HOOK_NAME;
   }
 
   public static getMethodEntityName(generatedMethod: GeneratedClientFunction) {
@@ -1446,7 +1447,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
   }
 
   private buildGeneratorConfig(file: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
-    const queryHookName = NormalizedQueryPlugin.getMethodReactQueryHookName(generatedMethod);
+    const queryHookName = this.pluginConfig.hook.reactQueryHookNameGetter(generatedMethod);
 
     const relatedEntity = generatedMethod.method.relatedEntity?.generatedName
       ? this.generatedEntities.get(generatedMethod.method.relatedEntity.generatedName)
