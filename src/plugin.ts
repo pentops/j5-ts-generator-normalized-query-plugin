@@ -18,12 +18,12 @@ import {
   ParsedSchema,
   ParsedSchemaWithRef,
   BasePlugin,
-  PluginConfig,
-  BasePluginFile,
-  PluginFileGeneratorConfig,
-  PluginFilePostBuildHook,
-  PluginFileReader,
   findSchemaProperties,
+  IPluginConfig,
+  PluginEventHandlers,
+  GeneratorFileReader,
+  IPluginRunOutput,
+  IWritableFile,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import {
   arrayLiteralAsConst,
@@ -52,10 +52,11 @@ import {
   REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME,
 } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
+import { NormalizedQueryPluginFile, NormalizedQueryPluginFileConfig } from './plugin-file';
 
 const { factory } = ts;
 
-export const pluginFileReader: PluginFileReader<SourceFile> = async (filePath) => {
+export const pluginFileReader: GeneratorFileReader<SourceFile> = async (filePath) => {
   try {
     return new Project({ useInMemoryFileSystem: true }).addSourceFileAtPath(filePath);
   } catch {
@@ -115,7 +116,7 @@ export interface MethodGeneratorConfig {
   queryKeyParameterName: string;
   queryFnParameterName: string;
   hookName: string;
-  file: BasePluginFile<SourceFile>;
+  file: NormalizedQueryPluginFile;
   relatedEntity?: NormalizerEntity;
   responseEntity?: NormalizerEntity;
   parameterNameMap?: MethodParameterNameMap;
@@ -468,7 +469,7 @@ export interface NormalizerEntity extends GeneratedSchema<ParsedObject> {
   references?: Map<string, EntityReference>;
 }
 
-export interface NormalizedQueryPluginConfig extends PluginConfig<SourceFile, PluginFileGeneratorConfig<SourceFile>> {
+export interface NormalizedQueryPluginConfig extends IPluginConfig<NormalizedQueryPluginFile> {
   allowStringKeyReferences?: boolean;
   entity: {
     nameWriter: EntityNameWriter;
@@ -495,7 +496,7 @@ export type NormalizedQueryPluginHookConfigInput = Partial<NormalizedQueryPlugin
 export type NormalizedQueryPluginEntityConfigInput = Partial<NormalizedQueryPluginConfig['entity']>;
 
 export type NormalizedQueryPluginConfigInput = Optional<
-  Omit<NormalizedQueryPluginConfig, 'hook' | 'entity' | 'defaultExistingFileReader' | 'defaultFileHooks'> & {
+  Omit<NormalizedQueryPluginConfig, 'hook' | 'entity' | 'defaultExistingFileReader' | 'hooks'> & {
     hook?: NormalizedQueryPluginHookConfigInput;
     entity?: NormalizedQueryPluginEntityConfigInput;
   },
@@ -504,20 +505,20 @@ export type NormalizedQueryPluginConfigInput = Optional<
 
 export class NormalizedQueryPlugin extends BasePlugin<
   SourceFile,
-  PluginFileGeneratorConfig<SourceFile>,
-  NormalizedQueryPluginConfig,
-  BasePluginFile<SourceFile, PluginFileGeneratorConfig<SourceFile>, NormalizedQueryPluginConfig>
+  NormalizedQueryPluginFileConfig,
+  NormalizedQueryPluginFile,
+  NormalizedQueryPluginConfig
 > {
   name = 'NormalizedQueryPlugin';
 
-  private static getPostBuildHook(baseConfig: Omit<NormalizedQueryPluginConfig, 'defaultFileHooks'>) {
-    const mergedPostBuildHook: PluginFilePostBuildHook<SourceFile> = async (file, fileToWrite) => {
-      const { content } = fileToWrite;
+  private static getPostBuildHook(baseConfig: NormalizedQueryPluginConfig) {
+    const mergedPostBuildHook: PluginEventHandlers<NormalizedQueryPluginFile>['postBuildFile'] = async ({ file, fileToBuild }) => {
+      const { content } = fileToBuild;
 
       let existingFileContent: SourceFile | undefined;
 
       try {
-        existingFileContent = await file.getExistingFileContent();
+        existingFileContent = (await file.pollForExistingFileContent())?.content;
       } catch {}
 
       if (!existingFileContent) {
@@ -525,7 +526,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       }
 
       // Check for existing content and merge it with the new content
-      const newFileAsSourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile(fileToWrite.fileName, content);
+      const newFileAsSourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile(fileToBuild.fileName, content);
 
       const newFileStatements = newFileAsSourceFile.getStatements();
       const existingFileStatements = existingFileContent.getStatements() || [];
@@ -584,7 +585,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
   }
 
   private static buildConfig(config: NormalizedQueryPluginConfigInput) {
-    const baseConfig: Omit<NormalizedQueryPluginConfig, 'defaultFileHooks'> = {
+    const baseConfig: Omit<NormalizedQueryPluginConfig, 'hooks'> = {
       ...config,
       allowStringKeyReferences: config.allowStringKeyReferences ?? true,
       entity: {
@@ -611,8 +612,8 @@ export class NormalizedQueryPlugin extends BasePlugin<
 
     return {
       ...baseConfig,
-      defaultFileHooks: {
-        postBuildHook: NormalizedQueryPlugin.getPostBuildHook(baseConfig),
+      hooks: {
+        postBuildFile: NormalizedQueryPlugin.getPostBuildHook(baseConfig),
       },
     };
   }
@@ -637,7 +638,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       .otherwise(() => undefined);
   }
 
-  private static getImportPathForGeneratedFiles(from: BasePluginFile<SourceFile>, to: BasePluginFile<SourceFile>) {
+  private static getImportPathForGeneratedFiles(from: NormalizedQueryPluginFile, to: NormalizedQueryPluginFile) {
     return getImportPath(to.config.directory, to.config.fileName, from.config.directory, from.config.fileName);
   }
 
@@ -694,7 +695,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
-  private addEntityReferenceImports(file: BasePluginFile<SourceFile>, entityReferences: Map<string, EntityReference>) {
+  private addEntityReferenceImports(file: NormalizedQueryPluginFile, entityReferences: Map<string, EntityReference>) {
     for (const [, ref] of entityReferences) {
       match(ref)
         .with({ entity: P.not(P.nullish) }, (r) => {
@@ -709,7 +710,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     }
   }
 
-  private generateEntity(fileForSchema: BasePluginFile<SourceFile>, schema: GeneratedSchema): NormalizerEntity | undefined {
+  private generateEntity(fileForSchema: NormalizedQueryPluginFile, schema: GeneratedSchema): NormalizerEntity | undefined {
     const isEntity = match(schema.rawSchema)
       .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, () => true)
       .otherwise(() => false);
@@ -897,7 +898,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     return factory.createObjectLiteralExpression(properties, true);
   }
 
-  private generateResponseEntity(fileForSchema: BasePluginFile<SourceFile>, schema: GeneratedSchema) {
+  private generateResponseEntity(fileForSchema: NormalizedQueryPluginFile, schema: GeneratedSchema) {
     if (this.generatedEntities.has(schema.generatedName)) {
       return this.generatedEntities.get(schema.generatedName);
     }
@@ -1434,7 +1435,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     }
   }
 
-  private generateAndAddResponseEntity(generatedMethod: GeneratedClientFunction, clientFnFile: BasePluginFile<SourceFile>) {
+  private generateAndAddResponseEntity(generatedMethod: GeneratedClientFunction, clientFnFile: NormalizedQueryPluginFile) {
     if (generatedMethod.method.responseBodySchema) {
       const responseBodyFile = this.getFileForSchema(generatedMethod.method.responseBodySchema);
       const file = responseBodyFile || clientFnFile;
@@ -1452,7 +1453,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     return undefined;
   }
 
-  private buildGeneratorConfig(file: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
+  private buildGeneratorConfig(file: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
     const queryHookName = this.pluginConfig.hook.reactQueryHookNameGetter(generatedMethod);
 
     const relatedEntity = generatedMethod.method.relatedEntity?.generatedName
@@ -1665,7 +1666,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
-  private static addMethodTypeImports(file: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
+  private static addMethodTypeImports(file: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction) {
     const { responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema } = generatedMethod.method;
 
     [responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema].forEach((schema) => {
@@ -1675,7 +1676,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     });
   }
 
-  private generateDataHook(fileForMethod: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
+  private generateDataHook(fileForMethod: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction) {
     const generatorConfig = this.buildGeneratorConfig(fileForMethod, generatedMethod);
 
     if (!generatorConfig) {
@@ -1702,7 +1703,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
-  public async run() {
+  public async run(): Promise<IPluginRunOutput<NormalizedQueryPluginFile>> {
     for (const file of this.files) {
       for (const [, schema] of this.generatedSchemas) {
         if (file.isFileForSchema(schema)) {
@@ -1732,5 +1733,11 @@ export class NormalizedQueryPlugin extends BasePlugin<
         file.generateHeading();
       }
     }
+
+    const out = await this.buildFiles();
+
+    return {
+      files: out.reduce<IWritableFile<SourceFile>[]>((acc, curr) => (curr ? [...acc, curr] : acc), []),
+    };
   }
 }
