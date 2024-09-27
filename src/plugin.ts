@@ -17,12 +17,13 @@ import {
   ParsedObjectProperty,
   ParsedSchema,
   ParsedSchemaWithRef,
-  PluginBase,
+  BasePlugin,
   PluginConfig,
-  PluginFile,
+  BasePluginFile,
   PluginFileGeneratorConfig,
   PluginFilePostBuildHook,
   PluginFileReader,
+  findSchemaProperties,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import {
   arrayLiteralAsConst,
@@ -114,7 +115,7 @@ export interface MethodGeneratorConfig {
   queryKeyParameterName: string;
   queryFnParameterName: string;
   hookName: string;
-  file: PluginFile<SourceFile>;
+  file: BasePluginFile<SourceFile>;
   relatedEntity?: NormalizerEntity;
   responseEntity?: NormalizerEntity;
   parameterNameMap?: MethodParameterNameMap;
@@ -501,7 +502,12 @@ export type NormalizedQueryPluginConfigInput = Optional<
   'entity' | 'hook' | 'statementConflictHandler'
 >;
 
-export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGeneratorConfig<SourceFile>, NormalizedQueryPluginConfig> {
+export class NormalizedQueryPlugin extends BasePlugin<
+  SourceFile,
+  PluginFileGeneratorConfig<SourceFile>,
+  NormalizedQueryPluginConfig,
+  BasePluginFile<SourceFile, PluginFileGeneratorConfig<SourceFile>, NormalizedQueryPluginConfig>
+> {
   name = 'NormalizedQueryPlugin';
 
   private static getPostBuildHook(baseConfig: Omit<NormalizedQueryPluginConfig, 'defaultFileHooks'>) {
@@ -631,7 +637,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       .otherwise(() => undefined);
   }
 
-  private static getImportPathForGeneratedFiles(from: PluginFile<SourceFile>, to: PluginFile<SourceFile>) {
+  private static getImportPathForGeneratedFiles(from: BasePluginFile<SourceFile>, to: BasePluginFile<SourceFile>) {
     return getImportPath(to.config.directory, to.config.fileName, from.config.directory, from.config.fileName);
   }
 
@@ -688,7 +694,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     );
   }
 
-  private addEntityReferenceImports(file: PluginFile<SourceFile>, entityReferences: Map<string, EntityReference>) {
+  private addEntityReferenceImports(file: BasePluginFile<SourceFile>, entityReferences: Map<string, EntityReference>) {
     for (const [, ref] of entityReferences) {
       match(ref)
         .with({ entity: P.not(P.nullish) }, (r) => {
@@ -703,7 +709,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     }
   }
 
-  private generateEntity(fileForSchema: PluginFile<SourceFile>, schema: GeneratedSchema): NormalizerEntity | undefined {
+  private generateEntity(fileForSchema: BasePluginFile<SourceFile>, schema: GeneratedSchema): NormalizerEntity | undefined {
     const isEntity = match(schema.rawSchema)
       .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, () => true)
       .otherwise(() => false);
@@ -842,7 +848,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
           }
         } else if (fullGrpcName && !visited.has(fullGrpcName)) {
           visited.add(fullGrpcName);
-          const subProperties = this.findSchemaProperties(property.schema);
+          const subProperties = findSchemaProperties(property.schema, this.generatedSchemas);
 
           if (subProperties.size) {
             const subPropertyRefs = digForEntityReferences(subProperties);
@@ -857,7 +863,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
       return subRefs;
     };
 
-    return digForEntityReferences(this.findSchemaProperties(schema));
+    return digForEntityReferences(findSchemaProperties(schema, this.generatedSchemas));
   }
 
   private static buildNormalizrObject(entityReferences: Map<string, EntityReference>, schemaName?: string) {
@@ -891,7 +897,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     return factory.createObjectLiteralExpression(properties, true);
   }
 
-  private generateResponseEntity(fileForSchema: PluginFile<SourceFile>, schema: GeneratedSchema) {
+  private generateResponseEntity(fileForSchema: BasePluginFile<SourceFile>, schema: GeneratedSchema) {
     if (this.generatedEntities.has(schema.generatedName)) {
       return this.generatedEntities.get(schema.generatedName);
     }
@@ -1428,7 +1434,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     }
   }
 
-  private generateAndAddResponseEntity(generatedMethod: GeneratedClientFunction, clientFnFile: PluginFile<SourceFile>) {
+  private generateAndAddResponseEntity(generatedMethod: GeneratedClientFunction, clientFnFile: BasePluginFile<SourceFile>) {
     if (generatedMethod.method.responseBodySchema) {
       const responseBodyFile = this.getFileForSchema(generatedMethod.method.responseBodySchema);
       const file = responseBodyFile || clientFnFile;
@@ -1446,7 +1452,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     return undefined;
   }
 
-  private buildGeneratorConfig(file: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
+  private buildGeneratorConfig(file: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction): MethodGeneratorConfig | undefined {
     const queryHookName = this.pluginConfig.hook.reactQueryHookNameGetter(generatedMethod);
 
     const relatedEntity = generatedMethod.method.relatedEntity?.generatedName
@@ -1659,7 +1665,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     );
   }
 
-  private static addMethodTypeImports(file: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
+  private static addMethodTypeImports(file: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
     const { responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema } = generatedMethod.method;
 
     [responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema].forEach((schema) => {
@@ -1669,7 +1675,7 @@ export class NormalizedQueryPlugin extends PluginBase<SourceFile, PluginFileGene
     });
   }
 
-  private generateDataHook(fileForMethod: PluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
+  private generateDataHook(fileForMethod: BasePluginFile<SourceFile>, generatedMethod: GeneratedClientFunction) {
     const generatorConfig = this.buildGeneratorConfig(fileForMethod, generatedMethod);
 
     if (!generatorConfig) {
