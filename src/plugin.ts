@@ -512,8 +512,8 @@ export class NormalizedQueryPlugin extends BasePlugin<
   name = 'NormalizedQueryPlugin';
 
   private static getPostBuildHook(baseConfig: NormalizedQueryPluginConfig) {
-    const mergedPostBuildHook: PluginEventHandlers<NormalizedQueryPluginFile>['postBuildFile'] = async ({ file, fileToBuild }) => {
-      const { content } = fileToBuild;
+    const mergedPostBuildHook: PluginEventHandlers<NormalizedQueryPluginFile>['postBuildFile'] = async ({ file, builtFile }) => {
+      const { content } = builtFile;
 
       let existingFileContent: SourceFile | undefined;
 
@@ -526,7 +526,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       }
 
       // Check for existing content and merge it with the new content
-      const newFileAsSourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile(fileToBuild.fileName, content);
+      const newFileAsSourceFile = new Project({ useInMemoryFileSystem: true }).createSourceFile(builtFile.fileName, content);
 
       const newFileStatements = newFileAsSourceFile.getStatements();
       const existingFileStatements = existingFileContent.getStatements() || [];
@@ -985,67 +985,9 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
-  private static buildAggregatedSplitRequestType(generatedMethod: GeneratedClientFunction) {
-    const props: ts.PropertySignature[] = [];
-
-    if (generatedMethod.method.pathParametersSchema) {
-      props.push(
-        factory.createPropertySignature(
-          undefined,
-          GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME,
-          optionalQuestionToken,
-          factory.createTypeReferenceNode(generatedMethod.method.pathParametersSchema.generatedName),
-        ),
-      );
-    }
-
-    if (generatedMethod.method.queryParametersSchema) {
-      props.push(
-        factory.createPropertySignature(
-          undefined,
-          GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME,
-          optionalQuestionToken,
-          factory.createTypeReferenceNode(generatedMethod.method.queryParametersSchema.generatedName),
-        ),
-      );
-    }
-
-    if (generatedMethod.method.requestBodySchema) {
-      props.push(
-        factory.createPropertySignature(
-          undefined,
-          GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME,
-          optionalQuestionToken,
-          factory.createTypeReferenceNode(generatedMethod.method.requestBodySchema.generatedName),
-        ),
-      );
-    }
-
-    if (!props.length) {
-      return undefined;
-    }
-
-    return factory.createTypeLiteralNode(props);
-  }
-
   private buildQueryFnRequestType(generatedMethod: GeneratedClientFunction) {
-    switch (this.config?.types.requestType) {
-      case 'split': {
-        const aggregatedSplitRequestType = NormalizedQueryPlugin.buildAggregatedSplitRequestType(generatedMethod);
-        if (aggregatedSplitRequestType) {
-          return aggregatedSplitRequestType;
-        }
-
-        break;
-      }
-      case 'merged':
-      default: {
-        if (generatedMethod.method.mergedRequestSchema) {
-          return factory.createTypeReferenceNode(generatedMethod.method.mergedRequestSchema.generatedName);
-        }
-
-        break;
-      }
+    if (generatedMethod.method.mergedRequestSchema) {
+      return factory.createTypeReferenceNode(generatedMethod.method.mergedRequestSchema.generatedName);
     }
 
     return factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword);
@@ -1062,31 +1004,13 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const typeArgs = match(generatorConfig.queryHookName)
       .returnType<ts.TypeNode[]>()
       .with(REACT_QUERY_MUTATION_HOOK_NAME, () => {
-        switch (this.config?.types.requestType) {
-          case 'split': {
-            const aggregatedSplitRequestType = NormalizedQueryPlugin.buildAggregatedSplitRequestType(generatorConfig.method);
-            if (aggregatedSplitRequestType) {
-              return [
-                returnType,
-                factory.createTypeReferenceNode('Error'),
-                aggregatedSplitRequestType,
-                factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-              ];
-            }
-
-            break;
-          }
-          case 'merged':
-          default: {
-            if (generatorConfig.method.method.mergedRequestSchema) {
-              return [
-                returnType,
-                factory.createTypeReferenceNode('Error'),
-                factory.createTypeReferenceNode(generatorConfig.method.method.mergedRequestSchema.generatedName),
-                factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-              ];
-            }
-          }
+        if (generatorConfig.method.method.mergedRequestSchema) {
+          return [
+            returnType,
+            factory.createTypeReferenceNode('Error'),
+            factory.createTypeReferenceNode(generatorConfig.method.method.mergedRequestSchema.generatedName),
+            factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
+          ];
         }
 
         return [
@@ -1122,64 +1046,15 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const parameters: ts.ParameterDeclaration[] = [];
 
     if (generatorConfig.queryHookName !== REACT_QUERY_MUTATION_HOOK_NAME) {
-      switch (this.config?.types.requestType) {
-        case 'split': {
-          let addedNonOptionalParameter = false;
-
-          if (generatorConfig.method.method.pathParametersSchema) {
-            const parameter = NormalizedQueryPlugin.buildHookParameterDeclaration(
-              GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME,
-              generatorConfig.method.method.pathParametersSchema,
-              addedNonOptionalParameter,
-              this.pluginConfig.hook.undefinedRequestForSkip,
-            );
-
-            parameters.push(parameter);
-
-            addedNonOptionalParameter = addedNonOptionalParameter || parameter.questionToken !== undefined;
-          }
-
-          if (generatorConfig.method.method.queryParametersSchema) {
-            const parameter = NormalizedQueryPlugin.buildHookParameterDeclaration(
-              GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME,
-              generatorConfig.method.method.queryParametersSchema,
-              addedNonOptionalParameter,
-              this.pluginConfig.hook.undefinedRequestForSkip,
-            );
-
-            parameters.push(parameter);
-
-            addedNonOptionalParameter = addedNonOptionalParameter || parameter.questionToken !== undefined;
-          }
-
-          if (generatorConfig.method.method.requestBodySchema) {
-            const parameter = NormalizedQueryPlugin.buildHookParameterDeclaration(
-              GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME,
-              generatorConfig.method.method.requestBodySchema,
-              addedNonOptionalParameter,
-              this.pluginConfig.hook.undefinedRequestForSkip,
-            );
-
-            parameters.push(parameter);
-          }
-
-          break;
-        }
-        case 'merged':
-        default: {
-          if (generatorConfig.method.method.mergedRequestSchema) {
-            parameters.push(
-              NormalizedQueryPlugin.buildHookParameterDeclaration(
-                GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
-                generatorConfig.method.method.mergedRequestSchema,
-                false,
-                this.pluginConfig.hook.undefinedRequestForSkip,
-              ),
-            );
-          }
-
-          break;
-        }
+      if (generatorConfig.method.method.mergedRequestSchema) {
+        parameters.push(
+          NormalizedQueryPlugin.buildHookParameterDeclaration(
+            GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
+            generatorConfig.method.method.mergedRequestSchema,
+            false,
+            this.pluginConfig.hook.undefinedRequestForSkip,
+          ),
+        );
       }
     }
 
@@ -1318,7 +1193,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
                 false,
               );
 
-              // TODO: refactor this when there's more time to support split request types
               if (this.pluginConfig.hook.undefinedRequestForSkip) {
                 const requiredParams = createLogicalAndChain(getRequiredRequestParameters(generatorConfig));
                 const requestCondition = requiredParams
@@ -1360,42 +1234,9 @@ export class NormalizedQueryPlugin extends BasePlugin<
           break;
         }
 
-        switch (this.config?.types.requestType) {
-          case 'split': {
-            args.push(
-              generatorConfig.method.method.pathParametersSchema
-                ? factory.createPropertyAccessExpression(
-                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                    factory.createIdentifier(GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME),
-                  )
-                : factory.createIdentifier('undefined'),
-              generatorConfig.method.method.queryParametersSchema
-                ? factory.createPropertyAccessExpression(
-                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                    factory.createIdentifier(GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME),
-                  )
-                : factory.createIdentifier('undefined'),
-              generatorConfig.method.method.requestBodySchema
-                ? factory.createPropertyAccessExpression(
-                    factory.createIdentifier(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME),
-                    factory.createIdentifier(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME),
-                  )
-                : factory.createIdentifier('undefined'),
-            );
-
-            break;
-          }
-          case 'merged':
-          default: {
-            args.push(
-              factory.createIdentifier(
-                generatorConfig.method.method.mergedRequestSchema ? GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME : 'undefined',
-              ),
-            );
-
-            break;
-          }
-        }
+        args.push(
+          factory.createIdentifier(generatorConfig.method.method.mergedRequestSchema ? GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME : 'undefined'),
+        );
 
         break;
       }
@@ -1495,25 +1336,9 @@ export class NormalizedQueryPlugin extends BasePlugin<
       relatedEntity,
       responseEntity: this.generateAndAddResponseEntity(generatedMethod, file),
       undefinedRequestForSkip: Boolean(this.pluginConfig.hook.undefinedRequestForSkip),
-      parameterNameMap: match({ type: this.config?.types.requestType, ...generatedMethod.method })
+      parameterNameMap: match(generatedMethod.method)
         .returnType<MethodParameterNameMap | undefined>()
-        .with({ type: 'split' }, (s) =>
-          match(s)
-            .with(
-              P.union(
-                { pathParametersSchema: P.not(P.nullish) },
-                { queryParametersSchema: P.not(P.nullish) },
-                { requestBodySchema: P.not(P.nullish) },
-              ),
-              (sub) => ({
-                path: sub.pathParametersSchema ? GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME : undefined,
-                query: sub.queryParametersSchema ? GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME : undefined,
-                body: sub.requestBodySchema ? GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME : undefined,
-              }),
-            )
-            .otherwise(() => undefined),
-        )
-        .with({ type: 'merged', mergedRequestSchema: P.not(P.nullish) }, () => ({
+        .with({ mergedRequestSchema: P.not(P.nullish) }, () => ({
           merged: GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
         }))
         .otherwise(() => undefined),

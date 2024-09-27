@@ -75,11 +75,6 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
             }
           }
         })
-        // TODO: handle split params
-        // .with(
-        //   P.union({ pathParametersSchema: P.not(P.nullish) }, { queryParametersSchema: P.not(P.nullish) }, {requestBodySchema: P.not(P.nullish)}),
-        //   (s) => {},
-        // )
         .otherwise(() => undefined);
     });
   }
