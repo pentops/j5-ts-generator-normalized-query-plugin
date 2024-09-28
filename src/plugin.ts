@@ -1074,24 +1074,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
   static findPageParameterForConfig(config: MethodGeneratorConfig) {
     return match(config.method.method)
       .with({ mergedRequestSchema: P.not(P.nullish) }, (r) => NormalizedQueryPlugin.getPageParameter(r.mergedRequestSchema?.rawSchema))
-      .with(
-        P.union({ pathParametersSchema: P.not(P.nullish) }, { queryParametersSchema: P.not(P.nullish) }, { requestBodySchema: P.not(P.nullish) }),
-        (r) => {
-          if (r.pathParametersSchema) {
-            return NormalizedQueryPlugin.getPageParameter(r.pathParametersSchema?.rawSchema);
-          }
-
-          if (r.queryParametersSchema) {
-            return NormalizedQueryPlugin.getPageParameter(r.queryParametersSchema?.rawSchema);
-          }
-
-          if (r.requestBodySchema) {
-            return NormalizedQueryPlugin.getPageParameter(r.requestBodySchema?.rawSchema);
-          }
-
-          return undefined;
-        },
-      )
       .otherwise(() => undefined);
   }
 
@@ -1153,15 +1135,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
             const pageProp = match(argName)
               .with(GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME, () =>
                 NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.mergedRequestSchema?.rawSchema),
-              )
-              .with(GENERATED_HOOK_PATH_PARAMETERS_PARAMETER_NAME, () =>
-                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.pathParametersSchema?.rawSchema),
-              )
-              .with(GENERATED_HOOK_QUERY_PARAMETERS_PARAMETER_NAME, () =>
-                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.queryParametersSchema?.rawSchema),
-              )
-              .with(GENERATED_HOOK_REQUEST_BODY_PARAMETER_NAME, () =>
-                NormalizedQueryPlugin.getPageParameter(generatorConfig.method.method.requestBodySchema?.rawSchema),
               )
               .otherwise(() => undefined);
 
@@ -1492,9 +1465,9 @@ export class NormalizedQueryPlugin extends BasePlugin<
   }
 
   private static addMethodTypeImports(file: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction) {
-    const { responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema } = generatedMethod.method;
+    const { responseBodySchema, mergedRequestSchema } = generatedMethod.method;
 
-    [responseBodySchema, mergedRequestSchema, requestBodySchema, pathParametersSchema, queryParametersSchema].forEach((schema) => {
+    [responseBodySchema, mergedRequestSchema].forEach((schema) => {
       if (schema) {
         file.addGeneratedTypeImport(schema.generatedName);
       }
@@ -1537,13 +1510,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       }
 
       for (const method of this.generatedClientFunctions) {
-        [
-          method.method.responseBodySchema,
-          method.method.mergedRequestSchema,
-          method.method.requestBodySchema,
-          method.method.pathParametersSchema,
-          method.method.queryParametersSchema,
-        ].forEach((schema) => {
+        [method.method.responseBodySchema, method.method.mergedRequestSchema].forEach((schema) => {
           if (schema && file.isFileForSchema(schema)) {
             this.generateResponseEntity(file, schema);
           }
