@@ -32,7 +32,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.105",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.106",
     "change-case": "^5.4.4",
     "ts-morph": "^24.0.0",
     "ts-pattern": "^5.4.0"
