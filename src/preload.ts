@@ -23,9 +23,7 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
       match({ method: generatorConfig.method.method, parameterNames: generatorConfig.parameterNameMap })
         .with({ method: { mergedRequestSchema: P.not(P.nullish) }, parameterNames: { merged: P.string } }, (s) => {
           const properties = getObjectProperties(s.method.mergedRequestSchema.rawSchema);
-          const matchesByPrimaryKey: Map<string, ts.Expression> = new Map();
-
-          for (const primaryKey of r.entity.primaryKeys || []) {
+          const matchesByPrimaryKey = (r.entity.primaryKeys || []).reduce<Map<string, ts.Expression>>((acc, primaryKey) => {
             const matchingProperty = findEntityPropertyReference(
               properties || new Map(),
               s.parameterNames.merged,
@@ -35,9 +33,11 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
             );
 
             if (matchingProperty) {
-              matchesByPrimaryKey.set(primaryKey, matchingProperty);
+              acc.set(primaryKey, matchingProperty);
             }
-          }
+
+            return acc;
+          }, new Map());
 
           if (matchesByPrimaryKey.size !== r.entity.primaryKeys?.length) {
             console.warn(

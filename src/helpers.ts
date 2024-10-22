@@ -148,10 +148,21 @@ export function findEntityPropertyReference(
       });
 
       if (property) {
-        const keySchema = match({ allowStringKeys, property })
-          .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
-          .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
-          .otherwise(() => undefined);
+        let keySchema = Boolean(
+          match({ allowStringKeys, property })
+            .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
+            .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
+            .otherwise(() => undefined),
+        );
+
+        // Back-up check if there's a matching key that didn't specify an entity
+        if (!keySchema) {
+          keySchema = Boolean(
+            match(property)
+              .with({ schema: { key: { entity: P.nullish } } }, (s) => s)
+              .otherwise(() => undefined),
+          );
+        }
 
         if (keySchema) {
           return createPropertyAccessChain(accessVariableName, true, consumedParts);
