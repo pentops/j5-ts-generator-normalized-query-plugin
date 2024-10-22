@@ -7,6 +7,7 @@ import {
   ParsedObjectProperty,
   ParsedSchemaWithRef,
   PropertyAccessPart,
+  QueryPart,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import { MethodGeneratorConfig } from './plugin';
 
@@ -30,6 +31,10 @@ export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME = '
 export const REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME = 'placeholderData';
 export const REACT_QUERY_INFINITE_DATA_TYPE_NAME = 'InfiniteData';
 export const REACT_QUERY_QUERY_KEY_TYPE_NAME = 'QueryKey';
+
+export function getIsEventMethod(method: GeneratedClientFunction) {
+  return method.method.rawMethod.methodType?.stateQuery?.queryPart === QueryPart.ListEvents;
+}
 
 export type ReactQueryHookName =
   | typeof REACT_QUERY_QUERY_HOOK_NAME
@@ -88,12 +93,6 @@ export function getRequiredRequestParameters(generatorConfig: MethodGeneratorCon
     .otherwise(() => []);
 }
 
-export function guessIsEventMethod(method: GeneratedClientFunction) {
-  const lowerCasedName = method.generatedName.toLowerCase();
-
-  return lowerCasedName.endsWith('event') || lowerCasedName.endsWith('events');
-}
-
 export function arrayLiteralAsConst(arrayLiteral: ts.ArrayLiteralExpression) {
   return ts.factory.createAsExpression(arrayLiteral, ts.factory.createTypeReferenceNode('const'));
 }
@@ -142,6 +141,7 @@ export function findEntityPropertyReference(
 
     if (currentProperties.has(part)) {
       const property = currentProperties.get(part);
+
       consumedParts.push({
         name: part,
         optional: !property?.required,

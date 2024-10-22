@@ -32,13 +32,13 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.106",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.108",
     "change-case": "^5.4.4",
     "ts-morph": "^24.0.0",
     "ts-pattern": "^5.5.0"
   },
   "peerDependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": ">=0.0.102 < 0.1.0",
+    "@pentops/jsonapi-jdef-ts-generator": ">=0.0.108 < 0.1.0",
     "@pentops/normalized-query-cache": ">=0.0.1 < 0.1.0",
     "normalizr": ">=3.0.0 < 4.0.0"
   }

@@ -41,7 +41,7 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
 
           if (matchesByPrimaryKey.size !== r.entity.primaryKeys?.length) {
             console.warn(
-              `[j5-ts-generator-normalized-query-plugin]: could not find all primary keys while building preload for request: ${generatorConfig.method.generatedName} (entity: ${r.entity.entityName}). Skipping preload for ${key}. Primary keys: ${r.entity.primaryKeys}, found: ${Array.from(matchesByPrimaryKey.keys())}`,
+              `[j5-ts-generator-normalized-query-plugin]: could not find all primary keys while building preload for request: ${generatorConfig.method.generatedName} (entity: ${r.entity.entityName}). Skipping preload for ${key}. Primary keys: ${JSON.stringify(r.entity.primaryKeys || [])}, found: ${JSON.stringify(Array.from(matchesByPrimaryKey))}`,
             );
           } else {
             const assignments: ts.ObjectLiteralElementLike[] = [];

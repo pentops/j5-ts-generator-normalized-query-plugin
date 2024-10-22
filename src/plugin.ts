@@ -29,7 +29,6 @@ import {
   arrayLiteralAsConst,
   findMatchingVariableStatement,
   getRequiredRequestParameters,
-  guessIsEventMethod,
   NORMALIZR_ENTITY_GET_ID_METHOD_NAME,
   REACT_QUERY_INFINITE_QUERY_HOOK_NAME,
   REACT_QUERY_MUTATION_HOOK_NAME,
@@ -50,6 +49,7 @@ import {
   J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME,
   REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME,
   REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME,
+  getIsEventMethod,
 } from './helpers';
 import { buildPreload, PRELOAD_DATA_VARIABLE_NAME } from './preload';
 import { NormalizedQueryPluginFile, NormalizedQueryPluginFileConfig } from './plugin-file';
@@ -296,7 +296,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
         method: { method: { mergedRequestSchema: P.not(P.nullish) } },
       },
       (s) => {
-        if (!guessIsEventMethod(s.method) && s.relatedEntity) {
+        if (!getIsEventMethod(s.method) && s.relatedEntity) {
           return [
             factory.createVariableStatement(
               undefined,
@@ -340,7 +340,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
       factory.createStringLiteral(config.method.method.rawMethod.fullGrpcName || NormalizedQueryPlugin.getMethodEntityName(config.method), true),
     )
     .with({ relatedEntity: P.not(P.nullish) }, (s) => {
-      if (guessIsEventMethod(s.method)) {
+      if (getIsEventMethod(s.method)) {
         return s.method.method.rootEntitySchema
           ? factory.createStringLiteral(s.method.method.rootEntitySchema.generatedName, true)
           : factory.createStringLiteral(s.method.method.rawMethod.fullGrpcName, true);
@@ -352,7 +352,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
       );
     })
     .otherwise((s) => {
-      if (guessIsEventMethod(s.method)) {
+      if (getIsEventMethod(s.method)) {
         return s.method.method.rootEntitySchema
           ? factory.createStringLiteral(s.method.method.rootEntitySchema.generatedName, true)
           : factory.createStringLiteral(s.method.method.rawMethod.fullGrpcName, true);
@@ -378,7 +378,7 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
       },
       (s) => {
         const detailName = factory.createStringLiteral('detail', true);
-        const isEventMethod = guessIsEventMethod(s.method);
+        const isEventMethod = getIsEventMethod(s.method);
 
         if (!isEventMethod) {
           if (s.relatedEntity) {
@@ -1274,7 +1274,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       ? this.generatedEntities.get(generatedMethod.method.relatedEntity.generatedName)
       : undefined;
 
-    const isEvent = guessIsEventMethod(generatedMethod);
+    const isEvent = getIsEventMethod(generatedMethod);
 
     if (relatedEntity && !isEvent) {
       const entityFile = this.getEntityFile(relatedEntity);
