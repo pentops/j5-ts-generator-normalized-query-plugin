@@ -159,7 +159,7 @@ export function findEntityPropertyReference(
         if (!keySchema) {
           keySchema = Boolean(
             match(property)
-              .with({ schema: { key: { entity: P.nullish } } }, (s) => s)
+              .with({ schema: { key: { primary: true } } }, (s) => s)
               .otherwise(() => undefined),
           );
         }
