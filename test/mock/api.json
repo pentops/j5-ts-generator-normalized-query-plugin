@@ -1,0 +1,2438 @@
+{
+  "version": "9d1915195b4421069e7c87a00ab90f9c8aa01445",
+  "api": {
+    "packages": [
+      {
+        "label": "Dante",
+        "name": "o5.dante.v1",
+        "services": [
+          {
+            "name": "DeadMessageCommandService",
+            "methods": [
+              {
+                "name": "UpdateDeadMessage",
+                "fullGrpcName": "/o5.dante.v1.DeadMessageCommandService/UpdateDeadMessage",
+                "httpMethod": "POST",
+                "httpPath": "/dante/v1/c/messages/:messageId/update",
+                "request": {
+                  "body": {
+                    "name": "UpdateDeadMessageRequest",
+                    "properties": [
+                      {
+                        "schema": {
+                          "!type": "key",
+                          "key": {
+                            "format": {
+                              "!type": "uuid",
+                              "uuid": {
+
+                              }
+                            }
+                          }
+                        },
+                        "name": "replacesVersionId",
+                        "protoField": [2]
+                      },
+                      {
+                        "schema": {
+                          "!type": "key",
+                          "key": {
+                            "format": {
+                              "!type": "uuid",
+                              "uuid": {
+
+                              }
+                            }
+                          }
+                        },
+                        "name": "versionId",
+                        "explicitlyOptional": true,
+                        "protoField": [3]
+                      },
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "o5.dante.v1",
+                              "schema": "DeadMessageVersion"
+                            }
+                          }
+                        },
+                        "name": "message",
+                        "required": true,
+                        "protoField": [4]
+                      }
+                    ]
+                  },
+                  "pathParameters": [
+                    {
+                      "schema": {
+                        "!type": "key",
+                        "key": {
+                          "format": {
+                            "!type": "uuid",
+                            "uuid": {
+
+                            }
+                          }
+                        }
+                      },
+                      "name": "messageId",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                },
+                "responseBody": {
+                  "name": "UpdateDeadMessageResponse",
+                  "properties": [
+                    {
+                      "schema": {
+                        "!type": "object",
+                        "object": {
+                          "ref": {
+                            "package": "o5.dante.v1",
+                            "schema": "DeadMessageState"
+                          }
+                        }
+                      },
+                      "name": "message",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "ReplayDeadMessage",
+                "fullGrpcName": "/o5.dante.v1.DeadMessageCommandService/ReplayDeadMessage",
+                "httpMethod": "POST",
+                "httpPath": "/dante/v1/c/messages/:messageId/replay",
+                "request": {
+                  "body": {
+                    "name": "ReplayDeadMessageRequest"
+                  },
+                  "pathParameters": [
+                    {
+                      "schema": {
+                        "!type": "key",
+                        "key": {
+                          "format": {
+                            "!type": "uuid",
+                            "uuid": {
+
+                            }
+                          }
+                        }
+                      },
+                      "name": "messageId",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                },
+                "responseBody": {
+                  "name": "ReplayDeadMessageResponse",
+                  "properties": [
+                    {
+                      "schema": {
+                        "!type": "object",
+                        "object": {
+                          "ref": {
+                            "package": "o5.dante.v1",
+                            "schema": "DeadMessageState"
+                          }
+                        }
+                      },
+                      "name": "message",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "RejectDeadMessage",
+                "fullGrpcName": "/o5.dante.v1.DeadMessageCommandService/RejectDeadMessage",
+                "httpMethod": "POST",
+                "httpPath": "/dante/v1/c/messages/:messageId/shelve",
+                "request": {
+                  "body": {
+                    "name": "RejectDeadMessageRequest",
+                    "properties": [
+                      {
+                        "schema": {
+                          "!type": "string",
+                          "string": {
+
+                          }
+                        },
+                        "name": "reason",
+                        "protoField": [2]
+                      }
+                    ]
+                  },
+                  "pathParameters": [
+                    {
+                      "schema": {
+                        "!type": "key",
+                        "key": {
+                          "format": {
+                            "!type": "uuid",
+                            "uuid": {
+
+                            }
+                          }
+                        }
+                      },
+                      "name": "messageId",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                },
+                "responseBody": {
+                  "name": "RejectDeadMessageResponse",
+                  "properties": [
+                    {
+                      "schema": {
+                        "!type": "object",
+                        "object": {
+                          "ref": {
+                            "package": "o5.dante.v1",
+                            "schema": "DeadMessageState"
+                          }
+                        }
+                      },
+                      "name": "message",
+                      "required": true,
+                      "protoField": [1]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "stateEntities": [
+          {
+            "name": "deadmessage",
+            "fullName": "o5.dante.v1/deadmessage",
+            "schemaName": "o5.dante.v1.DeadMessageState",
+            "primaryKey": [
+              "messageId"
+            ],
+            "queryService": {
+              "name": "DeadMessageQueryService",
+              "methods": [
+                {
+                  "name": "GetDeadMessage",
+                  "fullGrpcName": "/o5.dante.v1.DeadMessageQueryService/GetDeadMessage",
+                  "httpMethod": "GET",
+                  "httpPath": "/dante/v1/q/message/:messageId",
+                  "request": {
+                    "pathParameters": [
+                      {
+                        "schema": {
+                          "!type": "key",
+                          "key": {
+                            "format": {
+                              "!type": "uuid",
+                              "uuid": {
+
+                              }
+                            }
+                          }
+                        },
+                        "name": "messageId",
+                        "required": true,
+                        "explicitlyOptional": true,
+                        "description": "when not set, returns the next unhandled message",
+                        "protoField": [1]
+                      }
+                    ]
+                  },
+                  "responseBody": {
+                    "name": "GetDeadMessageResponse",
+                    "properties": [
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "o5.dante.v1",
+                              "schema": "DeadMessageState"
+                            }
+                          }
+                        },
+                        "name": "message",
+                        "required": true,
+                        "protoField": [1]
+                      },
+                      {
+                        "schema": {
+                          "!type": "array",
+                          "array": {
+                            "items": {
+                              "!type": "object",
+                              "object": {
+                                "ref": {
+                                  "package": "o5.dante.v1",
+                                  "schema": "DeadMessageEvent"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "name": "events",
+                        "protoField": [2]
+                      }
+                    ]
+                  },
+                  "methodType": {
+                    "!type": "stateQuery",
+                    "stateQuery": {
+                      "entityName": "deadmessage",
+                      "queryPart": "GET"
+                    }
+                  }
+                },
+                {
+                  "name": "ListDeadMessages",
+                  "fullGrpcName": "/o5.dante.v1.DeadMessageQueryService/ListDeadMessages",
+                  "httpMethod": "GET",
+                  "httpPath": "/dante/v1/q/messages",
+                  "request": {
+                    "queryParameters": [
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "PageRequest"
+                            }
+                          }
+                        },
+                        "name": "page",
+                        "protoField": [100]
+                      },
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "QueryRequest"
+                            }
+                          }
+                        },
+                        "name": "query",
+                        "protoField": [101]
+                      }
+                    ],
+                    "list": {
+                      "sortableFields": [
+                        {
+                          "name": "metadata.createdAt",
+                          "defaultSort": "ASC"
+                        },
+                        {
+                          "name": "metadata.updatedAt"
+                        }
+                      ],
+                      "filterableFields": [
+                        {
+                          "name": "status",
+                          "defaultFilters": [
+                            "CREATED"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "responseBody": {
+                    "name": "ListDeadMessagesResponse",
+                    "properties": [
+                      {
+                        "schema": {
+                          "!type": "array",
+                          "array": {
+                            "items": {
+                              "!type": "object",
+                              "object": {
+                                "ref": {
+                                  "package": "o5.dante.v1",
+                                  "schema": "DeadMessageState"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "name": "messages",
+                        "protoField": [1]
+                      },
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "PageResponse"
+                            }
+                          }
+                        },
+                        "name": "page",
+                        "protoField": [100]
+                      }
+                    ]
+                  },
+                  "methodType": {
+                    "!type": "stateQuery",
+                    "stateQuery": {
+                      "entityName": "deadmessage",
+                      "queryPart": "LIST"
+                    }
+                  }
+                },
+                {
+                  "name": "ListDeadMessageEvents",
+                  "fullGrpcName": "/o5.dante.v1.DeadMessageQueryService/ListDeadMessageEvents",
+                  "httpMethod": "GET",
+                  "httpPath": "/dante/v1/q/message/:messageId/events",
+                  "request": {
+                    "pathParameters": [
+                      {
+                        "schema": {
+                          "!type": "key",
+                          "key": {
+                            "format": {
+                              "!type": "uuid",
+                              "uuid": {
+
+                              }
+                            }
+                          }
+                        },
+                        "name": "messageId",
+                        "required": true,
+                        "protoField": [1]
+                      }
+                    ],
+                    "queryParameters": [
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "PageRequest"
+                            }
+                          }
+                        },
+                        "name": "page",
+                        "protoField": [100]
+                      },
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "QueryRequest"
+                            }
+                          }
+                        },
+                        "name": "query",
+                        "protoField": [101]
+                      }
+                    ],
+                    "list": {
+                      "sortableFields": [
+                        {
+                          "name": "metadata.timestamp",
+                          "defaultSort": "ASC"
+                        }
+                      ]
+                    }
+                  },
+                  "responseBody": {
+                    "name": "ListDeadMessageEventsResponse",
+                    "properties": [
+                      {
+                        "schema": {
+                          "!type": "array",
+                          "array": {
+                            "items": {
+                              "!type": "object",
+                              "object": {
+                                "ref": {
+                                  "package": "o5.dante.v1",
+                                  "schema": "DeadMessageEvent"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "name": "events",
+                        "protoField": [1]
+                      },
+                      {
+                        "schema": {
+                          "!type": "object",
+                          "object": {
+                            "ref": {
+                              "package": "j5.list.v1",
+                              "schema": "PageResponse"
+                            }
+                          }
+                        },
+                        "name": "page",
+                        "protoField": [100]
+                      }
+                    ]
+                  },
+                  "methodType": {
+                    "!type": "stateQuery",
+                    "stateQuery": {
+                      "entityName": "deadmessage",
+                      "queryPart": "LIST_EVENTS"
+                    }
+                  }
+                }
+              ]
+            },
+            "events": [
+              {
+                "name": "notified",
+                "fullName": "o5.dante.v1/deadmessage.notified"
+              },
+              {
+                "name": "updated",
+                "fullName": "o5.dante.v1/deadmessage.updated"
+              },
+              {
+                "name": "replayed",
+                "fullName": "o5.dante.v1/deadmessage.replayed"
+              },
+              {
+                "name": "rejected",
+                "fullName": "o5.dante.v1/deadmessage.rejected"
+              }
+            ]
+          }
+        ],
+        "schemas": {
+          "DeadMessageEventType_Replayed": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Replayed"
+            }
+          },
+          "DeadMessageData": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageData",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "DeadMessage"
+                      }
+                    }
+                  },
+                  "name": "notification",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageVersion"
+                      }
+                    }
+                  },
+                  "name": "currentVersion",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Notified": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Notified",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "DeadMessage"
+                      }
+                    }
+                  },
+                  "name": "notification",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Rejected": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Rejected",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "reason",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "DeadMessageEventType",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Notified"
+                      }
+                    }
+                  },
+                  "name": "notified",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Updated"
+                      }
+                    }
+                  },
+                  "name": "updated",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Replayed"
+                      }
+                    }
+                  },
+                  "name": "replayed",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Rejected"
+                      }
+                    }
+                  },
+                  "name": "rejected",
+                  "protoField": [4]
+                }
+              ]
+            }
+          },
+          "DeadMessageKeys": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageKeys",
+              "entity": {
+                "entity": "deadmessage",
+                "part": "KEYS"
+              },
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      },
+                      "entity": {
+                        "primaryKey": true
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Updated": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Updated",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageVersion"
+                      }
+                    }
+                  },
+                  "name": "spec",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageState": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageState",
+              "entity": {
+                "entity": "deadmessage",
+                "part": "STATE"
+              },
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "StateMetadata"
+                      }
+                    }
+                  },
+                  "name": "metadata",
+                  "required": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      },
+                      "entity": {
+                        "primaryKey": true
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [2, 1]
+                },
+                {
+                  "schema": {
+                    "!type": "enum",
+                    "enum": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "MessageStatus"
+                      },
+                      "listRules": {
+                        "filtering": {
+                          "filterable": true,
+                          "defaultFilters": [
+                            "CREATED"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "name": "status",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageData"
+                      }
+                    }
+                  },
+                  "name": "data",
+                  "protoField": [4]
+                }
+              ]
+            }
+          },
+          "MessageStatus": {
+            "!type": "enum",
+            "enum": {
+              "name": "MessageStatus",
+              "prefix": "MESSAGE_STATUS_",
+              "options": [
+                {
+                  "name": "UNSPECIFIED"
+                },
+                {
+                  "name": "CREATED",
+                  "number": 1
+                },
+                {
+                  "name": "UPDATED",
+                  "number": 2
+                },
+                {
+                  "name": "REPLAYED",
+                  "number": 3
+                },
+                {
+                  "name": "REJECTED",
+                  "number": 4
+                }
+              ]
+            }
+          },
+          "DeadMessageEvent": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEvent",
+              "entity": {
+                "entity": "deadmessage",
+                "part": "EVENT"
+              },
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "EventMetadata"
+                      }
+                    }
+                  },
+                  "name": "metadata",
+                  "required": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      },
+                      "entity": {
+                        "primaryKey": true
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [2, 1]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType"
+                      }
+                    }
+                  },
+                  "name": "event",
+                  "required": true,
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "DeadMessageVersion": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageVersion",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "versionId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message"
+                      }
+                    }
+                  },
+                  "name": "message",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageVersion_SQSMessage"
+                      }
+                    }
+                  },
+                  "name": "sqsMessage",
+                  "protoField": [5]
+                }
+              ]
+            }
+          },
+          "DeadMessageVersion_SQSMessage": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageVersion_SQSMessage",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "queueUrl",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "attributes",
+                  "protoField": [2]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "o5.messaging.v1",
+        "indirect": true,
+        "schemas": {
+          "Any": {
+            "!type": "object",
+            "object": {
+              "name": "Any",
+              "description": "Any is wire-compatible with google.protobuf.Any, but without the parsing and\nencoding methods, i.e. it leaves proto messages proto bytes",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "typeUrl",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "bytes",
+                    "bytes": {
+                      "rules": {
+
+                      }
+                    }
+                  },
+                  "name": "value",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "enum",
+                    "enum": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "WireEncoding"
+                      }
+                    }
+                  },
+                  "name": "encoding",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "topic.Infra": {
+            "!type": "object",
+            "object": {
+              "name": "Infra",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "type",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "metadata",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Message_Request": {
+            "!type": "object",
+            "object": {
+              "name": "Message_Request",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "replyTo",
+                  "description": "In the reply to a request/reply message, Identifies the service or instance\nwhich first sent the request to which the reply should be routed.",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "WireEncoding": {
+            "!type": "enum",
+            "enum": {
+              "name": "WireEncoding",
+              "description": "WireEncoding specifies the encoding of the value field in the Any message",
+              "prefix": "WIRE_ENCODING_",
+              "options": [
+                {
+                  "name": "UNSPECIFIED",
+                  "description": "Protobuf message (default for any)"
+                },
+                {
+                  "name": "PROTOJSON",
+                  "number": 1,
+                  "description": "ProtoJSON encoded protobuf message"
+                },
+                {
+                  "name": "RAW",
+                  "number": 2,
+                  "description": "Raw message of any format. Maps to /o5.messaging.v1.topic.RawMessageTopic/Raw"
+                }
+              ]
+            }
+          },
+          "topic.Problem": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "Problem",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "Problem_UnhandledError"
+                      }
+                    }
+                  },
+                  "name": "unhandledError",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Message": {
+            "!type": "object",
+            "object": {
+              "name": "Message",
+              "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+                      "rules": {
+                        "pattern": "^([a-z0-9_]+\\.)+([A-Z][a-zA-Z0-9_]+)$"
+                      }
+                    }
+                  },
+                  "name": "grpcService",
+                  "description": "The 'full_name' of the gRPC service \u003Cpackage\u003E.\u003Cservice\u003E",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+                      "rules": {
+                        "pattern": "^([A-Za-z0-9_]+)$"
+                      }
+                    }
+                  },
+                  "name": "grpcMethod",
+                  "description": "The short name of the method in the gRPC service",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Any"
+                      }
+                    }
+                  },
+                  "name": "body",
+                  "protoField": [4]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "sourceApp",
+                  "description": "Then o5.application.name which sent the message",
+                  "protoField": [5]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "sourceEnv",
+                  "description": "The o5.environment.full_name which sent the message",
+                  "protoField": [6]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "destinationTopic",
+                  "description": "compatibility with named topic messaging, specifies the destination name",
+                  "protoField": [7]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+
+                    }
+                  },
+                  "name": "timestamp",
+                  "description": "Timestamp when producing or replaying the message.",
+                  "protoField": [8]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "headers",
+                  "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
+                  "protoField": [9]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message_Request"
+                      }
+                    }
+                  },
+                  "name": "request",
+                  "protoField": [20]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message_Reply"
+                      }
+                    }
+                  },
+                  "name": "reply",
+                  "protoField": [21]
+                }
+              ]
+            }
+          },
+          "topic.Problem_UnhandledError": {
+            "!type": "object",
+            "object": {
+              "name": "Problem_UnhandledError",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "error",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Message_Reply": {
+            "!type": "object",
+            "object": {
+              "name": "Message_Reply",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "replyTo",
+                  "description": "Copied from the Request's reply_to field when replying.",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "topic.DeadMessage": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessage",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "deathId",
+                  "description": "Generated by the handler on failure, so that multiple failures of the same\nmessage (either through replay or multiple services working on the same\ncause) are not de-duplicated. This is used as the message_id on the wire\nmessage when sent, the original message_id is in the message field.",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "handlerApp",
+                  "description": "The o5.application.name which attepmted to handle the message",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "handlerEnv",
+                  "description": "The o5.environment.full_name which attepmted to handle the message",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message"
+                      }
+                    }
+                  },
+                  "name": "message",
+                  "description": "The message which was not able to be handled",
+                  "protoField": [4]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "Problem"
+                      }
+                    }
+                  },
+                  "name": "problem",
+                  "description": "The problem which caused the message to die",
+                  "protoField": [5]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "Infra"
+                      }
+                    }
+                  },
+                  "name": "infra",
+                  "protoField": [6]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "j5.auth.v1",
+        "indirect": true,
+        "schemas": {
+          "Fingerprint": {
+            "!type": "object",
+            "object": {
+              "name": "Fingerprint",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "ipAddress",
+                  "explicitlyOptional": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "userAgent",
+                  "explicitlyOptional": true,
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Claim": {
+            "!type": "object",
+            "object": {
+              "name": "Claim",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "realmId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+                      "rules": {
+                        "pattern": "^[a-z0-9_]+$"
+                      }
+                    }
+                  },
+                  "name": "tenantType",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "tenantId",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "scopes",
+                  "protoField": [4]
+                }
+              ]
+            }
+          },
+          "Action": {
+            "!type": "object",
+            "object": {
+              "name": "Action",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "method",
+                  "required": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Actor"
+                      }
+                    }
+                  },
+                  "name": "actor",
+                  "required": true,
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Fingerprint"
+                      }
+                    }
+                  },
+                  "name": "fingerprint",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "Actor": {
+            "!type": "object",
+            "object": {
+              "name": "Actor",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "subjectId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "subjectType",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "AuthenticationMethod"
+                      }
+                    }
+                  },
+                  "name": "authenticationMethod",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Claim"
+                      }
+                    }
+                  },
+                  "name": "claim",
+                  "required": true,
+                  "protoField": [4]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "actorTags",
+                  "protoField": [5]
+                }
+              ]
+            }
+          },
+          "AuthenticationMethod": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "AuthenticationMethod",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "AuthenticationMethod_JWT"
+                      }
+                    }
+                  },
+                  "name": "jwt",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "AuthenticationMethod_Session"
+                      }
+                    }
+                  },
+                  "name": "session",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "AuthenticationMethod_External"
+                      }
+                    }
+                  },
+                  "name": "external",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "AuthenticationMethod_External": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_External",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "systemName",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "metadata",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "AuthenticationMethod_JWT": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_JWT",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "jwtId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "issuer",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+
+                    }
+                  },
+                  "name": "issuedAt",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "AuthenticationMethod_Session": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_Session",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "sessionManager",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "sessionId",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+
+                    }
+                  },
+                  "name": "verifiedAt",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+
+                    }
+                  },
+                  "name": "authenticatedAt",
+                  "protoField": [4]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "j5.list.v1",
+        "indirect": true,
+        "schemas": {
+          "PageRequest": {
+            "!type": "object",
+            "object": {
+              "name": "PageRequest",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "token",
+                  "explicitlyOptional": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "integer",
+                    "integer": {
+                      "format": "INT64",
+                      "rules": {
+                        "exclusiveMinimum": true,
+                        "minimum": 0
+                      }
+                    }
+                  },
+                  "name": "pageSize",
+                  "explicitlyOptional": true,
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Field": {
+            "!type": "object",
+            "object": {
+              "name": "Field",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "name",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "FieldType"
+                      }
+                    }
+                  },
+                  "name": "type",
+                  "required": true,
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "FieldType": {
+            "!type": "object",
+            "object": {
+              "name": "FieldType",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "value",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "Range"
+                      }
+                    }
+                  },
+                  "name": "range",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "QueryRequest": {
+            "!type": "object",
+            "object": {
+              "name": "QueryRequest",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "object",
+                        "object": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Search"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "name": "searches",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "object",
+                        "object": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Sort"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "name": "sorts",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "oneof",
+                        "oneof": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Filter"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "name": "filters",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "Search": {
+            "!type": "object",
+            "object": {
+              "name": "Search",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "field",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "value",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Or": {
+            "!type": "object",
+            "object": {
+              "name": "Or",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "oneof",
+                        "oneof": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Filter"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "name": "filters",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Sort": {
+            "!type": "object",
+            "object": {
+              "name": "Sort",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "field",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "bool",
+                    "bool": {
+
+                    }
+                  },
+                  "name": "descending",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Filter": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "Filter",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "Field"
+                      }
+                    }
+                  },
+                  "name": "field",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "And"
+                      }
+                    }
+                  },
+                  "name": "and",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "Or"
+                      }
+                    }
+                  },
+                  "name": "or",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "And": {
+            "!type": "object",
+            "object": {
+              "name": "And",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "oneof",
+                        "oneof": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Filter"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "name": "filters",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Range": {
+            "!type": "object",
+            "object": {
+              "name": "Range",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "min",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "max",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "PageResponse": {
+            "!type": "object",
+            "object": {
+              "name": "PageResponse",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "nextToken",
+                  "explicitlyOptional": true,
+                  "protoField": [1]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "j5.state.v1",
+        "indirect": true,
+        "schemas": {
+          "EventMetadata": {
+            "!type": "object",
+            "object": {
+              "name": "EventMetadata",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "eventId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "integer",
+                    "integer": {
+                      "format": "UINT64"
+                    }
+                  },
+                  "name": "sequence",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+                      "listRules": {
+                        "sorting": {
+                          "sortable": true,
+                          "defaultSort": true
+                        }
+                      }
+                    }
+                  },
+                  "name": "timestamp",
+                  "required": true,
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "Cause"
+                      }
+                    }
+                  },
+                  "name": "cause",
+                  "protoField": [4]
+                }
+              ]
+            }
+          },
+          "StateMetadata": {
+            "!type": "object",
+            "object": {
+              "name": "StateMetadata",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+                      "listRules": {
+                        "sorting": {
+                          "sortable": true,
+                          "defaultSort": true
+                        }
+                      }
+                    }
+                  },
+                  "name": "createdAt",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {
+                      "listRules": {
+                        "sorting": {
+                          "sortable": true
+                        }
+                      }
+                    }
+                  },
+                  "name": "updatedAt",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "integer",
+                    "integer": {
+                      "format": "UINT64"
+                    }
+                  },
+                  "name": "lastSequence",
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "PSMEventCause": {
+            "!type": "object",
+            "object": {
+              "name": "PSMEventCause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {
+
+                        }
+                      }
+                    }
+                  },
+                  "name": "eventId",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "stateMachine",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "ExternalEventCause": {
+            "!type": "object",
+            "object": {
+              "name": "ExternalEventCause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "systemName",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "eventName",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+
+                    }
+                  },
+                  "name": "externalId",
+                  "explicitlyOptional": true,
+                  "protoField": [3]
+                }
+              ]
+            }
+          },
+          "ReplyCause": {
+            "!type": "object",
+            "object": {
+              "name": "ReplyCause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "PSMEventCause"
+                      }
+                    }
+                  },
+                  "name": "request",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "bool",
+                    "bool": {
+
+                    }
+                  },
+                  "name": "async",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "Cause": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "Cause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "PSMEventCause"
+                      }
+                    }
+                  },
+                  "name": "psmEvent",
+                  "protoField": [1]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Action"
+                      }
+                    }
+                  },
+                  "name": "command",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "ExternalEventCause"
+                      }
+                    }
+                  },
+                  "name": "externalEvent",
+                  "protoField": [3]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "ReplyCause"
+                      }
+                    }
+                  },
+                  "name": "reply",
+                  "protoField": [4]
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "metadata": {
+      "builtAt": "2024-10-23T16:10:10Z"
+    }
+  }
+}
