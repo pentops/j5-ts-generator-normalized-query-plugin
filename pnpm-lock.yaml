@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@pentops/jsonapi-jdef-ts-generator':
-        specifier: ^0.0.110
-        version: 0.0.110(@pentops/jsonapi-request@0.0.6(qs@6.13.0)(uuid@10.0.0))
+        specifier: ^0.0.111
+        version: 0.0.111(@pentops/jsonapi-request@0.0.6(qs@6.13.0)(uuid@10.0.0))
       '@pentops/normalized-query-cache':
         specifier: '>=0.0.1 < 0.1.0'
         version: 0.0.2(@tanstack/react-query@5.52.1)(normalizr@3.6.2)(react@18.3.1)
@@ -328,8 +328,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@pentops/jsonapi-jdef-ts-generator@0.0.110':
-    resolution: {integrity: sha512-A7HBJ7KsfaeHHfqAxgNcAXj3K6Sf9O0Xf1kbZICRq97GPDr2cMe3RFG32IHg/1sp82M5g6qNs4XLyMc8JSozNQ==}
+  '@pentops/jsonapi-jdef-ts-generator@0.0.111':
+    resolution: {integrity: sha512-qP2mzejC1bY2sUPs2Q/KLF/JugcMjzFVHBCC3O6wtZmGPWw9rxLs4FhMZwHuOytHd3be9odM2kx4vlvscOCQPQ==}
     hasBin: true
     peerDependencies:
       '@pentops/jsonapi-request': '>=0.0.4'
@@ -2008,7 +2008,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@pentops/jsonapi-jdef-ts-generator@0.0.110(@pentops/jsonapi-request@0.0.6(qs@6.13.0)(uuid@10.0.0))':
+  '@pentops/jsonapi-jdef-ts-generator@0.0.111(@pentops/jsonapi-request@0.0.6(qs@6.13.0)(uuid@10.0.0))':
     dependencies:
       '@pentops/jsonapi-request': 0.0.6(qs@6.13.0)(uuid@10.0.0)
       '@pentops/sort-helpers': 0.0.1
