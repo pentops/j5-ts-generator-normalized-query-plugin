@@ -106,7 +106,7 @@ export type StatementConflictHandler = (newSource: Statement | undefined, existi
 
 export const defaultStatementConflictHandler: StatementConflictHandler = (newSource) => newSource;
 
-export type MethodParameterNameMap = { merged: string } | { body?: string; path?: string; query?: string };
+export type MethodParameterNameMap = { merged: string };
 
 export interface MethodGeneratorConfig {
   auth: ParsedAuthType | undefined;
@@ -1320,7 +1320,13 @@ export class NormalizedQueryPlugin extends BasePlugin<
 
   private buildRequestEnabled(generatorConfig: MethodGeneratorConfig) {
     const requiredParameters = getRequiredRequestParameters(generatorConfig);
-    const requiredParameterLogicalAnd = createLogicalAndChain(requiredParameters);
+    const requiredParameterLogicalAnd = createLogicalAndChain(
+      requiredParameters?.length
+        ? requiredParameters
+        : generatorConfig.undefinedRequestForSkip && generatorConfig.parameterNameMap?.merged
+          ? [factory.createIdentifier(generatorConfig.parameterNameMap.merged)]
+          : [],
+    );
     const baseEnabled = requiredParameterLogicalAnd
       ? factory.createCallExpression(factory.createIdentifier('Boolean'), undefined, [requiredParameterLogicalAnd])
       : factory.createTrue();

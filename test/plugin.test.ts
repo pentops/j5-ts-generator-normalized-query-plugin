@@ -142,7 +142,6 @@ describe('NormalizedQueryPlugin', async () => {
       });
 
       file.getFunctions().forEach((f) => {
-        console.log(f.getName());
         expectedFnDeclarations.delete(f.getName());
       });
     });
