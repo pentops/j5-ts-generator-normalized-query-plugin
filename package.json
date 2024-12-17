@@ -18,23 +18,23 @@
   "author": "Joshua Slate",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "@types/node": "^22.9.0",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/node": "^22.10.2",
     "normalizr": "^3.6.2",
-    "prettier": "^3.3.3",
-    "rollup": "^4.26.0",
+    "prettier": "^3.4.2",
+    "rollup": "^4.28.1",
     "tslib": "^2.8.1",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.11",
-    "vitest": "^2.1.5"
+    "typescript": "5.6.3",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.115",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.116",
     "change-case": "^5.4.4",
     "ts-morph": "^24.0.0",
-    "ts-pattern": "^5.5.0"
+    "ts-pattern": "^5.6.0"
   },
   "peerDependencies": {
     "@pentops/jsonapi-jdef-ts-generator": ">=0.0.109 < 0.1.0",
