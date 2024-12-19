@@ -711,6 +711,8 @@ export class NormalizedQueryPlugin extends BasePlugin<
       );
 
       if (optionsBuilder?.fnDeclaration?.name?.escapedText) {
+        generatorConfig.file.addManualImport(REACT_QUERY_IMPORT_PATH, [REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME]);
+
         generatorConfig.file.addNodes(
           optionsBuilder?.fnDeclaration,
           factory.createIdentifier('\n'),
