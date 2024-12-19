@@ -728,6 +728,14 @@ export class NormalizedQueryPlugin extends BasePlugin<
                       undefined,
                       factory.createCallExpression(factory.createIdentifier(REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME), undefined, []),
                     ),
+                  ],
+                  ts.NodeFlags.Const,
+                ),
+              ),
+              factory.createVariableStatement(
+                undefined,
+                factory.createVariableDeclarationList(
+                  [
                     factory.createVariableDeclaration(
                       PRELOAD_CACHE_PARAM_NAME,
                       undefined,
