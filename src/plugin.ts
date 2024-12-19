@@ -22,6 +22,7 @@ import {
   REACT_QUERY_OPTIONS_TYPE_BY_HOOK_NAME,
   REACT_QUERY_FN_KEY_PARAMETER_NAME_BY_HOOK_NAME,
   REACT_QUERY_FN_PARAMETER_NAME_BY_HOOK_NAME,
+  REACT_QUERY_OPTIONS_FN_BY_HOOK_NAME,
 } from './react-query';
 import { buildPreload } from './preload';
 import { addMethodTypeImports, NormalizedQueryPluginFile, NormalizedQueryPluginFileConfig } from './plugin-file';
@@ -76,6 +77,11 @@ import {
   REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME,
   REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME,
   GENERATED_HOOK_META_NORMALIZATION_SCHEMA_PARAMETER_NAME,
+  PRELOAD_CACHE_PARAM_NAME,
+  REACT_QUERY_QUERY_CACHE_TYPE_NAME,
+  PRELOAD_CLIENT_VARIABLE_NAME,
+  REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME,
+  REACT_QUERY_GET_QUERY_CACHE_METHOD_NAME,
 } from './constants';
 import { buildBaseParameters, buildQueryFnArgs, buildQueryFnRequestType, buildRequestEnabled } from './hook';
 
@@ -473,6 +479,13 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const optionsTypeName = REACT_QUERY_OPTIONS_TYPE_BY_HOOK_NAME[queryHookName];
 
     const reactQueryImports = [queryHookName, optionsTypeName];
+
+    const reactQueryOptionsFnImport = REACT_QUERY_OPTIONS_FN_BY_HOOK_NAME[queryHookName as keyof typeof REACT_QUERY_OPTIONS_FN_BY_HOOK_NAME];
+
+    if (reactQueryOptionsFnImport) {
+      reactQueryImports.push(reactQueryOptionsFnImport);
+    }
+
     const reactQueryTypeOnlyImports = [optionsTypeName];
 
     if (queryHookName === REACT_QUERY_INFINITE_QUERY_HOOK_NAME) {
@@ -602,11 +615,16 @@ export class NormalizedQueryPlugin extends BasePlugin<
     return queryOptions;
   }
 
-  private generateHook(generatorConfig: MethodGeneratorConfig, parameters: ts.ParameterDeclaration[], callExpression: ts.CallExpression) {
+  private generateHook(
+    generatorConfig: MethodGeneratorConfig,
+    parameters: ts.ParameterDeclaration[],
+    baseHead: ts.Statement[],
+    callExpression: ts.CallExpression,
+  ) {
     const head =
       typeof this.pluginConfig.hook.headOrGetter === 'function'
-        ? this.pluginConfig.hook.headOrGetter(generatorConfig, [])
-        : (this.pluginConfig.hook.headOrGetter ?? []);
+        ? this.pluginConfig.hook.headOrGetter(generatorConfig, baseHead)
+        : (this.pluginConfig.hook.headOrGetter ?? baseHead);
 
     if (head?.length) {
       head.push(factory.createIdentifier('\n') as unknown as ts.Statement);
@@ -664,12 +682,32 @@ export class NormalizedQueryPlugin extends BasePlugin<
       generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME || generatorConfig.queryHookName === REACT_QUERY_INFINITE_QUERY_HOOK_NAME;
 
     if (hasSeparateOptionsBuilder) {
+      const optionBuilderParams: ts.ParameterDeclaration[] = preload
+        ? [
+            factory.createParameterDeclaration(
+              undefined,
+              undefined,
+              factory.createIdentifier(PRELOAD_CACHE_PARAM_NAME),
+              undefined,
+              factory.createTypeReferenceNode(REACT_QUERY_QUERY_CACHE_TYPE_NAME),
+            ),
+            ...parameters,
+          ]
+        : parameters;
+      const defaultOptionsBuilderCalledWith = [...optionBuilderParams.map((p) => p.name as unknown as ts.Expression)];
       const optionsBuilder = generatorConfig.queryOptionsBuilderFnGetter(
         generatorConfig as ReactQueryOptionsBuilderConfig,
-        parameters,
+        optionBuilderParams,
         queryOptions,
         preload ? [preload] : [],
-        defaultReactQueryOptionsBuilderGetter(generatorConfig as ReactQueryOptionsBuilderConfig, parameters, queryOptions, preload ? [preload] : []),
+        defaultOptionsBuilderCalledWith,
+        defaultReactQueryOptionsBuilderGetter(
+          generatorConfig as ReactQueryOptionsBuilderConfig,
+          optionBuilderParams,
+          queryOptions,
+          preload ? [preload] : [],
+          defaultOptionsBuilderCalledWith,
+        ),
       );
 
       if (optionsBuilder?.fnDeclaration?.name?.escapedText) {
@@ -679,6 +717,35 @@ export class NormalizedQueryPlugin extends BasePlugin<
           this.generateHook(
             generatorConfig,
             parameters,
+            [
+              factory.createVariableStatement(
+                undefined,
+                factory.createVariableDeclarationList(
+                  [
+                    factory.createVariableDeclaration(
+                      PRELOAD_CLIENT_VARIABLE_NAME,
+                      undefined,
+                      undefined,
+                      factory.createCallExpression(factory.createIdentifier(REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME), undefined, []),
+                    ),
+                    factory.createVariableDeclaration(
+                      PRELOAD_CACHE_PARAM_NAME,
+                      undefined,
+                      undefined,
+                      factory.createCallExpression(
+                        factory.createPropertyAccessExpression(
+                          factory.createIdentifier(PRELOAD_CLIENT_VARIABLE_NAME),
+                          REACT_QUERY_GET_QUERY_CACHE_METHOD_NAME,
+                        ),
+                        undefined,
+                        [],
+                      ),
+                    ),
+                  ],
+                  ts.NodeFlags.Const,
+                ),
+              ),
+            ],
             factory.createCallExpression(factory.createIdentifier(generatorConfig.queryHookName), undefined, [
               factory.createCallExpression(
                 factory.createIdentifier(optionsBuilder?.fnDeclaration.name.escapedText),
@@ -697,6 +764,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       this.generateHook(
         generatorConfig,
         parameters,
+        [],
         factory.createCallExpression(factory.createIdentifier(generatorConfig.queryHookName), undefined, [
           factory.createObjectLiteralExpression(queryOptions, true),
         ]),

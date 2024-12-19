@@ -68,10 +68,17 @@ export type ReactQueryOptionsBuilderGetter = (
   parameters: ts.ParameterDeclaration[],
   queryOptions: ts.ObjectLiteralElementLike[],
   headStatements: ts.Statement[],
+  defaultCalledWith: ts.Expression[],
   defaultQueryOptionsBuilder?: ReactQueryOptionsBuilderReturn,
 ) => ReactQueryOptionsBuilderReturn | undefined;
 
-export const defaultReactQueryOptionsBuilderGetter: ReactQueryOptionsBuilderGetter = (config, parameters, queryOptions, headStatements) => {
+export const defaultReactQueryOptionsBuilderGetter: ReactQueryOptionsBuilderGetter = (
+  config,
+  parameters,
+  queryOptions,
+  headStatements,
+  defaultCalledWith,
+) => {
   return {
     fnDeclaration: factory.createFunctionDeclaration(
       [],
@@ -89,7 +96,7 @@ export const defaultReactQueryOptionsBuilderGetter: ReactQueryOptionsBuilderGett
         ),
       ]),
     ),
-    calledWithFromHook: parameters.map((p) => p.name as unknown as ts.Expression),
+    calledWithFromHook: defaultCalledWith,
   };
 };
 

@@ -7,7 +7,11 @@ import {
   NORMALIZED_QUERY_CACHE_IMPORT_PATH,
   NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME,
   NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME,
+  PRELOAD_CACHE_PARAM_NAME,
   PRELOAD_DATA_VARIABLE_NAME,
+  REACT_QUERY_IMPORT_PATH,
+  REACT_QUERY_QUERY_CACHE_TYPE_NAME,
+  REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME,
 } from './constants';
 
 export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true, useHook = false): ts.VariableStatement | undefined {
@@ -85,32 +89,65 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
     return undefined;
   }
 
-  const fnName = useHook ? NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME : NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME;
+  if (useHook) {
+    generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME]);
 
-  generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [fnName]);
-
-  return factory.createVariableStatement(
-    undefined,
-    factory.createVariableDeclarationList(
-      [
-        factory.createVariableDeclaration(
-          PRELOAD_DATA_VARIABLE_NAME,
-          undefined,
-          undefined,
-          factory.createCallExpression(
-            factory.createIdentifier(fnName),
-            [
-              factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
-              factory.createUnionTypeNode(refKeyUnionTypeNodes),
-            ],
-            [
-              factory.createIdentifier(generatorConfig.responseEntity.entityVariableName),
-              factory.createObjectLiteralExpression(refKeyPreloadObjectLiteralProperties),
-            ],
+    return factory.createVariableStatement(
+      undefined,
+      factory.createVariableDeclarationList(
+        [
+          factory.createVariableDeclaration(
+            PRELOAD_DATA_VARIABLE_NAME,
+            undefined,
+            undefined,
+            factory.createCallExpression(
+              factory.createIdentifier(NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME),
+              [
+                factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
+                factory.createUnionTypeNode(refKeyUnionTypeNodes),
+              ],
+              [
+                factory.createIdentifier(generatorConfig.responseEntity.entityVariableName),
+                factory.createObjectLiteralExpression(refKeyPreloadObjectLiteralProperties),
+              ],
+            ),
           ),
-        ),
-      ],
-      ts.NodeFlags.Const,
-    ),
-  );
+        ],
+        ts.NodeFlags.Const,
+      ),
+    );
+  } else {
+    generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME]);
+    generatorConfig.file.addManualImport(
+      REACT_QUERY_IMPORT_PATH,
+      [REACT_QUERY_QUERY_CACHE_TYPE_NAME, REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME],
+      [REACT_QUERY_QUERY_CACHE_TYPE_NAME],
+    );
+
+    return factory.createVariableStatement(
+      undefined,
+      factory.createVariableDeclarationList(
+        [
+          factory.createVariableDeclaration(
+            PRELOAD_DATA_VARIABLE_NAME,
+            undefined,
+            undefined,
+            factory.createCallExpression(
+              factory.createIdentifier(NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME),
+              [
+                factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
+                factory.createUnionTypeNode(refKeyUnionTypeNodes),
+              ],
+              [
+                factory.createIdentifier(PRELOAD_CACHE_PARAM_NAME),
+                factory.createIdentifier(generatorConfig.responseEntity.entityVariableName),
+                factory.createObjectLiteralExpression(refKeyPreloadObjectLiteralProperties),
+              ],
+            ),
+          ),
+        ],
+        ts.NodeFlags.Const,
+      ),
+    );
+  }
 }

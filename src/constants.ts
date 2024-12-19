@@ -8,6 +8,9 @@ export const GENERATED_HOOK_QUERY_KEY_GETTER_REST_NAME = 'rest';
 
 // `@tanstack/react-query` constants
 export const REACT_QUERY_IMPORT_PATH = '@tanstack/react-query';
+export const REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME = 'useQueryClient';
+export const REACT_QUERY_GET_QUERY_CACHE_METHOD_NAME = 'getQueryCache';
+export const REACT_QUERY_QUERY_CACHE_TYPE_NAME = 'QueryCache';
 export const REACT_QUERY_MUTATION_HOOK_NAME = 'useMutation';
 export const REACT_QUERY_QUERY_HOOK_NAME = 'useQuery';
 export const REACT_QUERY_INFINITE_QUERY_HOOK_NAME = 'useInfiniteQuery';
@@ -46,3 +49,5 @@ export const NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME = 'preloadData';
 
 // preload constants
 export const PRELOAD_DATA_VARIABLE_NAME = 'preloadedData';
+export const PRELOAD_CACHE_PARAM_NAME = 'cache';
+export const PRELOAD_CLIENT_VARIABLE_NAME = 'queryClient';

@@ -71,7 +71,6 @@ export function buildReactQueryOptionsParameter(generatorConfig: MethodGenerator
       returnType,
       factory.createTypeReferenceNode('Error'),
       factory.createTypeReferenceNode(REACT_QUERY_INFINITE_DATA_TYPE_NAME, [returnType]),
-      returnType,
       factory.createTypeReferenceNode(REACT_QUERY_QUERY_KEY_TYPE_NAME),
       factory.createUnionTypeNode([
         factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
