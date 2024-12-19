@@ -17,7 +17,7 @@ import {
   IPluginRunOutput,
   IWritableFile,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { optionalQuestionToken, isSchemaArray, buildHookParameterDeclaration, findMatchingProperty, getRequiredRequestParameters } from './helpers';
+import { isSchemaArray, findMatchingProperty, getRequiredRequestParameters } from './helpers';
 import {
   REACT_QUERY_OPTIONS_TYPE_BY_HOOK_NAME,
   REACT_QUERY_FN_KEY_PARAMETER_NAME_BY_HOOK_NAME,
@@ -35,10 +35,12 @@ import {
   NormalizedQueryPluginConfigInput,
 } from './config';
 import {
+  addEntityReferenceImports,
   buildEntityReferenceMap,
   buildNormalizrObject,
   EntityReference,
   generateIdAttributeAccessor,
+  getEntityFile,
   getEntityName,
   getEntityPrimaryKeys,
   NormalizerEntity,
@@ -73,6 +75,7 @@ import {
   REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME,
   GENERATED_HOOK_META_NORMALIZATION_SCHEMA_PARAMETER_NAME,
 } from './constants';
+import { buildBaseParameters, buildQueryFnRequestType, buildRequestEnabled } from './hook';
 
 const { factory } = ts;
 
@@ -89,27 +92,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
   }
 
   private generatedEntities: Map<string, NormalizerEntity> = new Map();
-
-  private getEntityFile(entity: NormalizerEntity) {
-    return this.files.find(
-      (file) => file.config.directory === entity.importConfig.directory && file.config.fileName === entity.importConfig.fileName,
-    );
-  }
-
-  private addEntityReferenceImports(file: NormalizedQueryPluginFile, entityReferences: Map<string, EntityReference>) {
-    for (const [, ref] of entityReferences) {
-      match(ref)
-        .with({ entity: P.not(P.nullish) }, (r) => {
-          const entityFile = this.getEntityFile(r.entity);
-
-          if (entityFile && entityFile !== file) {
-            file.addImportToOtherGeneratedFile(entityFile, [r.entity.entityVariableName]);
-          }
-        })
-        .with({ schema: P.not(P.nullish) }, (r) => this.addEntityReferenceImports(file, r.schema))
-        .otherwise(() => {});
-    }
-  }
 
   private generateEntity(fileForSchema: NormalizedQueryPluginFile, schema: GeneratedSchema): NormalizerEntity | undefined {
     const isEntity = match(schema.rawSchema)
@@ -157,7 +139,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
 
     generatedEntity.references = this.findEntityReferences(schema.rawSchema);
 
-    this.addEntityReferenceImports(fileForSchema, generatedEntity.references);
+    addEntityReferenceImports(fileForSchema, generatedEntity.references, this.files);
 
     fileForSchema.addNodes(
       factory.createVariableStatement(
@@ -287,7 +269,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       references: entityReferences,
     };
 
-    this.addEntityReferenceImports(fileForSchema, entityReferences);
+    addEntityReferenceImports(fileForSchema, entityReferences, this.files);
 
     this.generatedEntities.set(schema.generatedName, generatedEntity);
 
@@ -302,88 +284,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
 
     return generatedEntity;
-  }
-
-  private buildQueryFnRequestType(generatedMethod: GeneratedClientFunction) {
-    if (generatedMethod.method.mergedRequestSchema) {
-      return factory.createTypeReferenceNode(generatedMethod.method.mergedRequestSchema.generatedName);
-    }
-
-    return factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword);
-  }
-
-  private buildReactQueryOptionsParameter(generatorConfig: MethodGeneratorConfig) {
-    const returnType = generatorConfig.method.method.responseBodySchema
-      ? factory.createUnionTypeNode([
-          factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
-          factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword),
-        ])
-      : factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword);
-
-    const typeArgs = match(generatorConfig.queryHookName)
-      .returnType<ts.TypeNode[]>()
-      .with(REACT_QUERY_MUTATION_HOOK_NAME, () => {
-        if (generatorConfig.method.method.mergedRequestSchema) {
-          return [
-            returnType,
-            factory.createTypeReferenceNode('Error'),
-            factory.createTypeReferenceNode(generatorConfig.method.method.mergedRequestSchema.generatedName),
-            factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-          ];
-        }
-
-        return [
-          returnType,
-          factory.createTypeReferenceNode('Error'),
-          factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword),
-          factory.createKeywordTypeNode(SyntaxKind.UnknownKeyword),
-        ];
-      })
-      .with(REACT_QUERY_INFINITE_QUERY_HOOK_NAME, () => [
-        returnType,
-        factory.createTypeReferenceNode('Error'),
-        factory.createTypeReferenceNode(REACT_QUERY_INFINITE_DATA_TYPE_NAME, [returnType]),
-        returnType,
-        factory.createTypeReferenceNode(REACT_QUERY_QUERY_KEY_TYPE_NAME),
-        factory.createUnionTypeNode([
-          factory.createKeywordTypeNode(SyntaxKind.StringKeyword),
-          factory.createKeywordTypeNode(SyntaxKind.UndefinedKeyword),
-        ]),
-      ])
-      .otherwise(() => [returnType]);
-
-    return factory.createParameterDeclaration(
-      undefined,
-      undefined,
-      GENERATED_HOOK_REACT_QUERY_OPTIONS_PARAMETER_NAME,
-      optionalQuestionToken,
-      factory.createTypeReferenceNode('Partial', [factory.createTypeReferenceNode(generatorConfig.queryOptionsTypeName, typeArgs)]),
-    );
-  }
-
-  private buildBaseParameters(generatorConfig: MethodGeneratorConfig) {
-    const parameters: ts.ParameterDeclaration[] = [];
-
-    if (generatorConfig.queryHookName !== REACT_QUERY_MUTATION_HOOK_NAME) {
-      if (generatorConfig.method.method.mergedRequestSchema) {
-        parameters.push(
-          buildHookParameterDeclaration(
-            GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
-            generatorConfig.method.method.mergedRequestSchema,
-            false,
-            this.pluginConfig.hook.undefinedRequestForSkip,
-          ),
-        );
-      }
-    }
-
-    const optionParameter = this.buildReactQueryOptionsParameter(generatorConfig);
-
-    if (optionParameter) {
-      parameters.push(optionParameter);
-    }
-
-    return parameters;
   }
 
   private buildClientFnArgs(generatorConfig: MethodGeneratorConfig, parameters: ts.ParameterDeclaration[]) {
@@ -510,7 +410,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
         break;
       }
       case REACT_QUERY_MUTATION_HOOK_NAME: {
-        const requestType = this.buildQueryFnRequestType(generatorConfig.method);
+        const requestType = buildQueryFnRequestType(generatorConfig.method);
 
         if (requestType.kind === SyntaxKind.UndefinedKeyword) {
           break;
@@ -538,7 +438,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       case REACT_QUERY_QUERY_HOOK_NAME:
         return [];
       case REACT_QUERY_MUTATION_HOOK_NAME: {
-        const requestType = this.buildQueryFnRequestType(generatorConfig.method);
+        const requestType = buildQueryFnRequestType(generatorConfig.method);
 
         return requestType && requestType.kind !== SyntaxKind.UndefinedKeyword
           ? [factory.createParameterDeclaration(undefined, undefined, GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME, undefined, requestType)]
@@ -586,7 +486,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const isEvent = getIsEventMethod(generatedMethod);
 
     if (relatedEntity && !isEvent) {
-      const entityFile = this.getEntityFile(relatedEntity);
+      const entityFile = getEntityFile(relatedEntity, this.files);
 
       if (entityFile && entityFile !== file) {
         file.addImportToOtherGeneratedFile(entityFile, [relatedEntity.entityVariableName]);
@@ -628,37 +528,6 @@ export class NormalizedQueryPlugin extends BasePlugin<
     };
   }
 
-  private buildRequestEnabled(generatorConfig: MethodGeneratorConfig) {
-    const requiredParameters = getRequiredRequestParameters(generatorConfig);
-    const requiredParameterLogicalAnd = createLogicalAndChain(
-      requiredParameters?.length
-        ? requiredParameters
-        : generatorConfig.undefinedRequestForSkip && generatorConfig.parameterNameMap?.merged
-          ? [factory.createIdentifier(generatorConfig.parameterNameMap.merged)]
-          : [],
-    );
-    const baseEnabled = requiredParameterLogicalAnd
-      ? factory.createCallExpression(factory.createIdentifier('Boolean'), undefined, [requiredParameterLogicalAnd])
-      : factory.createTrue();
-
-    return match(this.pluginConfig.hook.requestEnabledOrGetter)
-      .with(true, () => factory.createTrue())
-      .with(false, () => factory.createFalse())
-      .otherwise((r) => {
-        if (typeof r === 'function') {
-          const out = r(generatorConfig, baseEnabled, requiredParameters);
-
-          if (typeof out === 'boolean') {
-            return out ? factory.createTrue() : factory.createFalse();
-          }
-
-          return out || factory.createTrue();
-        }
-
-        return r || factory.createTrue();
-      });
-  }
-
   private generateQueryOptions(generatorConfig: MethodGeneratorConfig, clientFnArgs: ts.Expression[], queryKeyBuilder: ts.FunctionDeclaration) {
     const queryOptions: ts.ObjectLiteralElementLike[] = [
       factory.createPropertyAssignment(
@@ -683,7 +552,12 @@ export class NormalizedQueryPlugin extends BasePlugin<
     ];
 
     if (generatorConfig.queryHookName !== REACT_QUERY_MUTATION_HOOK_NAME) {
-      queryOptions.push(factory.createPropertyAssignment(REACT_QUERY_ENABLED_PARAM_NAME, this.buildRequestEnabled(generatorConfig)));
+      queryOptions.push(
+        factory.createPropertyAssignment(
+          REACT_QUERY_ENABLED_PARAM_NAME,
+          buildRequestEnabled(generatorConfig, this.pluginConfig.hook.requestEnabledOrGetter),
+        ),
+      );
     }
 
     if (generatorConfig.responseEntity) {
@@ -734,7 +608,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
   }
 
   private generateHook(generatorConfig: MethodGeneratorConfig, queryKeyBuilder: ts.FunctionDeclaration) {
-    const parameters = this.buildBaseParameters(generatorConfig);
+    const parameters = buildBaseParameters(generatorConfig, Boolean(this.pluginConfig.hook.undefinedRequestForSkip));
     const clientFnArgs = this.buildClientFnArgs(generatorConfig, parameters);
 
     const queryOptions = this.generateQueryOptions(generatorConfig, clientFnArgs, queryKeyBuilder);
@@ -786,7 +660,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
-  private generateDataHook(fileForMethod: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction) {
+  private generateHookWithHelpers(fileForMethod: NormalizedQueryPluginFile, generatedMethod: GeneratedClientFunction) {
     const generatorConfig = this.buildGeneratorConfig(fileForMethod, generatedMethod);
 
     if (!generatorConfig) {
@@ -829,7 +703,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
         });
 
         if (file.isFileForGeneratedClientFunction(method)) {
-          this.generateDataHook(file, method);
+          this.generateHookWithHelpers(file, method);
         }
       }
 

@@ -2,6 +2,7 @@ import { SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
 import { GeneratedClientFunction, GeneratedImportPath, type GeneratedSchema, type ParsedObject } from '@pentops/jsonapi-jdef-ts-generator';
 import { NORMALIZR_OBJECT_NAME, NORMALIZR_SCHEMA_NAME } from './constants';
+import { type NormalizedQueryPluginFile } from './plugin-file';
 
 const { factory } = ts;
 
@@ -109,4 +110,27 @@ export function getMethodEntityName(generatedMethod: GeneratedClientFunction) {
         r.method.relatedEntity.generatedName,
     )
     .otherwise(() => generatedMethod.generatedName);
+}
+
+export function getEntityFile(entity: NormalizerEntity, files: NormalizedQueryPluginFile[]) {
+  return files.find((file) => file.config.directory === entity.importConfig.directory && file.config.fileName === entity.importConfig.fileName);
+}
+
+export function addEntityReferenceImports(
+  file: NormalizedQueryPluginFile,
+  entityReferences: Map<string, EntityReference>,
+  files: NormalizedQueryPluginFile[],
+) {
+  for (const [, ref] of entityReferences) {
+    match(ref)
+      .with({ entity: P.not(P.nullish) }, (r) => {
+        const entityFile = getEntityFile(r.entity, files);
+
+        if (entityFile && entityFile !== file) {
+          file.addImportToOtherGeneratedFile(entityFile, [r.entity.entityVariableName]);
+        }
+      })
+      .with({ schema: P.not(P.nullish) }, (r) => addEntityReferenceImports(file, r.schema, files))
+      .otherwise(() => {});
+  }
 }

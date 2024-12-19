@@ -2,11 +2,9 @@ import { Statement, SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
 import {
   createPropertyAccessChain,
-  GeneratedSchema,
   getFullGRPCName,
   getImportPath,
   getObjectProperties,
-  ParsedObject,
   ParsedObjectProperty,
   ParsedSchemaWithRef,
   PropertyAccessPart,
@@ -93,32 +91,6 @@ export function getImportPathForGeneratedFiles(from: NormalizedQueryPluginFile, 
 
 export function isSchemaArray(schema: ParsedSchemaWithRef) {
   return Boolean(schema && 'array' in schema && schema.array);
-}
-
-export function buildHookParameterDeclaration(
-  parameterName: string,
-  schema: GeneratedSchema<ParsedObject>,
-  addedNonOptionalParameter: boolean,
-  nullable?: boolean,
-) {
-  let hasARequiredParameter = false;
-
-  for (const [, value] of schema.rawSchema.object.properties) {
-    if (value.required) {
-      hasARequiredParameter = true;
-      break;
-    }
-  }
-
-  const baseTypeReference = factory.createTypeReferenceNode(schema.generatedName);
-
-  return factory.createParameterDeclaration(
-    undefined,
-    undefined,
-    parameterName,
-    hasARequiredParameter || addedNonOptionalParameter ? undefined : optionalQuestionToken,
-    nullable ? factory.createUnionTypeNode([baseTypeReference, factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)]) : baseTypeReference,
-  );
 }
 
 export function getRequiredRequestParameterNames(generatorConfig: MethodGeneratorConfig) {

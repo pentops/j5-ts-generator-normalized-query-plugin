@@ -2,6 +2,7 @@ export * from './config';
 export * from './constants';
 export * from './entity';
 export * from './helpers';
+export * from './hook';
 export * from './pagination';
 export * from './plugin';
 export * from './plugin-file';
