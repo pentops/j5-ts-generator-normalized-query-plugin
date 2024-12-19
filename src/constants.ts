@@ -21,7 +21,9 @@ export const REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME = 'placeholderData';
 export const REACT_QUERY_INFINITE_DATA_TYPE_NAME = 'InfiniteData';
 export const REACT_QUERY_QUERY_KEY_TYPE_NAME = 'QueryKey';
 export const REACT_QUERY_QUERY_OPTIONS_NAME = 'queryOptions';
+export const REACT_QUERY_DEFINED_INITIAL_DATA_OPTIONS = 'DefinedInitialDataOptions';
 export const REACT_QUERY_INFINITE_QUERY_OPTIONS_NAME = 'infiniteQueryOptions';
+export const REACT_QUERY_DEFINED_INITIAL_DATA_INFINITE_OPTIONS = 'DefinedInitialDataInfiniteOptions';
 
 // `normalizr` constants
 export const NORMALIZR_IMPORT_PATH = 'normalizr';

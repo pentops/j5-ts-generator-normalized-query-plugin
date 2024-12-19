@@ -3,7 +3,13 @@ import { match } from 'ts-pattern';
 import { createLogicalAndChain, GeneratedClientFunction, GeneratedSchema, ParsedObject } from '@pentops/jsonapi-jdef-ts-generator';
 import { MethodGeneratorConfig, RequestEnabledOrGetter } from './config';
 import { getRequiredRequestParameters, optionalQuestionToken } from './helpers';
-import { GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME, REACT_QUERY_MUTATION_HOOK_NAME } from './constants';
+import {
+  GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME,
+  REACT_QUERY_INFINITE_QUERY_HOOK_NAME,
+  REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME,
+  REACT_QUERY_MUTATION_HOOK_NAME,
+  REACT_QUERY_QUERY_HOOK_NAME,
+} from './constants';
 import { buildReactQueryOptionsParameter } from './react-query';
 
 const { factory } = ts;
@@ -92,4 +98,29 @@ export function buildBaseParameters(generatorConfig: MethodGeneratorConfig, unde
   parameters.push(buildReactQueryOptionsParameter(generatorConfig));
 
   return parameters;
+}
+
+export function buildQueryFnArgs(generatorConfig: MethodGeneratorConfig): ts.ParameterDeclaration[] {
+  switch (generatorConfig.queryHookName) {
+    case REACT_QUERY_QUERY_HOOK_NAME:
+      return [];
+    case REACT_QUERY_MUTATION_HOOK_NAME: {
+      const requestType = buildQueryFnRequestType(generatorConfig.method);
+
+      return requestType && requestType.kind !== SyntaxKind.UndefinedKeyword
+        ? [factory.createParameterDeclaration(undefined, undefined, GENERATED_HOOK_MERGED_REQUEST_PARAMETER_NAME, undefined, requestType)]
+        : [];
+    }
+    case REACT_QUERY_INFINITE_QUERY_HOOK_NAME: {
+      return [
+        factory.createParameterDeclaration(
+          undefined,
+          undefined,
+          factory.createObjectBindingPattern([factory.createBindingElement(undefined, undefined, REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME)]),
+        ),
+      ];
+    }
+    default:
+      return [];
+  }
 }

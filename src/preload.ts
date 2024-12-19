@@ -3,9 +3,14 @@ import ts, { factory } from 'typescript';
 import { getObjectProperties } from '@pentops/jsonapi-jdef-ts-generator';
 import { MethodGeneratorConfig, NORMALIZR_ENTITY_GET_ID_METHOD_NAME } from './config';
 import { findEntityPropertyReference } from './helpers';
-import { NORMALIZED_QUERY_CACHE_IMPORT_PATH, NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME, PRELOAD_DATA_VARIABLE_NAME } from './constants';
+import {
+  NORMALIZED_QUERY_CACHE_IMPORT_PATH,
+  NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME,
+  NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME,
+  PRELOAD_DATA_VARIABLE_NAME,
+} from './constants';
 
-export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true) {
+export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true, useHook = false): ts.VariableStatement | undefined {
   if (!generatorConfig.method.method.responseBodySchema || !generatorConfig.responseEntity?.references?.size) {
     return undefined;
   }
@@ -80,7 +85,9 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
     return undefined;
   }
 
-  generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME]);
+  const fnName = useHook ? NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME : NORMALIZED_QUERY_CACHE_PRELOAD_DATA_HELPER_NAME;
+
+  generatorConfig.file.addManualImport(NORMALIZED_QUERY_CACHE_IMPORT_PATH, [fnName]);
 
   return factory.createVariableStatement(
     undefined,
@@ -91,7 +98,7 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
           undefined,
           undefined,
           factory.createCallExpression(
-            factory.createIdentifier(NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME),
+            factory.createIdentifier(fnName),
             [
               factory.createTypeReferenceNode(generatorConfig.method.method.responseBodySchema.generatedName),
               factory.createUnionTypeNode(refKeyUnionTypeNodes),

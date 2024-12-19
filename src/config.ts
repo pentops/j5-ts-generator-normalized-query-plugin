@@ -22,6 +22,7 @@ import {
   REACT_QUERY_QUERY_HOOK_NAME,
 } from './constants';
 import { arrayLiteralAsConst, findMatchingVariableStatement, returnArrayLiteralAsConst } from './helpers';
+import { REACT_QUERY_OPTIONS_FN_BY_HOOK_NAME } from './react-query';
 
 const { factory } = ts;
 
@@ -38,7 +39,8 @@ export interface MethodGeneratorConfig {
   queryOptionsTypeName: string;
   queryKeyParameterName: string;
   queryFnParameterName: string;
-  queryOptionsGetterFnName: string;
+  queryOptionsGetter: ReactQueryOptionsGetter;
+  queryOptionsBuilderFnGetter: ReactQueryOptionsBuilderGetter;
   hookName: string;
   file: NormalizedQueryPluginFile;
   relatedEntity?: NormalizerEntity;
@@ -47,6 +49,49 @@ export interface MethodGeneratorConfig {
   queryKeyBuilderName: string;
   undefinedRequestForSkip: boolean;
 }
+
+export type ReactQueryDataHooks = Exclude<ReactQueryHookName, typeof REACT_QUERY_MUTATION_HOOK_NAME>;
+
+export type ReactQueryOptionsGetter = (config: MethodGeneratorConfig, defaultOptions: ts.ObjectLiteralElementLike[]) => ts.ObjectLiteralElementLike[];
+
+export const defaultReactQueryOptionsGetter: ReactQueryOptionsGetter = (_, defaultOptions) => defaultOptions;
+
+export type ReactQueryOptionsBuilderConfig = MethodGeneratorConfig & { queryHookName: ReactQueryDataHooks };
+
+export interface ReactQueryOptionsBuilderReturn {
+  fnDeclaration: ts.FunctionDeclaration;
+  calledWithFromHook: ts.Expression[];
+}
+
+export type ReactQueryOptionsBuilderGetter = (
+  config: ReactQueryOptionsBuilderConfig,
+  parameters: ts.ParameterDeclaration[],
+  queryOptions: ts.ObjectLiteralElementLike[],
+  headStatements: ts.Statement[],
+  defaultQueryOptionsBuilder?: ReactQueryOptionsBuilderReturn,
+) => ReactQueryOptionsBuilderReturn | undefined;
+
+export const defaultReactQueryOptionsBuilderGetter: ReactQueryOptionsBuilderGetter = (config, parameters, queryOptions, headStatements) => {
+  return {
+    fnDeclaration: factory.createFunctionDeclaration(
+      [],
+      undefined,
+      camelCase(`build-${config.method.generatedName}-Query-Options`),
+      undefined,
+      parameters,
+      undefined,
+      factory.createBlock([
+        ...(headStatements || []),
+        factory.createReturnStatement(
+          factory.createCallExpression(factory.createIdentifier(REACT_QUERY_OPTIONS_FN_BY_HOOK_NAME[config.queryHookName]), undefined, [
+            factory.createObjectLiteralExpression(queryOptions, true),
+          ]),
+        ),
+      ]),
+    ),
+    calledWithFromHook: parameters.map((p) => p.name as unknown as ts.Expression),
+  };
+};
 
 export type BaseUrlOrGetter = string | ts.Expression | ((config: MethodGeneratorConfig) => string | ts.Expression);
 
@@ -367,14 +412,6 @@ export const defaultReactQueryKeyBuilderGetter: ReactQueryKeyBuilderGetter = (co
   );
 };
 
-export type ReactQueryOptionsGetter = (
-  config: MethodGeneratorConfig,
-  builtOptions: ts.ObjectLiteralElementLike[],
-  head: ts.Statement[],
-) => ts.ObjectLiteralElementLike[];
-
-export const defaultReactQueryOptionsGetter: ReactQueryOptionsGetter = (_, builtOptions) => builtOptions;
-
 export type EntityNameWriter = (schema: GeneratedSchema) => string;
 
 export const defaultEntityNameWriter: EntityNameWriter = (schema: GeneratedSchema) => camelCase(`${schema.generatedName}-Entity`);
@@ -383,11 +420,6 @@ export type EntitySchemaNameConstNameWriter = (schema: GeneratedSchema) => strin
 
 export const defaultEntitySchemaNameConstNameWriter: EntitySchemaNameConstNameWriter = (schema: GeneratedSchema) =>
   constantCase(`${schema.generatedName}-Entity-Name`);
-
-export type ReactQueryOptionsGetterFnNameWriter = (generatedHookName: string, method: GeneratedClientFunction) => string;
-
-export const defaultReactQueryOptionsGetterFnNameWriter: ReactQueryOptionsGetterFnNameWriter = (generatedHookName) =>
-  camelCase(`build-${generatedHookName}-Query-Options`);
 
 export function getIsEventMethod(method: GeneratedClientFunction) {
   return method.method.rawMethod.methodType?.stateQuery?.queryPart === QueryPart.ListEvents;
@@ -417,7 +449,7 @@ export interface NormalizedQueryPluginConfig extends IPluginConfig<NormalizedQue
     reactQueryKeyGetter: ReactQueryKeyGetter;
     reactQueryKeyNameWriter: KeyBuilderNameWriter;
     reactQueryOptionsGetter: ReactQueryOptionsGetter;
-    reactQueryOptionsGetterFnNameWriter: ReactQueryOptionsGetterFnNameWriter;
+    reactQueryOptionsBuilderGetter: ReactQueryOptionsBuilderGetter;
     requestEnabledOrGetter: RequestEnabledOrGetter;
     requestInitOrGetter: RequestInitOrGetter;
     undefinedRequestForSkip?: boolean;
@@ -530,7 +562,7 @@ export function buildConfig(config: NormalizedQueryPluginConfigInput) {
       reactQueryKeyGetter: config.hook?.reactQueryKeyGetter ?? defaultReactQueryKeyGetter,
       reactQueryKeyBuilderGetter: config.hook?.reactQueryKeyBuilderGetter ?? defaultReactQueryKeyBuilderGetter,
       reactQueryOptionsGetter: config.hook?.reactQueryOptionsGetter ?? defaultReactQueryOptionsGetter,
-      reactQueryOptionsGetterFnNameWriter: config.hook?.reactQueryOptionsGetterFnNameWriter ?? defaultReactQueryOptionsGetterFnNameWriter,
+      reactQueryOptionsBuilderGetter: config?.hook?.reactQueryOptionsBuilderGetter ?? defaultReactQueryOptionsBuilderGetter,
       requestInitOrGetter: config.hook?.requestInitOrGetter || defaultRequestInitOrGetter,
     },
     defaultExistingFileReader: pluginFileReader,
