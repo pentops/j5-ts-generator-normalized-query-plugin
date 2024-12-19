@@ -1,12 +1,9 @@
 import { match, P } from 'ts-pattern';
 import ts, { factory } from 'typescript';
 import { getObjectProperties } from '@pentops/jsonapi-jdef-ts-generator';
-import { type MethodGeneratorConfig } from './plugin';
-import { findEntityPropertyReference, NORMALIZR_ENTITY_GET_ID_METHOD_NAME } from './helpers';
-
-export const NORMALIZED_QUERY_CACHE_IMPORT_PATH = '@pentops/normalized-query-cache';
-export const NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME = 'usePreloadDataFromNormalizedCache';
-export const PRELOAD_DATA_VARIABLE_NAME = 'preloadData';
+import { MethodGeneratorConfig, NORMALIZR_ENTITY_GET_ID_METHOD_NAME } from './config';
+import { findEntityPropertyReference } from './helpers';
+import { NORMALIZED_QUERY_CACHE_IMPORT_PATH, NORMALIZED_QUERY_CACHE_USE_PRELOAD_DATA_HOOK_NAME, PRELOAD_DATA_VARIABLE_NAME } from './constants';
 
 export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true) {
   if (!generatorConfig.method.method.responseBodySchema || !generatorConfig.responseEntity?.references?.size) {

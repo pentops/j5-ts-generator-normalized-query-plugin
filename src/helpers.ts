@@ -2,48 +2,124 @@ import { Statement, SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
 import {
   createPropertyAccessChain,
-  GeneratedClientFunction,
+  GeneratedSchema,
+  getFullGRPCName,
+  getImportPath,
   getObjectProperties,
+  ParsedObject,
   ParsedObjectProperty,
   ParsedSchemaWithRef,
   PropertyAccessPart,
-  QueryPart,
 } from '@pentops/jsonapi-jdef-ts-generator';
-import { MethodGeneratorConfig } from './plugin';
+import type { NormalizedQueryPluginFile } from './plugin-file';
+import { MethodGeneratorConfig, MethodParameterName } from './config';
 
 const { factory } = ts;
 
-export const J5_LIST_PAGE_RESPONSE_TYPE = 'j5.list.v1.PageResponse';
-export const J5_LIST_PAGE_REQUEST_TYPE = 'j5.list.v1.PageRequest';
-export const J5_LIST_PAGE_REQUEST_PAGINATION_TOKEN_PARAM_NAME = 'token';
-export const J5_LIST_PAGE_RESPONSE_PAGINATION_TOKEN_PARAM_NAME = 'nextToken';
+export const optionalQuestionToken = factory.createToken(SyntaxKind.QuestionToken);
 
-export const REACT_QUERY_IMPORT_PATH = '@tanstack/react-query';
-export const REACT_QUERY_MUTATION_HOOK_NAME = 'useMutation';
-export const REACT_QUERY_QUERY_HOOK_NAME = 'useQuery';
-export const REACT_QUERY_INFINITE_QUERY_HOOK_NAME = 'useInfiniteQuery';
-export const REACT_QUERY_INFINITE_QUERY_HOOK_PAGE_PARAM_NAME = 'pageParam';
-export const REACT_QUERY_META_PARAM_NAME = 'meta';
-export const REACT_QUERY_ENABLED_PARAM_NAME = 'enabled';
-export const REACT_QUERY_INFINITE_QUERY_INITIAL_PAGE_PARAM_NAME = 'initialPageParam';
-export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_PARAM_NAME = 'getNextPageParam';
-export const REACT_QUERY_INFINITE_QUERY_GET_NEXT_PAGE_FN_RESPONSE_PARAM_NAME = 'response';
-export const REACT_QUERY_PLACEHOLDER_DATA_PARAM_NAME = 'placeholderData';
-export const REACT_QUERY_INFINITE_DATA_TYPE_NAME = 'InfiniteData';
-export const REACT_QUERY_QUERY_KEY_TYPE_NAME = 'QueryKey';
+export function findMatchingProperty(properties: Map<string, ParsedObjectProperty>, fullGrpcName: string) {
+  for (const entry of properties || []) {
+    if (getFullGRPCName(entry[1].schema) === fullGrpcName) {
+      return entry;
+    }
+  }
 
-export function getIsEventMethod(method: GeneratedClientFunction) {
-  return method.method.rawMethod.methodType?.stateQuery?.queryPart === QueryPart.ListEvents;
+  return undefined;
 }
 
-export type ReactQueryHookName =
-  | typeof REACT_QUERY_QUERY_HOOK_NAME
-  | typeof REACT_QUERY_MUTATION_HOOK_NAME
-  | typeof REACT_QUERY_INFINITE_QUERY_HOOK_NAME;
+export function findEntityPropertyReference(
+  properties: Map<string, ParsedObjectProperty>,
+  accessVariableName: string,
+  entityName: string,
+  primaryKey: string,
+  allowStringKeys = true,
+): ts.PropertyAccessExpression | undefined {
+  const parts = primaryKey.split('.');
+  let currentProperties = properties;
+  const consumedParts: PropertyAccessPart[] = [];
 
-export const NORMALIZR_ENTITY_GET_ID_METHOD_NAME = 'getId';
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
 
-export type MethodParameterName = 'merged';
+    if (currentProperties.has(part)) {
+      const property = currentProperties.get(part);
+
+      consumedParts.push({
+        name: part,
+        optional: !property?.required,
+      });
+
+      if (property) {
+        let keySchema = Boolean(
+          match({ allowStringKeys, property })
+            .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
+            .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
+            .otherwise(() => undefined),
+        );
+
+        // Back-up check if there's a matching key that didn't specify an entity
+        if (!keySchema) {
+          keySchema = Boolean(
+            match(property)
+              .with({ schema: { key: { primary: true } } }, (s) => s)
+              .otherwise(() => undefined),
+          );
+        }
+
+        if (keySchema) {
+          return createPropertyAccessChain(accessVariableName, true, consumedParts);
+        }
+
+        const prospectiveProperties = getObjectProperties(property.schema);
+
+        if (prospectiveProperties?.size) {
+          currentProperties = prospectiveProperties;
+        } else {
+          return undefined;
+        }
+      }
+    } else {
+      return undefined;
+    }
+  }
+
+  return undefined;
+}
+
+export function getImportPathForGeneratedFiles(from: NormalizedQueryPluginFile, to: NormalizedQueryPluginFile) {
+  return getImportPath(to.config.directory, to.config.fileName, from.config.directory, from.config.fileName);
+}
+
+export function isSchemaArray(schema: ParsedSchemaWithRef) {
+  return Boolean(schema && 'array' in schema && schema.array);
+}
+
+export function buildHookParameterDeclaration(
+  parameterName: string,
+  schema: GeneratedSchema<ParsedObject>,
+  addedNonOptionalParameter: boolean,
+  nullable?: boolean,
+) {
+  let hasARequiredParameter = false;
+
+  for (const [, value] of schema.rawSchema.object.properties) {
+    if (value.required) {
+      hasARequiredParameter = true;
+      break;
+    }
+  }
+
+  const baseTypeReference = factory.createTypeReferenceNode(schema.generatedName);
+
+  return factory.createParameterDeclaration(
+    undefined,
+    undefined,
+    parameterName,
+    hasARequiredParameter || addedNonOptionalParameter ? undefined : optionalQuestionToken,
+    nullable ? factory.createUnionTypeNode([baseTypeReference, factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword)]) : baseTypeReference,
+  );
+}
 
 export function getRequiredRequestParameterNames(generatorConfig: MethodGeneratorConfig) {
   function findRequired(schema: ParsedSchemaWithRef | undefined): string[] {
@@ -119,65 +195,6 @@ export function findMatchingVariableStatement(needle: Statement, haystack: State
       if (needle.getText() === searchStatement.getText()) {
         return searchStatement;
       }
-    }
-  }
-
-  return undefined;
-}
-
-export function findEntityPropertyReference(
-  properties: Map<string, ParsedObjectProperty>,
-  accessVariableName: string,
-  entityName: string,
-  primaryKey: string,
-  allowStringKeys = true,
-): ts.PropertyAccessExpression | undefined {
-  const parts = primaryKey.split('.');
-  let currentProperties = properties;
-  const consumedParts: PropertyAccessPart[] = [];
-
-  for (let i = 0; i < parts.length; i += 1) {
-    const part = parts[i];
-
-    if (currentProperties.has(part)) {
-      const property = currentProperties.get(part);
-
-      consumedParts.push({
-        name: part,
-        optional: !property?.required,
-      });
-
-      if (property) {
-        let keySchema = Boolean(
-          match({ allowStringKeys, property })
-            .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
-            .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
-            .otherwise(() => undefined),
-        );
-
-        // Back-up check if there's a matching key that didn't specify an entity
-        if (!keySchema) {
-          keySchema = Boolean(
-            match(property)
-              .with({ schema: { key: { primary: true } } }, (s) => s)
-              .otherwise(() => undefined),
-          );
-        }
-
-        if (keySchema) {
-          return createPropertyAccessChain(accessVariableName, true, consumedParts);
-        }
-
-        const prospectiveProperties = getObjectProperties(property.schema);
-
-        if (prospectiveProperties?.size) {
-          currentProperties = prospectiveProperties;
-        } else {
-          return undefined;
-        }
-      }
-    } else {
-      return undefined;
     }
   }
 
