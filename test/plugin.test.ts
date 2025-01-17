@@ -1,4 +1,12 @@
-import { APISource, Builder, defaultConfig, IPluginFileConfig, parseApiSource, ParsedMethod } from '@pentops/jsonapi-jdef-ts-generator';
+import {
+  APISource,
+  Builder,
+  defaultConfig,
+  defaultEnumKeyNameWriter,
+  IPluginFileConfig,
+  parseApiSource,
+  ParsedMethod,
+} from '@pentops/jsonapi-jdef-ts-generator';
 import { SourceFile } from 'ts-morph';
 import { describe, it, expect } from 'vitest';
 import { match, P } from 'ts-pattern';
@@ -49,6 +57,7 @@ describe('NormalizedQueryPlugin', async () => {
         },
         types: {
           enumType: 'enum',
+          enumKeyNameWriter: defaultEnumKeyNameWriter,
           nameWriter: typeNameWriter,
         },
         client: {
