@@ -1,5 +1,5 @@
 {
-  "version": "9d1915195b4421069e7c87a00ab90f9c8aa01445",
+  "version": "08f4ac2f783c1c3ed39a7452a3d5a9d36b6a9c91",
   "api": {
     "packages": [
       {
@@ -24,14 +24,14 @@
                           "key": {
                             "format": {
                               "!type": "uuid",
-                              "uuid": {
-
-                              }
+                              "uuid": {}
                             }
                           }
                         },
                         "name": "replacesVersionId",
-                        "protoField": [2]
+                        "protoField": [
+                          2
+                        ]
                       },
                       {
                         "schema": {
@@ -39,15 +39,15 @@
                           "key": {
                             "format": {
                               "!type": "uuid",
-                              "uuid": {
-
-                              }
+                              "uuid": {}
                             }
                           }
                         },
                         "name": "versionId",
                         "explicitlyOptional": true,
-                        "protoField": [3]
+                        "protoField": [
+                          3
+                        ]
                       },
                       {
                         "schema": {
@@ -61,7 +61,9 @@
                         },
                         "name": "message",
                         "required": true,
-                        "protoField": [4]
+                        "protoField": [
+                          4
+                        ]
                       }
                     ]
                   },
@@ -72,15 +74,15 @@
                         "key": {
                           "format": {
                             "!type": "uuid",
-                            "uuid": {
-
-                            }
+                            "uuid": {}
                           }
                         }
                       },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 },
@@ -99,7 +101,9 @@
                       },
                       "name": "message",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 }
@@ -120,15 +124,15 @@
                         "key": {
                           "format": {
                             "!type": "uuid",
-                            "uuid": {
-
-                            }
+                            "uuid": {}
                           }
                         }
                       },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 },
@@ -147,7 +151,9 @@
                       },
                       "name": "message",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 }
@@ -164,12 +170,12 @@
                       {
                         "schema": {
                           "!type": "string",
-                          "string": {
-
-                          }
+                          "string": {}
                         },
                         "name": "reason",
-                        "protoField": [2]
+                        "protoField": [
+                          2
+                        ]
                       }
                     ]
                   },
@@ -180,15 +186,15 @@
                         "key": {
                           "format": {
                             "!type": "uuid",
-                            "uuid": {
-
-                            }
+                            "uuid": {}
                           }
                         }
                       },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 },
@@ -207,7 +213,9 @@
                       },
                       "name": "message",
                       "required": true,
-                      "protoField": [1]
+                      "protoField": [
+                        1
+                      ]
                     }
                   ]
                 }
@@ -239,9 +247,7 @@
                           "key": {
                             "format": {
                               "!type": "uuid",
-                              "uuid": {
-
-                              }
+                              "uuid": {}
                             }
                           }
                         },
@@ -249,7 +255,9 @@
                         "required": true,
                         "explicitlyOptional": true,
                         "description": "when not set, returns the next unhandled message",
-                        "protoField": [1]
+                        "protoField": [
+                          1
+                        ]
                       }
                     ]
                   },
@@ -268,7 +276,9 @@
                         },
                         "name": "message",
                         "required": true,
-                        "protoField": [1]
+                        "protoField": [
+                          1
+                        ]
                       },
                       {
                         "schema": {
@@ -286,7 +296,9 @@
                           }
                         },
                         "name": "events",
-                        "protoField": [2]
+                        "protoField": [
+                          2
+                        ]
                       }
                     ]
                   },
@@ -316,7 +328,9 @@
                           }
                         },
                         "name": "page",
-                        "protoField": [100]
+                        "protoField": [
+                          100
+                        ]
                       },
                       {
                         "schema": {
@@ -329,14 +343,16 @@
                           }
                         },
                         "name": "query",
-                        "protoField": [101]
+                        "protoField": [
+                          101
+                        ]
                       }
                     ],
                     "list": {
                       "sortableFields": [
                         {
                           "name": "metadata.createdAt",
-                          "defaultSort": "ASC"
+                          "defaultSort": "DESC"
                         },
                         {
                           "name": "metadata.updatedAt"
@@ -371,7 +387,9 @@
                           }
                         },
                         "name": "messages",
-                        "protoField": [1]
+                        "protoField": [
+                          1
+                        ]
                       },
                       {
                         "schema": {
@@ -384,7 +402,9 @@
                           }
                         },
                         "name": "page",
-                        "protoField": [100]
+                        "protoField": [
+                          100
+                        ]
                       }
                     ]
                   },
@@ -409,15 +429,15 @@
                           "key": {
                             "format": {
                               "!type": "uuid",
-                              "uuid": {
-
-                              }
+                              "uuid": {}
                             }
                           }
                         },
                         "name": "messageId",
                         "required": true,
-                        "protoField": [1]
+                        "protoField": [
+                          1
+                        ]
                       }
                     ],
                     "queryParameters": [
@@ -432,7 +452,9 @@
                           }
                         },
                         "name": "page",
-                        "protoField": [100]
+                        "protoField": [
+                          100
+                        ]
                       },
                       {
                         "schema": {
@@ -445,14 +467,21 @@
                           }
                         },
                         "name": "query",
-                        "protoField": [101]
+                        "protoField": [
+                          101
+                        ]
                       }
                     ],
                     "list": {
                       "sortableFields": [
                         {
                           "name": "metadata.timestamp",
-                          "defaultSort": "ASC"
+                          "defaultSort": "DESC"
+                        }
+                      ],
+                      "filterableFields": [
+                        {
+                          "name": "metadata.timestamp"
                         }
                       ]
                     }
@@ -476,7 +505,9 @@
                           }
                         },
                         "name": "events",
-                        "protoField": [1]
+                        "protoField": [
+                          1
+                        ]
                       },
                       {
                         "schema": {
@@ -489,7 +520,9 @@
                           }
                         },
                         "name": "page",
-                        "protoField": [100]
+                        "protoField": [
+                          100
+                        ]
                       }
                     ]
                   },
@@ -524,175 +557,6 @@
           }
         ],
         "schemas": {
-          "DeadMessageEventType_Replayed": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Replayed"
-            }
-          },
-          "DeadMessageData": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageData",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "DeadMessage"
-                      }
-                    }
-                  },
-                  "name": "notification",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageVersion"
-                      }
-                    }
-                  },
-                  "name": "currentVersion",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "DeadMessageEventType_Notified": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Notified",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "DeadMessage"
-                      }
-                    }
-                  },
-                  "name": "notification",
-                  "protoField": [1]
-                }
-              ]
-            }
-          },
-          "DeadMessageEventType_Rejected": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Rejected",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "reason",
-                  "protoField": [1]
-                }
-              ]
-            }
-          },
-          "DeadMessageEventType": {
-            "!type": "oneof",
-            "oneof": {
-              "name": "DeadMessageEventType",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Notified"
-                      }
-                    }
-                  },
-                  "name": "notified",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Updated"
-                      }
-                    }
-                  },
-                  "name": "updated",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Replayed"
-                      }
-                    }
-                  },
-                  "name": "replayed",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Rejected"
-                      }
-                    }
-                  },
-                  "name": "rejected",
-                  "protoField": [4]
-                }
-              ]
-            }
-          },
-          "DeadMessageKeys": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageKeys",
-              "entity": {
-                "entity": "deadmessage",
-                "part": "KEYS"
-              },
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {
-
-                        }
-                      },
-                      "entity": {
-                        "primaryKey": true
-                      }
-                    }
-                  },
-                  "name": "messageId",
-                  "protoField": [1]
-                }
-              ]
-            }
-          },
           "DeadMessageEventType_Updated": {
             "!type": "object",
             "object": {
@@ -709,9 +573,17 @@
                     }
                   },
                   "name": "spec",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 }
               ]
+            }
+          },
+          "DeadMessageEventType_Replayed": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Replayed"
             }
           },
           "DeadMessageState": {
@@ -735,7 +607,9 @@
                   },
                   "name": "metadata",
                   "required": true,
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -743,9 +617,7 @@
                     "key": {
                       "format": {
                         "!type": "uuid",
-                        "uuid": {
-
-                        }
+                        "uuid": {}
                       },
                       "entity": {
                         "primaryKey": true
@@ -753,7 +625,10 @@
                     }
                   },
                   "name": "messageId",
-                  "protoField": [2, 1]
+                  "protoField": [
+                    2,
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -774,7 +649,9 @@
                     }
                   },
                   "name": "status",
-                  "protoField": [3]
+                  "protoField": [
+                    3
+                  ]
                 },
                 {
                   "schema": {
@@ -787,7 +664,95 @@
                     }
                   },
                   "name": "data",
-                  "protoField": [4]
+                  "protoField": [
+                    4
+                  ]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Notified": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Notified",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "DeadMessage"
+                      }
+                    }
+                  },
+                  "name": "notification",
+                  "protoField": [
+                    1
+                  ]
+                }
+              ]
+            }
+          },
+          "DeadMessageEvent": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEvent",
+              "entity": {
+                "entity": "deadmessage",
+                "part": "EVENT"
+              },
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "EventMetadata"
+                      }
+                    }
+                  },
+                  "name": "metadata",
+                  "required": true,
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {}
+                      },
+                      "entity": {
+                        "primaryKey": true
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [
+                    2,
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType"
+                      }
+                    }
+                  },
+                  "name": "event",
+                  "required": true,
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
@@ -820,38 +785,90 @@
               ]
             }
           },
-          "DeadMessageEvent": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEvent",
-              "entity": {
-                "entity": "deadmessage",
-                "part": "EVENT"
-              },
+          "DeadMessageEventType": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "DeadMessageEventType",
               "properties": [
                 {
                   "schema": {
                     "!type": "object",
                     "object": {
                       "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "EventMetadata"
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Notified"
                       }
                     }
                   },
-                  "name": "metadata",
-                  "required": true,
-                  "protoField": [1]
+                  "name": "notified",
+                  "protoField": [
+                    1
+                  ]
                 },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Updated"
+                      }
+                    }
+                  },
+                  "name": "updated",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Replayed"
+                      }
+                    }
+                  },
+                  "name": "replayed",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageEventType_Rejected"
+                      }
+                    }
+                  },
+                  "name": "rejected",
+                  "protoField": [
+                    4
+                  ]
+                }
+              ]
+            }
+          },
+          "DeadMessageKeys": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageKeys",
+              "entity": {
+                "entity": "deadmessage",
+                "part": "KEYS"
+              },
+              "properties": [
                 {
                   "schema": {
                     "!type": "key",
                     "key": {
                       "format": {
                         "!type": "uuid",
-                        "uuid": {
-
-                        }
+                        "uuid": {}
                       },
                       "entity": {
                         "primaryKey": true
@@ -859,21 +876,65 @@
                     }
                   },
                   "name": "messageId",
-                  "protoField": [2, 1]
-                },
+                  "protoField": [
+                    1
+                  ]
+                }
+              ]
+            }
+          },
+          "DeadMessageData": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageData",
+              "properties": [
                 {
                   "schema": {
-                    "!type": "oneof",
-                    "oneof": {
+                    "!type": "object",
+                    "object": {
                       "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType"
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "DeadMessage"
                       }
                     }
                   },
-                  "name": "event",
-                  "required": true,
-                  "protoField": [3]
+                  "name": "notification",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.dante.v1",
+                        "schema": "DeadMessageVersion"
+                      }
+                    }
+                  },
+                  "name": "currentVersion",
+                  "protoField": [
+                    2
+                  ]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Rejected": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Rejected",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "reason",
+                  "protoField": [
+                    1
+                  ]
                 }
               ]
             }
@@ -889,14 +950,14 @@
                     "key": {
                       "format": {
                         "!type": "uuid",
-                        "uuid": {
-
-                        }
+                        "uuid": {}
                       }
                     }
                   },
                   "name": "versionId",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -909,7 +970,9 @@
                     }
                   },
                   "name": "message",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -922,7 +985,9 @@
                     }
                   },
                   "name": "sqsMessage",
-                  "protoField": [5]
+                  "protoField": [
+                    5
+                  ]
                 }
               ]
             }
@@ -935,12 +1000,12 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "queueUrl",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -948,20 +1013,18 @@
                     "map": {
                       "itemSchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       },
                       "keySchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       }
                     }
                   },
                   "name": "attributes",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -972,6 +1035,168 @@
         "name": "o5.messaging.v1",
         "indirect": true,
         "schemas": {
+          "Message": {
+            "!type": "object",
+            "object": {
+              "name": "Message",
+              "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {}
+                      }
+                    }
+                  },
+                  "name": "messageId",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+                      "rules": {
+                        "pattern": "^([a-z0-9_]+\\.)+([A-Z][a-zA-Z0-9_]+)$"
+                      }
+                    }
+                  },
+                  "name": "grpcService",
+                  "description": "The 'full_name' of the gRPC service <package>.<service>",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {
+                      "rules": {
+                        "pattern": "^([A-Za-z0-9_]+)$"
+                      }
+                    }
+                  },
+                  "name": "grpcMethod",
+                  "description": "The short name of the method in the gRPC service",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Any"
+                      }
+                    }
+                  },
+                  "name": "body",
+                  "protoField": [
+                    4
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sourceApp",
+                  "description": "Then o5.application.name which sent the message",
+                  "protoField": [
+                    5
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sourceEnv",
+                  "description": "The o5.environment.full_name which sent the message",
+                  "protoField": [
+                    6
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "destinationTopic",
+                  "description": "compatibility with named topic messaging, specifies the destination name",
+                  "protoField": [
+                    7
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {}
+                  },
+                  "name": "timestamp",
+                  "description": "Timestamp when producing or replaying the message.",
+                  "protoField": [
+                    8
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {}
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {}
+                      }
+                    }
+                  },
+                  "name": "headers",
+                  "protoField": [
+                    9
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message_Request"
+                      }
+                    }
+                  },
+                  "name": "request",
+                  "protoField": [
+                    20
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message_Reply"
+                      }
+                    }
+                  },
+                  "name": "reply",
+                  "protoField": [
+                    21
+                  ]
+                }
+              ]
+            }
+          },
           "Any": {
             "!type": "object",
             "object": {
@@ -981,24 +1206,24 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "typeUrl",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "bytes",
                     "bytes": {
-                      "rules": {
-
-                      }
+                      "rules": {}
                     }
                   },
                   "name": "value",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -1011,7 +1236,102 @@
                     }
                   },
                   "name": "encoding",
-                  "protoField": [3]
+                  "protoField": [
+                    3
+                  ]
+                }
+              ]
+            }
+          },
+          "topic.DeadMessage": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessage",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "key",
+                    "key": {
+                      "format": {
+                        "!type": "uuid",
+                        "uuid": {}
+                      }
+                    }
+                  },
+                  "name": "deathId",
+                  "description": "Generated by the handler on failure, so that multiple failures of the same\nmessage (either through replay or multiple services working on the same\ncause) are not de-duplicated. This is used as the message_id on the wire\nmessage when sent, the original message_id is in the message field.",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "handlerApp",
+                  "description": "The o5.application.name which attepmted to handle the message",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "handlerEnv",
+                  "description": "The o5.environment.full_name which attepmted to handle the message",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1",
+                        "schema": "Message"
+                      }
+                    }
+                  },
+                  "name": "message",
+                  "description": "The message which was not able to be handled",
+                  "protoField": [
+                    4
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "Problem"
+                      }
+                    }
+                  },
+                  "name": "problem",
+                  "description": "The problem which caused the message to die",
+                  "protoField": [
+                    5
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "o5.messaging.v1.topic",
+                        "schema": "Infra"
+                      }
+                    }
+                  },
+                  "name": "infra",
+                  "protoField": [
+                    6
+                  ]
                 }
               ]
             }
@@ -1024,12 +1344,12 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "type",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -1037,20 +1357,18 @@
                     "map": {
                       "itemSchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       },
                       "keySchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       }
                     }
                   },
                   "name": "metadata",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -1063,13 +1381,13 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "replyTo",
                   "description": "In the reply to a request/reply message, Identifies the service or instance\nwhich first sent the request to which the reply should be routed.",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 }
               ]
             }
@@ -1098,6 +1416,43 @@
               ]
             }
           },
+          "topic.Problem_UnhandledError": {
+            "!type": "object",
+            "object": {
+              "name": "Problem_UnhandledError",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "error",
+                  "protoField": [
+                    1
+                  ]
+                }
+              ]
+            }
+          },
+          "Message_Reply": {
+            "!type": "object",
+            "object": {
+              "name": "Message_Reply",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "replyTo",
+                  "description": "Copied from the Request's reply_to field when replying.",
+                  "protoField": [
+                    2
+                  ]
+                }
+              ]
+            }
+          },
           "topic.Problem": {
             "!type": "oneof",
             "oneof": {
@@ -1114,286 +1469,9 @@
                     }
                   },
                   "name": "unhandledError",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "Message": {
-            "!type": "object",
-            "object": {
-              "name": "Message",
-              "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {
-
-                        }
-                      }
-                    }
-                  },
-                  "name": "messageId",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^([a-z0-9_]+\\.)+([A-Z][a-zA-Z0-9_]+)$"
-                      }
-                    }
-                  },
-                  "name": "grpcService",
-                  "description": "The 'full_name' of the gRPC service \u003Cpackage\u003E.\u003Cservice\u003E",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^([A-Za-z0-9_]+)$"
-                      }
-                    }
-                  },
-                  "name": "grpcMethod",
-                  "description": "The short name of the method in the gRPC service",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Any"
-                      }
-                    }
-                  },
-                  "name": "body",
-                  "protoField": [4]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "sourceApp",
-                  "description": "Then o5.application.name which sent the message",
-                  "protoField": [5]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "sourceEnv",
-                  "description": "The o5.environment.full_name which sent the message",
-                  "protoField": [6]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "destinationTopic",
-                  "description": "compatibility with named topic messaging, specifies the destination name",
-                  "protoField": [7]
-                },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-
-                    }
-                  },
-                  "name": "timestamp",
-                  "description": "Timestamp when producing or replaying the message.",
-                  "protoField": [8]
-                },
-                {
-                  "schema": {
-                    "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {
-
-                        }
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {
-
-                        }
-                      }
-                    }
-                  },
-                  "name": "headers",
-                  "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
-                  "protoField": [9]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message_Request"
-                      }
-                    }
-                  },
-                  "name": "request",
-                  "protoField": [20]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message_Reply"
-                      }
-                    }
-                  },
-                  "name": "reply",
-                  "protoField": [21]
-                }
-              ]
-            }
-          },
-          "topic.Problem_UnhandledError": {
-            "!type": "object",
-            "object": {
-              "name": "Problem_UnhandledError",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "error",
-                  "protoField": [1]
-                }
-              ]
-            }
-          },
-          "Message_Reply": {
-            "!type": "object",
-            "object": {
-              "name": "Message_Reply",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "replyTo",
-                  "description": "Copied from the Request's reply_to field when replying.",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "topic.DeadMessage": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessage",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {
-
-                        }
-                      }
-                    }
-                  },
-                  "name": "deathId",
-                  "description": "Generated by the handler on failure, so that multiple failures of the same\nmessage (either through replay or multiple services working on the same\ncause) are not de-duplicated. This is used as the message_id on the wire\nmessage when sent, the original message_id is in the message field.",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "handlerApp",
-                  "description": "The o5.application.name which attepmted to handle the message",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "handlerEnv",
-                  "description": "The o5.environment.full_name which attepmted to handle the message",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message"
-                      }
-                    }
-                  },
-                  "name": "message",
-                  "description": "The message which was not able to be handled",
-                  "protoField": [4]
-                },
-                {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "Problem"
-                      }
-                    }
-                  },
-                  "name": "problem",
-                  "description": "The problem which caused the message to die",
-                  "protoField": [5]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "Infra"
-                      }
-                    }
-                  },
-                  "name": "infra",
-                  "protoField": [6]
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -1404,6 +1482,54 @@
         "name": "j5.auth.v1",
         "indirect": true,
         "schemas": {
+          "AuthenticationMethod_Session": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_Session",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sessionManager",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sessionId",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {}
+                  },
+                  "name": "verifiedAt",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "timestamp",
+                    "timestamp": {}
+                  },
+                  "name": "authenticatedAt",
+                  "protoField": [
+                    4
+                  ]
+                }
+              ]
+            }
+          },
           "Fingerprint": {
             "!type": "object",
             "object": {
@@ -1412,201 +1538,62 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "ipAddress",
                   "explicitlyOptional": true,
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "userAgent",
                   "explicitlyOptional": true,
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
           },
-          "Claim": {
+          "AuthenticationMethod_JWT": {
             "!type": "object",
             "object": {
-              "name": "Claim",
+              "name": "AuthenticationMethod_JWT",
               "properties": [
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "realmId",
-                  "protoField": [1]
+                  "name": "jwtId",
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^[a-z0-9_]+$"
-                      }
-                    }
+                    "string": {}
                   },
-                  "name": "tenantType",
-                  "protoField": [2]
+                  "name": "issuer",
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
+                    "!type": "timestamp",
+                    "timestamp": {}
                   },
-                  "name": "tenantId",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "string",
-                        "string": {
-
-                        }
-                      }
-                    }
-                  },
-                  "name": "scopes",
-                  "protoField": [4]
-                }
-              ]
-            }
-          },
-          "Action": {
-            "!type": "object",
-            "object": {
-              "name": "Action",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "method",
-                  "required": true,
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Actor"
-                      }
-                    }
-                  },
-                  "name": "actor",
-                  "required": true,
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Fingerprint"
-                      }
-                    }
-                  },
-                  "name": "fingerprint",
-                  "protoField": [3]
-                }
-              ]
-            }
-          },
-          "Actor": {
-            "!type": "object",
-            "object": {
-              "name": "Actor",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "subjectId",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "subjectType",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "AuthenticationMethod"
-                      }
-                    }
-                  },
-                  "name": "authenticationMethod",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Claim"
-                      }
-                    }
-                  },
-                  "name": "claim",
-                  "required": true,
-                  "protoField": [4]
-                },
-                {
-                  "schema": {
-                    "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {
-
-                        }
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {
-
-                        }
-                      }
-                    }
-                  },
-                  "name": "actorTags",
-                  "protoField": [5]
+                  "name": "issuedAt",
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
@@ -1627,7 +1614,9 @@
                     }
                   },
                   "name": "jwt",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -1640,7 +1629,9 @@
                     }
                   },
                   "name": "session",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -1653,7 +1644,59 @@
                     }
                   },
                   "name": "external",
-                  "protoField": [3]
+                  "protoField": [
+                    3
+                  ]
+                }
+              ]
+            }
+          },
+          "Action": {
+            "!type": "object",
+            "object": {
+              "name": "Action",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "method",
+                  "required": true,
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Actor"
+                      }
+                    }
+                  },
+                  "name": "actor",
+                  "required": true,
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Fingerprint"
+                      }
+                    }
+                  },
+                  "name": "fingerprint",
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
@@ -1666,12 +1709,12 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "systemName",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -1679,106 +1722,208 @@
                     "map": {
                       "itemSchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       },
                       "keySchema": {
                         "!type": "string",
-                        "string": {
-
-                        }
+                        "string": {}
                       }
                     }
                   },
                   "name": "metadata",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
           },
-          "AuthenticationMethod_JWT": {
+          "Claim": {
             "!type": "object",
             "object": {
-              "name": "AuthenticationMethod_JWT",
+              "name": "Claim",
               "properties": [
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "jwtId",
-                  "protoField": [1]
+                  "name": "realmId",
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "string",
                     "string": {
-
+                      "rules": {
+                        "pattern": "^[a-z0-9_]+$"
+                      }
                     }
                   },
-                  "name": "issuer",
-                  "protoField": [2]
+                  "name": "tenantType",
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "tenantId",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "string",
+                        "string": {}
+                      }
                     }
                   },
-                  "name": "issuedAt",
-                  "protoField": [3]
+                  "name": "scopes",
+                  "protoField": [
+                    4
+                  ]
                 }
               ]
             }
           },
-          "AuthenticationMethod_Session": {
+          "Actor": {
             "!type": "object",
             "object": {
-              "name": "AuthenticationMethod_Session",
+              "name": "Actor",
               "properties": [
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "sessionManager",
-                  "protoField": [1]
+                  "name": "subjectId",
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "sessionId",
-                  "protoField": [2]
+                  "name": "subjectType",
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-
+                    "!type": "oneof",
+                    "oneof": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "AuthenticationMethod"
+                      }
                     }
                   },
-                  "name": "verifiedAt",
-                  "protoField": [3]
+                  "name": "authenticationMethod",
+                  "protoField": [
+                    3
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Claim"
+                      }
                     }
                   },
-                  "name": "authenticatedAt",
-                  "protoField": [4]
+                  "name": "claim",
+                  "required": true,
+                  "protoField": [
+                    4
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": {
+                      "itemSchema": {
+                        "!type": "string",
+                        "string": {}
+                      },
+                      "keySchema": {
+                        "!type": "string",
+                        "string": {}
+                      }
+                    }
+                  },
+                  "name": "actorTags",
+                  "protoField": [
+                    5
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "name": "j5.messaging.v1",
+        "indirect": true,
+        "schemas": {
+          "MessageCause": {
+            "!type": "object",
+            "object": {
+              "name": "MessageCause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "method",
+                  "required": true,
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "messageId",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sourceApp",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "sourceEnv",
+                  "protoField": [
+                    4
+                  ]
                 }
               ]
             }
@@ -1789,99 +1934,30 @@
         "name": "j5.list.v1",
         "indirect": true,
         "schemas": {
-          "PageRequest": {
+          "And": {
             "!type": "object",
             "object": {
-              "name": "PageRequest",
+              "name": "And",
               "properties": [
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "token",
-                  "explicitlyOptional": true,
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "integer",
-                    "integer": {
-                      "format": "INT64",
-                      "rules": {
-                        "exclusiveMinimum": true,
-                        "minimum": 0
+                    "!type": "array",
+                    "array": {
+                      "items": {
+                        "!type": "oneof",
+                        "oneof": {
+                          "ref": {
+                            "package": "j5.list.v1",
+                            "schema": "Filter"
+                          }
+                        }
                       }
                     }
                   },
-                  "name": "pageSize",
-                  "explicitlyOptional": true,
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "Field": {
-            "!type": "object",
-            "object": {
-              "name": "Field",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "name",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "FieldType"
-                      }
-                    }
-                  },
-                  "name": "type",
-                  "required": true,
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "FieldType": {
-            "!type": "object",
-            "object": {
-              "name": "FieldType",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "value",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "Range"
-                      }
-                    }
-                  },
-                  "name": "range",
-                  "protoField": [3]
+                  "name": "filters",
+                  "protoField": [
+                    1
+                  ]
                 }
               ]
             }
@@ -1907,7 +1983,9 @@
                     }
                   },
                   "name": "searches",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -1925,7 +2003,9 @@
                     }
                   },
                   "name": "sorts",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -1943,35 +2023,9 @@
                     }
                   },
                   "name": "filters",
-                  "protoField": [3]
-                }
-              ]
-            }
-          },
-          "Search": {
-            "!type": "object",
-            "object": {
-              "name": "Search",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "field",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "value",
-                  "protoField": [2]
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
@@ -1997,7 +2051,9 @@
                     }
                   },
                   "name": "filters",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 }
               ]
             }
@@ -2010,22 +2066,172 @@
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
                   "name": "field",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "bool",
-                    "bool": {
-
-                    }
+                    "bool": {}
                   },
                   "name": "descending",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
+                }
+              ]
+            }
+          },
+          "PageRequest": {
+            "!type": "object",
+            "object": {
+              "name": "PageRequest",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "token",
+                  "explicitlyOptional": true,
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "integer",
+                    "integer": {
+                      "format": "INT64",
+                      "rules": {
+                        "exclusiveMinimum": true,
+                        "minimum": "0"
+                      }
+                    }
+                  },
+                  "name": "pageSize",
+                  "explicitlyOptional": true,
+                  "protoField": [
+                    2
+                  ]
+                }
+              ]
+            }
+          },
+          "PageResponse": {
+            "!type": "object",
+            "object": {
+              "name": "PageResponse",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "nextToken",
+                  "explicitlyOptional": true,
+                  "protoField": [
+                    1
+                  ]
+                }
+              ]
+            }
+          },
+          "FieldType": {
+            "!type": "object",
+            "object": {
+              "name": "FieldType",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "value",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "Range"
+                      }
+                    }
+                  },
+                  "name": "range",
+                  "protoField": [
+                    3
+                  ]
+                }
+              ]
+            }
+          },
+          "Range": {
+            "!type": "object",
+            "object": {
+              "name": "Range",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "min",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "max",
+                  "protoField": [
+                    2
+                  ]
+                }
+              ]
+            }
+          },
+          "Field": {
+            "!type": "object",
+            "object": {
+              "name": "Field",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "name",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.list.v1",
+                        "schema": "FieldType"
+                      }
+                    }
+                  },
+                  "name": "type",
+                  "required": true,
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -2046,7 +2252,9 @@
                     }
                   },
                   "name": "field",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -2059,7 +2267,9 @@
                     }
                   },
                   "name": "and",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -2072,80 +2282,37 @@
                     }
                   },
                   "name": "or",
-                  "protoField": [3]
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
           },
-          "And": {
+          "Search": {
             "!type": "object",
             "object": {
-              "name": "And",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "oneof",
-                        "oneof": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Filter"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "name": "filters",
-                  "protoField": [1]
-                }
-              ]
-            }
-          },
-          "Range": {
-            "!type": "object",
-            "object": {
-              "name": "Range",
+              "name": "Search",
               "properties": [
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "min",
-                  "protoField": [1]
+                  "name": "field",
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
                     "!type": "string",
-                    "string": {
-
-                    }
+                    "string": {}
                   },
-                  "name": "max",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "PageResponse": {
-            "!type": "object",
-            "object": {
-              "name": "PageResponse",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "nextToken",
-                  "explicitlyOptional": true,
-                  "protoField": [1]
+                  "name": "value",
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -2156,10 +2323,138 @@
         "name": "j5.state.v1",
         "indirect": true,
         "schemas": {
-          "EventMetadata": {
+          "ExternalEventCause": {
             "!type": "object",
             "object": {
-              "name": "EventMetadata",
+              "name": "ExternalEventCause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "systemName",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "eventName",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "string",
+                    "string": {}
+                  },
+                  "name": "externalId",
+                  "explicitlyOptional": true,
+                  "protoField": [
+                    3
+                  ]
+                }
+              ]
+            }
+          },
+          "InitCause": {
+            "!type": "object",
+            "object": {
+              "name": "InitCause"
+            }
+          },
+          "Cause": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "Cause",
+              "properties": [
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "PSMEventCause"
+                      }
+                    }
+                  },
+                  "name": "psmEvent",
+                  "protoField": [
+                    1
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.auth.v1",
+                        "schema": "Action"
+                      }
+                    }
+                  },
+                  "name": "command",
+                  "protoField": [
+                    2
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.messaging.v1",
+                        "schema": "MessageCause"
+                      }
+                    }
+                  },
+                  "name": "message",
+                  "protoField": [
+                    3
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "ExternalEventCause"
+                      }
+                    }
+                  },
+                  "name": "externalEvent",
+                  "protoField": [
+                    4
+                  ]
+                },
+                {
+                  "schema": {
+                    "!type": "object",
+                    "object": {
+                      "ref": {
+                        "package": "j5.state.v1",
+                        "schema": "InitCause"
+                      }
+                    }
+                  },
+                  "name": "init",
+                  "protoField": [
+                    5
+                  ]
+                }
+              ]
+            }
+          },
+          "PSMEventCause": {
+            "!type": "object",
+            "object": {
+              "name": "PSMEventCause",
               "properties": [
                 {
                   "schema": {
@@ -2167,53 +2462,24 @@
                     "key": {
                       "format": {
                         "!type": "uuid",
-                        "uuid": {
-
-                        }
+                        "uuid": {}
                       }
                     }
                   },
                   "name": "eventId",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "integer",
-                    "integer": {
-                      "format": "UINT64"
-                    }
+                    "!type": "string",
+                    "string": {}
                   },
-                  "name": "sequence",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-                      "listRules": {
-                        "sorting": {
-                          "sortable": true,
-                          "defaultSort": true
-                        }
-                      }
-                    }
-                  },
-                  "name": "timestamp",
-                  "required": true,
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "Cause"
-                      }
-                    }
-                  },
-                  "name": "cause",
-                  "protoField": [4]
+                  "name": "stateMachine",
+                  "protoField": [
+                    2
+                  ]
                 }
               ]
             }
@@ -2236,7 +2502,9 @@
                     }
                   },
                   "name": "createdAt",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
@@ -2250,7 +2518,9 @@
                     }
                   },
                   "name": "updatedAt",
-                  "protoField": [2]
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
@@ -2260,15 +2530,17 @@
                     }
                   },
                   "name": "lastSequence",
-                  "protoField": [3]
+                  "protoField": [
+                    3
+                  ]
                 }
               ]
             }
           },
-          "PSMEventCause": {
+          "EventMetadata": {
             "!type": "object",
             "object": {
-              "name": "PSMEventCause",
+              "name": "EventMetadata",
               "properties": [
                 {
                   "schema": {
@@ -2276,154 +2548,62 @@
                     "key": {
                       "format": {
                         "!type": "uuid",
-                        "uuid": {
-
-                        }
+                        "uuid": {}
                       }
                     }
                   },
                   "name": "eventId",
-                  "protoField": [1]
+                  "protoField": [
+                    1
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {
-
+                    "!type": "integer",
+                    "integer": {
+                      "format": "UINT64"
                     }
                   },
-                  "name": "stateMachine",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "ExternalEventCause": {
-            "!type": "object",
-            "object": {
-              "name": "ExternalEventCause",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "systemName",
-                  "protoField": [1]
+                  "name": "sequence",
+                  "protoField": [
+                    2
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {
-
+                    "!type": "timestamp",
+                    "timestamp": {
+                      "listRules": {
+                        "filtering": {
+                          "filterable": true
+                        },
+                        "sorting": {
+                          "sortable": true,
+                          "defaultSort": true
+                        }
+                      }
                     }
                   },
-                  "name": "eventName",
-                  "protoField": [2]
+                  "name": "timestamp",
+                  "required": true,
+                  "protoField": [
+                    3
+                  ]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {
-
-                    }
-                  },
-                  "name": "externalId",
-                  "explicitlyOptional": true,
-                  "protoField": [3]
-                }
-              ]
-            }
-          },
-          "ReplyCause": {
-            "!type": "object",
-            "object": {
-              "name": "ReplyCause",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
+                    "!type": "oneof",
+                    "oneof": {
                       "ref": {
                         "package": "j5.state.v1",
-                        "schema": "PSMEventCause"
+                        "schema": "Cause"
                       }
                     }
                   },
-                  "name": "request",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "bool",
-                    "bool": {
-
-                    }
-                  },
-                  "name": "async",
-                  "protoField": [2]
-                }
-              ]
-            }
-          },
-          "Cause": {
-            "!type": "oneof",
-            "oneof": {
-              "name": "Cause",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "PSMEventCause"
-                      }
-                    }
-                  },
-                  "name": "psmEvent",
-                  "protoField": [1]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Action"
-                      }
-                    }
-                  },
-                  "name": "command",
-                  "protoField": [2]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "ExternalEventCause"
-                      }
-                    }
-                  },
-                  "name": "externalEvent",
-                  "protoField": [3]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "ReplyCause"
-                      }
-                    }
-                  },
-                  "name": "reply",
-                  "protoField": [4]
+                  "name": "cause",
+                  "protoField": [
+                    4
+                  ]
                 }
               ]
             }
@@ -2432,7 +2612,7 @@
       }
     ],
     "metadata": {
-      "builtAt": "2024-10-23T16:10:10Z"
+      "builtAt": "2025-04-11T23:54:40Z"
     }
   }
 }

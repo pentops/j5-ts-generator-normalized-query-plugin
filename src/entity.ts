@@ -10,7 +10,10 @@ export type EntityReferenceDetail = { entity: NormalizerEntity; isArray: boolean
 export type EntityReference = EntityReferenceDetail | { isArray: boolean; schema: Map<string, EntityReference> };
 
 export interface NormalizerEntity extends GeneratedSchema<ParsedObject> {
+  // entityName is the name of the entity, used to match it with primary keys from other entities
   entityName: string;
+  // entitySchemaName is the full gRPC name of the entity's state message, this is used as the key name for the normalizr entity
+  entitySchemaName: string;
   entityNameConstName?: string;
   entityVariableName: string;
   primaryKeys?: string[];
@@ -23,6 +26,14 @@ export function getEntityName(schema: GeneratedSchema) {
     .with({ object: { name: P.string } }, (r) => r.object.entity?.stateEntityFullName || r.object.fullGrpcName)
     .with({ oneOf: { name: P.string } }, (r) => r.oneOf.fullGrpcName)
     .with({ enum: { name: P.string } }, (r) => r.enum.fullGrpcName)
+    .otherwise(() => schema.generatedName);
+}
+
+export function getEntitySchemaName(schema: GeneratedSchema) {
+  return match(schema.rawSchema)
+    .with({ object: { name: P.string } }, (r) => r.object.entity?.schemaFullGrpcName || r.object.fullGrpcName)
+    .with({ oneOf: { name: P.string } }, (r) => r.oneOf.name)
+    .with({ enum: { name: P.string } }, (r) => r.enum.name)
     .otherwise(() => schema.generatedName);
 }
 
@@ -105,6 +116,7 @@ export function getMethodEntityName(generatedMethod: GeneratedClientFunction) {
     .with(
       { method: { relatedEntity: { rawSchema: { object: { entity: P.not(P.nullish) } } } } },
       (r) =>
+        r.method.relatedEntity.rawSchema.object.entity.schemaFullGrpcName ||
         r.method.relatedEntity.rawSchema.object.entity.stateEntityFullName ||
         r.method.relatedEntity.rawSchema.object.entity.entity ||
         r.method.relatedEntity.generatedName,

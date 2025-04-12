@@ -46,6 +46,7 @@ import {
   getEntityFile,
   getEntityName,
   getEntityPrimaryKeys,
+  getEntitySchemaName,
   NormalizerEntity,
 } from './entity';
 import { getPageParameter } from './pagination';
@@ -122,6 +123,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     }
 
     const entityName = getEntityName(schema);
+    const entitySchemaName = getEntitySchemaName(schema);
     const entityVariableName = this.pluginConfig.entity.nameWriter(schema);
     const entityNameConstName = this.pluginConfig.entity.schemaNameConstNameWriter(schema);
 
@@ -133,6 +135,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const generatedEntity: NormalizerEntity = {
       ...(schema as GeneratedSchema<ParsedObject>),
       entityName,
+      entitySchemaName,
       entityNameConstName,
       entityVariableName,
       primaryKeys: entityPrimaryKeys,
@@ -153,7 +156,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
       factory.createVariableStatement(
         [factory.createModifier(SyntaxKind.ExportKeyword)],
         factory.createVariableDeclarationList(
-          [factory.createVariableDeclaration(entityNameConstName, undefined, undefined, factory.createStringLiteral(entityName, true))],
+          [factory.createVariableDeclaration(entityNameConstName, undefined, undefined, factory.createStringLiteral(entitySchemaName, true))],
           ts.NodeFlags.Const,
         ),
       ),
@@ -272,6 +275,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const generatedEntity: NormalizerEntity = {
       ...(schema as GeneratedSchema<ParsedObject>),
       entityName: getEntityName(schema),
+      entitySchemaName: getEntitySchemaName(schema),
       entityVariableName,
       importConfig: fileForSchema.config,
       references: entityReferences,
