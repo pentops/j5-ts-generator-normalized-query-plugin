@@ -477,7 +477,7 @@ export type NormalizedQueryPluginConfigInput = Optional<
     hook?: NormalizedQueryPluginHookConfigInput;
     entity?: NormalizedQueryPluginEntityConfigInput;
   },
-  'entity' | 'hook' | 'statementConflictHandler'
+  'entity' | 'hook' | 'statementConflictHandler' | 'entityRegistryFile'
 >;
 
 function getPostBuildHook(baseConfig: NormalizedQueryPluginConfig) {
@@ -557,6 +557,7 @@ export function buildConfig(config: NormalizedQueryPluginConfigInput) {
   const baseConfig: Omit<NormalizedQueryPluginConfig, 'hooks'> = {
     ...config,
     allowStringKeyReferences: config.allowStringKeyReferences ?? true,
+    entityRegistryFile: config.entityRegistryFile,
     entity: {
       nameWriter: config.entity?.nameWriter ?? defaultEntityNameWriter,
       schemaNameConstNameWriter: config.entity?.schemaNameConstNameWriter ?? defaultEntitySchemaNameConstNameWriter,
