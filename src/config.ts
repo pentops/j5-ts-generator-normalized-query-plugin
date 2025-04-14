@@ -443,6 +443,10 @@ export type MethodParameterName = 'merged';
 
 export interface NormalizedQueryPluginConfig extends IPluginConfig<NormalizedQueryPluginFile> {
   allowStringKeyReferences?: boolean;
+  entityRegistryFile?: {
+    directory: string;
+    fileName?: `${string}.ts`;
+  };
   entity: {
     nameWriter: EntityNameWriter;
     schemaNameConstNameWriter: EntitySchemaNameConstNameWriter;

@@ -65,6 +65,10 @@ describe('NormalizedQueryPlugin', async () => {
         },
         plugins: [
           new NormalizedQueryPlugin({
+            entityRegistryFile: {
+              directory: './api-client/generated/entities',
+              fileName: 'registry.ts',
+            },
             files: (generatedSchemas, generatedClientFunctions) => {
               const files: IPluginFileConfig<SourceFile>[] = [];
 

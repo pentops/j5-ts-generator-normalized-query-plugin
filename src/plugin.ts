@@ -83,6 +83,7 @@ import {
   PRELOAD_CLIENT_VARIABLE_NAME,
   REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME,
   REACT_QUERY_GET_QUERY_CACHE_METHOD_NAME,
+  NORMALIZR_SCHEMA_KEY_PARAM,
 } from './constants';
 import { buildBaseParameters, buildQueryFnArgs, buildQueryFnRequestType, buildRequestEnabled } from './hook';
 
@@ -786,11 +787,71 @@ export class NormalizedQueryPlugin extends BasePlugin<
     );
   }
 
+  private buildRegistryFile(entitiesByFile: Map<NormalizedQueryPluginFile, string[]>): NormalizedQueryPluginFile | undefined {
+    if (!this.pluginConfig.entityRegistryFile || !entitiesByFile.size) {
+      return;
+    }
+
+    const registryFile = this.createPluginFile(
+      {
+        directory: this.pluginConfig.entityRegistryFile.directory,
+        fileName: this.pluginConfig.entityRegistryFile.fileName || 'registry.ts',
+      },
+      undefined,
+    );
+
+    const properties: ts.ObjectLiteralElementLike[] = [];
+
+    for (const [file, entities] of entitiesByFile) {
+      registryFile.addImportToOtherGeneratedFile(file, entities);
+
+      entities.forEach((entityVariableName) => {
+        properties.push(
+          factory.createPropertyAssignment(
+            factory.createComputedPropertyName(
+              factory.createPropertyAccessExpression(factory.createIdentifier(entityVariableName), NORMALIZR_SCHEMA_KEY_PARAM),
+            ),
+            factory.createIdentifier(entityVariableName),
+          ),
+        );
+      });
+    }
+
+    registryFile.addNodes(
+      factory.createVariableStatement(
+        [factory.createModifier(SyntaxKind.ExportKeyword)],
+        factory.createVariableDeclarationList(
+          [
+            factory.createVariableDeclaration(
+              'NORMALIZR_ENTITY_REGISTRY',
+              undefined,
+              undefined,
+              factory.createObjectLiteralExpression(properties, true),
+            ),
+          ],
+          ts.NodeFlags.Const,
+        ),
+      ),
+    );
+
+    return registryFile;
+  }
+
   public async run(): Promise<IPluginRunOutput<NormalizedQueryPluginFile>> {
+    const entitiesByFile = new Map<NormalizedQueryPluginFile, string[]>();
+
     for (const file of this.files) {
       for (const [, schema] of this.generatedSchemas) {
         if (file.isFileForSchema(schema)) {
-          this.generateEntity(file, schema);
+          const entity = this.generateEntity(file, schema);
+
+          if (entity) {
+            if (!entitiesByFile.has(file)) {
+              entitiesByFile.set(file, []);
+            }
+
+            entitiesByFile.get(file)?.push(entity.entityVariableName);
+          }
         }
       }
 
@@ -809,6 +870,12 @@ export class NormalizedQueryPlugin extends BasePlugin<
       if (file.getHasContent()) {
         file.generateHeading();
       }
+    }
+
+    const registryFile = this.buildRegistryFile(entitiesByFile);
+    if (registryFile?.getHasContent()) {
+      registryFile.generateHeading();
+      this.files.push(registryFile);
     }
 
     const out = await this.buildFiles();
