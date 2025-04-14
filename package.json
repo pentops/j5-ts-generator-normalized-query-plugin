@@ -1,6 +1,6 @@
 {
   "name": "@pentops/j5-ts-generator-normalized-query-plugin",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "",
   "main": "dist/index.js",
   "type": "module",
