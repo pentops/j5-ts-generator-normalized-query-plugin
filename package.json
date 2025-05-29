@@ -31,7 +31,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@pentops/jsonapi-jdef-ts-generator": "^0.0.123",
+    "@pentops/jsonapi-jdef-ts-generator": "^0.0.126",
     "change-case": "^5.4.4",
     "ts-morph": "^26.0.0",
     "ts-pattern": "^5.7.1"
