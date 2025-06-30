@@ -13,8 +13,9 @@ import {
   REACT_QUERY_QUERY_CACHE_TYPE_NAME,
   REACT_QUERY_USE_QUERY_CLIENT_HOOK_NAME,
 } from './constants';
+import { getEntityPrimaryKeys } from './entity';
 
-export function buildPreload(generatorConfig: MethodGeneratorConfig, allowStringKeys = true, useHook = false): ts.VariableStatement | undefined {
+export function buildPreload(generatorConfig: MethodGeneratorConfig, useHook = false): ts.VariableStatement | undefined {
   if (!generatorConfig.method.method.responseBodySchema || !generatorConfig.responseEntity?.references?.size) {
     return undefined;
   }
@@ -30,13 +31,7 @@ export function buildPreload(generatorConfig: MethodGeneratorConfig, allowString
         .with({ method: { mergedRequestSchema: P.not(P.nullish) }, parameterNames: { merged: P.string } }, (s) => {
           const properties = getObjectProperties(s.method.mergedRequestSchema.rawSchema);
           const matchesByPrimaryKey = (r.entity.primaryKeys || []).reduce<Map<string, ts.Expression>>((acc, primaryKey) => {
-            const matchingProperty = findEntityPropertyReference(
-              properties || new Map(),
-              s.parameterNames.merged,
-              r.entity.entityName,
-              primaryKey,
-              allowStringKeys,
-            );
+            const matchingProperty = findEntityPropertyReference(properties || new Map(), s.parameterNames.merged, r.entity.entityName, primaryKey);
 
             if (matchingProperty) {
               acc.set(primaryKey, matchingProperty);

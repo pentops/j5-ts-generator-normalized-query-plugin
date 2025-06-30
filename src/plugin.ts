@@ -16,6 +16,7 @@ import {
   findSchemaProperties,
   IPluginRunOutput,
   IWritableFile,
+  EntityPart,
 } from '@pentops/jsonapi-jdef-ts-generator';
 import { isSchemaArray, findMatchingProperty, getRequiredRequestParameters } from './helpers';
 import {
@@ -105,7 +106,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
 
   private generateEntity(fileForSchema: NormalizedQueryPluginFile, schema: GeneratedSchema): NormalizerEntity | undefined {
     const isEntity = match(schema.rawSchema)
-      .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, () => true)
+      .with(P.union({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, { object: { entity: { part: EntityPart.Event } } }), () => true)
       .otherwise(() => false);
 
     if (!isEntity) {
@@ -676,10 +677,7 @@ export class NormalizedQueryPlugin extends BasePlugin<
     const parameters = buildBaseParameters(generatorConfig, Boolean(this.pluginConfig.hook.undefinedRequestForSkip));
     const clientFnArgs = this.buildClientFnArgs(generatorConfig, parameters);
 
-    const preload =
-      generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME
-        ? buildPreload(generatorConfig, this.pluginConfig.allowStringKeyReferences)
-        : undefined;
+    const preload = generatorConfig.queryHookName === REACT_QUERY_QUERY_HOOK_NAME ? buildPreload(generatorConfig) : undefined;
 
     const queryOptions = this.generateDefaultQueryOptions(generatorConfig, clientFnArgs, queryKeyBuilder, Boolean(preload));
 

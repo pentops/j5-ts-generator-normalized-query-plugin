@@ -3,6 +3,7 @@ import {
   Builder,
   defaultConfig,
   defaultEnumKeyNameWriter,
+  EntityPart,
   IPluginFileConfig,
   parseApiSource,
   ParsedMethod,

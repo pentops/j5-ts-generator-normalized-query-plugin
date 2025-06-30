@@ -1,6 +1,12 @@
 import { SyntaxKind, ts } from 'ts-morph';
 import { match, P } from 'ts-pattern';
-import { GeneratedClientFunction, GeneratedImportPath, type GeneratedSchema, type ParsedObject } from '@pentops/jsonapi-jdef-ts-generator';
+import {
+  EntityPart,
+  GeneratedClientFunction,
+  GeneratedImportPath,
+  type GeneratedSchema,
+  type ParsedObject,
+} from '@pentops/jsonapi-jdef-ts-generator';
 import { NORMALIZR_OBJECT_NAME, NORMALIZR_SCHEMA_NAME } from './constants';
 import { type NormalizedQueryPluginFile } from './plugin-file';
 
@@ -25,6 +31,7 @@ export function getEntityName(schema: GeneratedSchema) {
   return match(schema.rawSchema)
     .with({ object: { name: P.string } }, (r) => r.object.entity?.stateEntityFullName || r.object.fullGrpcName)
     .with({ oneOf: { name: P.string } }, (r) => r.oneOf.fullGrpcName)
+    .with({ polymorph: { name: P.string } }, (r) => r.polymorph.fullGrpcName)
     .with({ enum: { name: P.string } }, (r) => r.enum.fullGrpcName)
     .otherwise(() => schema.generatedName);
 }
@@ -33,14 +40,19 @@ export function getEntitySchemaName(schema: GeneratedSchema) {
   return match(schema.rawSchema)
     .with({ object: { name: P.string } }, (r) => r.object.entity?.schemaFullGrpcName || r.object.fullGrpcName)
     .with({ oneOf: { name: P.string } }, (r) => r.oneOf.name)
+    .with({ polymorph: { name: P.string } }, (r) => r.polymorph.name)
     .with({ enum: { name: P.string } }, (r) => r.enum.name)
     .otherwise(() => schema.generatedName);
 }
 
 export function getEntityPrimaryKeys(schema: GeneratedSchema): string[] | undefined {
-  return match(schema.rawSchema)
-    .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, (s) => s.object.entity.primaryKeys)
-    .otherwise(() => undefined);
+  return (
+    match(schema.rawSchema)
+      .with({ object: { entity: { primaryKeys: P.not(P.nullish) } } }, (s) => s.object.entity.primaryKeys)
+      // TODO: perhaps use the referenced entity
+      .with({ object: { entity: { part: EntityPart.Event } } }, () => ['metadata.eventId'])
+      .otherwise(() => undefined)
+  );
 }
 
 export function generateIdAttributeAccessor(entity: NormalizerEntity) {

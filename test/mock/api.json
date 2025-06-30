@@ -1,5 +1,5 @@
 {
-  "version": "08f4ac2f783c1c3ed39a7452a3d5a9d36b6a9c91",
+  "version": "a0b2e0bf59c16b9fdd99b437b018f75d12ecf8b0",
   "api": {
     "packages": [
       {
@@ -19,70 +19,30 @@
                     "name": "UpdateDeadMessageRequest",
                     "properties": [
                       {
-                        "schema": {
-                          "!type": "key",
-                          "key": {
-                            "format": {
-                              "!type": "uuid",
-                              "uuid": {}
-                            }
-                          }
-                        },
+                        "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                         "name": "replacesVersionId",
-                        "protoField": [
-                          2
-                        ]
+                        "protoField": [2]
                       },
                       {
-                        "schema": {
-                          "!type": "key",
-                          "key": {
-                            "format": {
-                              "!type": "uuid",
-                              "uuid": {}
-                            }
-                          }
-                        },
+                        "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                         "name": "versionId",
                         "explicitlyOptional": true,
-                        "protoField": [
-                          3
-                        ]
+                        "protoField": [3]
                       },
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "o5.dante.v1",
-                              "schema": "DeadMessageVersion"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageVersion" } } },
                         "name": "message",
                         "required": true,
-                        "protoField": [
-                          4
-                        ]
+                        "protoField": [4]
                       }
                     ]
                   },
                   "pathParameters": [
                     {
-                      "schema": {
-                        "!type": "key",
-                        "key": {
-                          "format": {
-                            "!type": "uuid",
-                            "uuid": {}
-                          }
-                        }
-                      },
+                      "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 },
@@ -90,20 +50,10 @@
                   "name": "UpdateDeadMessageResponse",
                   "properties": [
                     {
-                      "schema": {
-                        "!type": "object",
-                        "object": {
-                          "ref": {
-                            "package": "o5.dante.v1",
-                            "schema": "DeadMessageState"
-                          }
-                        }
-                      },
+                      "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageState" } } },
                       "name": "message",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 }
@@ -114,25 +64,13 @@
                 "httpMethod": "POST",
                 "httpPath": "/dante/v1/c/messages/:messageId/replay",
                 "request": {
-                  "body": {
-                    "name": "ReplayDeadMessageRequest"
-                  },
+                  "body": { "name": "ReplayDeadMessageRequest" },
                   "pathParameters": [
                     {
-                      "schema": {
-                        "!type": "key",
-                        "key": {
-                          "format": {
-                            "!type": "uuid",
-                            "uuid": {}
-                          }
-                        }
-                      },
+                      "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 },
@@ -140,20 +78,10 @@
                   "name": "ReplayDeadMessageResponse",
                   "properties": [
                     {
-                      "schema": {
-                        "!type": "object",
-                        "object": {
-                          "ref": {
-                            "package": "o5.dante.v1",
-                            "schema": "DeadMessageState"
-                          }
-                        }
-                      },
+                      "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageState" } } },
                       "name": "message",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 }
@@ -166,35 +94,14 @@
                 "request": {
                   "body": {
                     "name": "RejectDeadMessageRequest",
-                    "properties": [
-                      {
-                        "schema": {
-                          "!type": "string",
-                          "string": {}
-                        },
-                        "name": "reason",
-                        "protoField": [
-                          2
-                        ]
-                      }
-                    ]
+                    "properties": [{ "schema": { "!type": "string", "string": {} }, "name": "reason", "protoField": [2] }]
                   },
                   "pathParameters": [
                     {
-                      "schema": {
-                        "!type": "key",
-                        "key": {
-                          "format": {
-                            "!type": "uuid",
-                            "uuid": {}
-                          }
-                        }
-                      },
+                      "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                       "name": "messageId",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 },
@@ -202,20 +109,10 @@
                   "name": "RejectDeadMessageResponse",
                   "properties": [
                     {
-                      "schema": {
-                        "!type": "object",
-                        "object": {
-                          "ref": {
-                            "package": "o5.dante.v1",
-                            "schema": "DeadMessageState"
-                          }
-                        }
-                      },
+                      "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageState" } } },
                       "name": "message",
                       "required": true,
-                      "protoField": [
-                        1
-                      ]
+                      "protoField": [1]
                     }
                   ]
                 }
@@ -228,9 +125,7 @@
             "name": "deadmessage",
             "fullName": "o5.dante.v1/deadmessage",
             "schemaName": "o5.dante.v1.DeadMessageState",
-            "primaryKey": [
-              "messageId"
-            ],
+            "primaryKey": ["messageId"],
             "queryService": {
               "name": "DeadMessageQueryService",
               "methods": [
@@ -242,22 +137,12 @@
                   "request": {
                     "pathParameters": [
                       {
-                        "schema": {
-                          "!type": "key",
-                          "key": {
-                            "format": {
-                              "!type": "uuid",
-                              "uuid": {}
-                            }
-                          }
-                        },
+                        "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                         "name": "messageId",
                         "required": true,
                         "explicitlyOptional": true,
                         "description": "when not set, returns the next unhandled message",
-                        "protoField": [
-                          1
-                        ]
+                        "protoField": [1]
                       }
                     ]
                   },
@@ -265,50 +150,22 @@
                     "name": "GetDeadMessageResponse",
                     "properties": [
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "o5.dante.v1",
-                              "schema": "DeadMessageState"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageState" } } },
                         "name": "message",
                         "required": true,
-                        "protoField": [
-                          1
-                        ]
+                        "protoField": [1]
                       },
                       {
                         "schema": {
                           "!type": "array",
-                          "array": {
-                            "items": {
-                              "!type": "object",
-                              "object": {
-                                "ref": {
-                                  "package": "o5.dante.v1",
-                                  "schema": "DeadMessageEvent"
-                                }
-                              }
-                            }
-                          }
+                          "array": { "items": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEvent" } } } }
                         },
                         "name": "events",
-                        "protoField": [
-                          2
-                        ]
+                        "protoField": [2]
                       }
                     ]
                   },
-                  "methodType": {
-                    "!type": "stateQuery",
-                    "stateQuery": {
-                      "entityName": "deadmessage",
-                      "queryPart": "GET"
-                    }
-                  }
+                  "methodType": { "!type": "stateQuery", "stateQuery": { "entityName": "deadmessage", "queryPart": "GET" } }
                 },
                 {
                   "name": "ListDeadMessages",
@@ -318,54 +175,19 @@
                   "request": {
                     "queryParameters": [
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "PageRequest"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "PageRequest" } } },
                         "name": "page",
-                        "protoField": [
-                          100
-                        ]
+                        "protoField": [100]
                       },
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "QueryRequest"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "QueryRequest" } } },
                         "name": "query",
-                        "protoField": [
-                          101
-                        ]
+                        "protoField": [101]
                       }
                     ],
                     "list": {
-                      "sortableFields": [
-                        {
-                          "name": "metadata.createdAt",
-                          "defaultSort": "DESC"
-                        },
-                        {
-                          "name": "metadata.updatedAt"
-                        }
-                      ],
-                      "filterableFields": [
-                        {
-                          "name": "status",
-                          "defaultFilters": [
-                            "CREATED"
-                          ]
-                        }
-                      ]
+                      "sortableFields": [{ "name": "metadata.createdAt", "defaultSort": "DESC" }, { "name": "metadata.updatedAt" }],
+                      "filterableFields": [{ "name": "status", "defaultFilters": ["CREATED"] }]
                     }
                   },
                   "responseBody": {
@@ -374,47 +196,19 @@
                       {
                         "schema": {
                           "!type": "array",
-                          "array": {
-                            "items": {
-                              "!type": "object",
-                              "object": {
-                                "ref": {
-                                  "package": "o5.dante.v1",
-                                  "schema": "DeadMessageState"
-                                }
-                              }
-                            }
-                          }
+                          "array": { "items": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageState" } } } }
                         },
                         "name": "messages",
-                        "protoField": [
-                          1
-                        ]
+                        "protoField": [1]
                       },
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "PageResponse"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "PageResponse" } } },
                         "name": "page",
-                        "protoField": [
-                          100
-                        ]
+                        "protoField": [100]
                       }
                     ]
                   },
-                  "methodType": {
-                    "!type": "stateQuery",
-                    "stateQuery": {
-                      "entityName": "deadmessage",
-                      "queryPart": "LIST"
-                    }
-                  }
+                  "methodType": { "!type": "stateQuery", "stateQuery": { "entityName": "deadmessage", "queryPart": "LIST" } }
                 },
                 {
                   "name": "ListDeadMessageEvents",
@@ -424,66 +218,27 @@
                   "request": {
                     "pathParameters": [
                       {
-                        "schema": {
-                          "!type": "key",
-                          "key": {
-                            "format": {
-                              "!type": "uuid",
-                              "uuid": {}
-                            }
-                          }
-                        },
+                        "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                         "name": "messageId",
                         "required": true,
-                        "protoField": [
-                          1
-                        ]
+                        "protoField": [1]
                       }
                     ],
                     "queryParameters": [
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "PageRequest"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "PageRequest" } } },
                         "name": "page",
-                        "protoField": [
-                          100
-                        ]
+                        "protoField": [100]
                       },
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "QueryRequest"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "QueryRequest" } } },
                         "name": "query",
-                        "protoField": [
-                          101
-                        ]
+                        "protoField": [101]
                       }
                     ],
                     "list": {
-                      "sortableFields": [
-                        {
-                          "name": "metadata.timestamp",
-                          "defaultSort": "DESC"
-                        }
-                      ],
-                      "filterableFields": [
-                        {
-                          "name": "metadata.timestamp"
-                        }
-                      ]
+                      "sortableFields": [{ "name": "metadata.timestamp", "defaultSort": "DESC" }],
+                      "filterableFields": [{ "name": "metadata.timestamp" }]
                     }
                   },
                   "responseBody": {
@@ -492,269 +247,63 @@
                       {
                         "schema": {
                           "!type": "array",
-                          "array": {
-                            "items": {
-                              "!type": "object",
-                              "object": {
-                                "ref": {
-                                  "package": "o5.dante.v1",
-                                  "schema": "DeadMessageEvent"
-                                }
-                              }
-                            }
-                          }
+                          "array": { "items": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEvent" } } } }
                         },
                         "name": "events",
-                        "protoField": [
-                          1
-                        ]
+                        "protoField": [1]
                       },
                       {
-                        "schema": {
-                          "!type": "object",
-                          "object": {
-                            "ref": {
-                              "package": "j5.list.v1",
-                              "schema": "PageResponse"
-                            }
-                          }
-                        },
+                        "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "PageResponse" } } },
                         "name": "page",
-                        "protoField": [
-                          100
-                        ]
+                        "protoField": [100]
                       }
                     ]
                   },
-                  "methodType": {
-                    "!type": "stateQuery",
-                    "stateQuery": {
-                      "entityName": "deadmessage",
-                      "queryPart": "LIST_EVENTS"
-                    }
-                  }
+                  "methodType": { "!type": "stateQuery", "stateQuery": { "entityName": "deadmessage", "queryPart": "LIST_EVENTS" } }
                 }
               ]
             },
             "events": [
-              {
-                "name": "notified",
-                "fullName": "o5.dante.v1/deadmessage.notified"
-              },
-              {
-                "name": "updated",
-                "fullName": "o5.dante.v1/deadmessage.updated"
-              },
-              {
-                "name": "replayed",
-                "fullName": "o5.dante.v1/deadmessage.replayed"
-              },
-              {
-                "name": "rejected",
-                "fullName": "o5.dante.v1/deadmessage.rejected"
-              }
+              { "name": "notified", "fullName": "o5.dante.v1/deadmessage.notified" },
+              { "name": "updated", "fullName": "o5.dante.v1/deadmessage.updated" },
+              { "name": "replayed", "fullName": "o5.dante.v1/deadmessage.replayed" },
+              { "name": "rejected", "fullName": "o5.dante.v1/deadmessage.rejected" }
             ]
           }
         ],
         "schemas": {
-          "DeadMessageEventType_Updated": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Updated",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageVersion"
-                      }
-                    }
-                  },
-                  "name": "spec",
-                  "protoField": [
-                    1
-                  ]
-                }
-              ]
-            }
-          },
-          "DeadMessageEventType_Replayed": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Replayed"
-            }
-          },
-          "DeadMessageState": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageState",
-              "entity": {
-                "entity": "deadmessage",
-                "part": "STATE"
-              },
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "StateMetadata"
-                      }
-                    }
-                  },
-                  "name": "metadata",
-                  "required": true,
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      },
-                      "entity": {
-                        "primaryKey": true
-                      }
-                    }
-                  },
-                  "name": "messageId",
-                  "protoField": [
-                    2,
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "enum",
-                    "enum": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "MessageStatus"
-                      },
-                      "listRules": {
-                        "filtering": {
-                          "filterable": true,
-                          "defaultFilters": [
-                            "CREATED"
-                          ]
-                        }
-                      }
-                    }
-                  },
-                  "name": "status",
-                  "protoField": [
-                    3
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageData"
-                      }
-                    }
-                  },
-                  "name": "data",
-                  "protoField": [
-                    4
-                  ]
-                }
-              ]
-            }
-          },
-          "DeadMessageEventType_Notified": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageEventType_Notified",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "DeadMessage"
-                      }
-                    }
-                  },
-                  "name": "notification",
-                  "protoField": [
-                    1
-                  ]
-                }
-              ]
-            }
-          },
           "DeadMessageEvent": {
             "!type": "object",
             "object": {
               "name": "DeadMessageEvent",
-              "entity": {
-                "entity": "deadmessage",
-                "part": "EVENT"
-              },
+              "entity": { "entity": "deadmessage", "part": "EVENT" },
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "EventMetadata"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.state.v1", "schema": "EventMetadata" } } },
                   "name": "metadata",
                   "required": true,
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      },
-                      "entity": {
-                        "primaryKey": true
-                      }
-                    }
-                  },
+                  "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} }, "entity": { "primaryKey": true } } },
                   "name": "messageId",
-                  "protoField": [
-                    2,
-                    1
-                  ]
+                  "entityKey": { "primary": true },
+                  "protoField": [2, 1]
                 },
                 {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "oneof", "oneof": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEventType" } } },
                   "name": "event",
                   "required": true,
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 }
               ]
+            }
+          },
+          "DeadMessageEventType_Rejected": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Rejected",
+              "properties": [{ "schema": { "!type": "string", "string": {} }, "name": "reason", "protoField": [1] }]
             }
           },
           "MessageStatus": {
@@ -763,25 +312,11 @@
               "name": "MessageStatus",
               "prefix": "MESSAGE_STATUS_",
               "options": [
-                {
-                  "name": "UNSPECIFIED"
-                },
-                {
-                  "name": "CREATED",
-                  "number": 1
-                },
-                {
-                  "name": "UPDATED",
-                  "number": 2
-                },
-                {
-                  "name": "REPLAYED",
-                  "number": 3
-                },
-                {
-                  "name": "REJECTED",
-                  "number": 4
-                }
+                { "name": "UNSPECIFIED" },
+                { "name": "CREATED", "number": 1 },
+                { "name": "UPDATED", "number": 2 },
+                { "name": "REPLAYED", "number": 3 },
+                { "name": "REJECTED", "number": 4 }
               ]
             }
           },
@@ -791,94 +326,24 @@
               "name": "DeadMessageEventType",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Notified"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEventType_Notified" } } },
                   "name": "notified",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Updated"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEventType_Updated" } } },
                   "name": "updated",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Replayed"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEventType_Replayed" } } },
                   "name": "replayed",
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageEventType_Rejected"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageEventType_Rejected" } } },
                   "name": "rejected",
-                  "protoField": [
-                    4
-                  ]
-                }
-              ]
-            }
-          },
-          "DeadMessageKeys": {
-            "!type": "object",
-            "object": {
-              "name": "DeadMessageKeys",
-              "entity": {
-                "entity": "deadmessage",
-                "part": "KEYS"
-              },
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      },
-                      "entity": {
-                        "primaryKey": true
-                      }
-                    }
-                  },
-                  "name": "messageId",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [4]
                 }
               ]
             }
@@ -889,52 +354,27 @@
               "name": "DeadMessageData",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "DeadMessage"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1.topic", "schema": "DeadMessage" } } },
                   "name": "notification",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageVersion"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageVersion" } } },
                   "name": "currentVersion",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 }
               ]
             }
           },
-          "DeadMessageEventType_Rejected": {
+          "DeadMessageEventType_Updated": {
             "!type": "object",
             "object": {
-              "name": "DeadMessageEventType_Rejected",
+              "name": "DeadMessageEventType_Updated",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "reason",
-                  "protoField": [
-                    1
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageVersion" } } },
+                  "name": "spec",
+                  "protoField": [1]
                 }
               ]
             }
@@ -944,50 +384,16 @@
             "object": {
               "name": "DeadMessageVersion",
               "properties": [
+                { "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } }, "name": "versionId", "protoField": [1] },
                 {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      }
-                    }
-                  },
-                  "name": "versionId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message" } } },
                   "name": "message",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.dante.v1",
-                        "schema": "DeadMessageVersion_SQSMessage"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageVersion_SQSMessage" } } },
                   "name": "sqsMessage",
-                  "protoField": [
-                    5
-                  ]
+                  "protoField": [5]
                 }
               ]
             }
@@ -997,248 +403,195 @@
             "object": {
               "name": "DeadMessageVersion_SQSMessage",
               "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "queueUrl",
-                  "protoField": [
-                    1
-                  ]
-                },
+                { "schema": { "!type": "string", "string": {} }, "name": "queueUrl", "protoField": [1] },
                 {
                   "schema": {
                     "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {}
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
+                    "map": { "itemSchema": { "!type": "string", "string": {} }, "keySchema": { "!type": "string", "string": {} } }
                   },
                   "name": "attributes",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 }
               ]
             }
-          }
+          },
+          "DeadMessageState": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageState",
+              "entity": { "entity": "deadmessage", "part": "STATE" },
+              "properties": [
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.state.v1", "schema": "StateMetadata" } } },
+                  "name": "metadata",
+                  "required": true,
+                  "protoField": [1]
+                },
+                {
+                  "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} }, "entity": { "primaryKey": true } } },
+                  "name": "messageId",
+                  "entityKey": { "primary": true },
+                  "protoField": [2, 1]
+                },
+                {
+                  "schema": {
+                    "!type": "enum",
+                    "enum": {
+                      "ref": { "package": "o5.dante.v1", "schema": "MessageStatus" },
+                      "listRules": { "filtering": { "filterable": true, "defaultFilters": ["CREATED"] } }
+                    }
+                  },
+                  "name": "status",
+                  "protoField": [3]
+                },
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.dante.v1", "schema": "DeadMessageData" } } },
+                  "name": "data",
+                  "protoField": [4]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Notified": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageEventType_Notified",
+              "properties": [
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1.topic", "schema": "DeadMessage" } } },
+                  "name": "notification",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageKeys": {
+            "!type": "object",
+            "object": {
+              "name": "DeadMessageKeys",
+              "entity": { "entity": "deadmessage", "part": "KEYS" },
+              "properties": [
+                {
+                  "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} }, "entity": { "primaryKey": true } } },
+                  "name": "messageId",
+                  "entityKey": { "primary": true },
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "DeadMessageEventType_Replayed": { "!type": "object", "object": { "name": "DeadMessageEventType_Replayed" } }
         }
       },
       {
         "name": "o5.messaging.v1",
         "indirect": true,
         "schemas": {
+          "topic.Infra": {
+            "!type": "object",
+            "object": {
+              "name": "Infra",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "type", "protoField": [1] },
+                {
+                  "schema": {
+                    "!type": "map",
+                    "map": { "itemSchema": { "!type": "string", "string": {} }, "keySchema": { "!type": "string", "string": {} } }
+                  },
+                  "name": "metadata",
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "topic.Problem_UnhandledError": {
+            "!type": "object",
+            "object": {
+              "name": "Problem_UnhandledError",
+              "properties": [{ "schema": { "!type": "string", "string": {} }, "name": "error", "protoField": [1] }]
+            }
+          },
           "Message": {
             "!type": "object",
             "object": {
               "name": "Message",
               "description": "Message wraps messaging content for the underlying platform routing and\ndelivery.",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "messageId", "protoField": [1] },
                 {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      }
-                    }
-                  },
-                  "name": "messageId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^([a-z0-9_]+\\.)+([A-Z][a-zA-Z0-9_]+)$"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "string", "string": { "rules": { "pattern": "^([a-z0-9_]+\\.)+([A-Z][a-zA-Z0-9_]+)$" } } },
                   "name": "grpcService",
                   "description": "The 'full_name' of the gRPC service <package>.<service>",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^([A-Za-z0-9_]+)$"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "string", "string": { "rules": { "pattern": "^([A-Za-z0-9_]+)$" } } },
                   "name": "grpcMethod",
                   "description": "The short name of the method in the gRPC service",
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Any"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Any" } } },
                   "name": "body",
-                  "protoField": [
-                    4
-                  ]
+                  "protoField": [4]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "sourceApp",
                   "description": "Then o5.application.name which sent the message",
-                  "protoField": [
-                    5
-                  ]
+                  "protoField": [5]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "sourceEnv",
                   "description": "The o5.environment.full_name which sent the message",
-                  "protoField": [
-                    6
-                  ]
+                  "protoField": [6]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "destinationTopic",
-                  "description": "compatibility with named topic messaging, specifies the destination name",
-                  "protoField": [
-                    7
-                  ]
+                  "description": "Deprecated. For compatibility with named topic messaging, specifies the destination name",
+                  "protoField": [7]
                 },
                 {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {}
-                  },
+                  "schema": { "!type": "timestamp", "timestamp": {} },
                   "name": "timestamp",
                   "description": "Timestamp when producing or replaying the message.",
-                  "protoField": [
-                    8
-                  ]
+                  "protoField": [8]
                 },
                 {
                   "schema": {
                     "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {}
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
+                    "map": { "itemSchema": { "!type": "string", "string": {} }, "keySchema": { "!type": "string", "string": {} } }
                   },
                   "name": "headers",
-                  "protoField": [
-                    9
-                  ]
+                  "protoField": [9]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message_Request"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "integer", "integer": { "format": "INT32", "rules": { "minimum": "0", "maximum": "900" } } },
+                  "name": "delaySeconds",
+                  "description": "Delay in seconds before the message should be delivered, with a maximum of\n15 mins.",
+                  "protoField": [10]
+                },
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message_Request" } } },
                   "name": "request",
-                  "protoField": [
-                    20
-                  ]
+                  "protoField": [20]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message_Reply"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message_Reply" } } },
                   "name": "reply",
-                  "protoField": [
-                    21
-                  ]
-                }
-              ]
-            }
-          },
-          "Any": {
-            "!type": "object",
-            "object": {
-              "name": "Any",
-              "description": "Any is wire-compatible with google.protobuf.Any, but without the parsing and\nencoding methods, i.e. it leaves proto messages proto bytes",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "typeUrl",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [21]
                 },
                 {
-                  "schema": {
-                    "!type": "bytes",
-                    "bytes": {
-                      "rules": {}
-                    }
-                  },
-                  "name": "value",
-                  "protoField": [
-                    2
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message_Event" } } },
+                  "name": "event",
+                  "protoField": [22]
                 },
                 {
-                  "schema": {
-                    "!type": "enum",
-                    "enum": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "WireEncoding"
-                      }
-                    }
-                  },
-                  "name": "encoding",
-                  "protoField": [
-                    3
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message_Upsert" } } },
+                  "name": "upsert",
+                  "protoField": [23]
                 }
               ]
             }
@@ -1249,126 +602,39 @@
               "name": "DeadMessage",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      }
-                    }
-                  },
+                  "schema": { "!type": "key", "key": { "format": { "!type": "uuid", "uuid": {} } } },
                   "name": "deathId",
                   "description": "Generated by the handler on failure, so that multiple failures of the same\nmessage (either through replay or multiple services working on the same\ncause) are not de-duplicated. This is used as the message_id on the wire\nmessage when sent, the original message_id is in the message field.",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "handlerApp",
                   "description": "The o5.application.name which attepmted to handle the message",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "handlerEnv",
                   "description": "The o5.environment.full_name which attepmted to handle the message",
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1",
-                        "schema": "Message"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1", "schema": "Message" } } },
                   "name": "message",
                   "description": "The message which was not able to be handled",
-                  "protoField": [
-                    4
-                  ]
+                  "protoField": [4]
                 },
                 {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "Problem"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "oneof", "oneof": { "ref": { "package": "o5.messaging.v1.topic", "schema": "Problem" } } },
                   "name": "problem",
                   "description": "The problem which caused the message to die",
-                  "protoField": [
-                    5
-                  ]
+                  "protoField": [5]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "Infra"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1.topic", "schema": "Infra" } } },
                   "name": "infra",
-                  "protoField": [
-                    6
-                  ]
-                }
-              ]
-            }
-          },
-          "topic.Infra": {
-            "!type": "object",
-            "object": {
-              "name": "Infra",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "type",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {}
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
-                  },
-                  "name": "metadata",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [6]
                 }
               ]
             }
@@ -1379,15 +645,54 @@
               "name": "Message_Request",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "replyTo",
                   "description": "In the reply to a request/reply message, Identifies the service or instance\nwhich first sent the request to which the reply should be routed.",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Message_Event": {
+            "!type": "object",
+            "object": {
+              "name": "Message_Event",
+              "properties": [
+                {
+                  "schema": { "!type": "string", "string": {} },
+                  "name": "entityName",
+                  "description": "full name of the state machine publishing the event, as package.v1.name",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Message_Upsert": {
+            "!type": "object",
+            "object": {
+              "name": "Message_Upsert",
+              "properties": [
+                {
+                  "schema": { "!type": "string", "string": {} },
+                  "name": "entityName",
+                  "description": "full name of the state machine causing the upsert, as package.v1.name",
+                  "protoField": [1]
+                }
+              ]
+            }
+          },
+          "Any": {
+            "!type": "object",
+            "object": {
+              "name": "Any",
+              "description": "Any is wire-compatible with google.protobuf.Any, but without the parsing and\nencoding methods, i.e. it leaves proto messages proto bytes",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "typeUrl", "protoField": [1] },
+                { "schema": { "!type": "bytes", "bytes": { "rules": {} } }, "name": "value", "protoField": [2] },
+                {
+                  "schema": { "!type": "enum", "enum": { "ref": { "package": "o5.messaging.v1", "schema": "WireEncoding" } } },
+                  "name": "encoding",
+                  "protoField": [3]
                 }
               ]
             }
@@ -1399,37 +704,22 @@
               "description": "WireEncoding specifies the encoding of the value field in the Any message",
               "prefix": "WIRE_ENCODING_",
               "options": [
-                {
-                  "name": "UNSPECIFIED",
-                  "description": "Protobuf message (default for any)"
-                },
-                {
-                  "name": "PROTOJSON",
-                  "number": 1,
-                  "description": "ProtoJSON encoded protobuf message"
-                },
-                {
-                  "name": "RAW",
-                  "number": 2,
-                  "description": "Raw message of any format. Maps to /o5.messaging.v1.topic.RawMessageTopic/Raw"
-                }
+                { "name": "UNSPECIFIED", "description": "Protobuf message (default for any)" },
+                { "name": "PROTOJSON", "number": 1, "description": "ProtoJSON encoded protobuf message" },
+                { "name": "RAW", "number": 2, "description": "Raw message of any format. Maps to /o5.messaging.v1.topic.RawMessageTopic/Raw" },
+                { "name": "J5_JSON", "number": 3, "description": "J5_JSON encoded protobuf message" }
               ]
             }
           },
-          "topic.Problem_UnhandledError": {
-            "!type": "object",
-            "object": {
-              "name": "Problem_UnhandledError",
+          "topic.Problem": {
+            "!type": "oneof",
+            "oneof": {
+              "name": "Problem",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "error",
-                  "protoField": [
-                    1
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "o5.messaging.v1.topic", "schema": "Problem_UnhandledError" } } },
+                  "name": "unhandledError",
+                  "protoField": [2]
                 }
               ]
             }
@@ -1440,38 +730,10 @@
               "name": "Message_Reply",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
+                  "schema": { "!type": "string", "string": {} },
                   "name": "replyTo",
                   "description": "Copied from the Request's reply_to field when replying.",
-                  "protoField": [
-                    2
-                  ]
-                }
-              ]
-            }
-          },
-          "topic.Problem": {
-            "!type": "oneof",
-            "oneof": {
-              "name": "Problem",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "o5.messaging.v1.topic",
-                        "schema": "Problem_UnhandledError"
-                      }
-                    }
-                  },
-                  "name": "unhandledError",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 }
               ]
             }
@@ -1482,50 +744,31 @@
         "name": "j5.auth.v1",
         "indirect": true,
         "schemas": {
-          "AuthenticationMethod_Session": {
+          "Actor": {
             "!type": "object",
             "object": {
-              "name": "AuthenticationMethod_Session",
+              "name": "Actor",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "subjectId", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "subjectType", "protoField": [2] },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "sessionManager",
-                  "protoField": [
-                    1
-                  ]
+                  "schema": { "!type": "oneof", "oneof": { "ref": { "package": "j5.auth.v1", "schema": "AuthenticationMethod" } } },
+                  "name": "authenticationMethod",
+                  "protoField": [3]
+                },
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "Claim" } } },
+                  "name": "claim",
+                  "required": true,
+                  "protoField": [4]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {}
+                    "!type": "map",
+                    "map": { "itemSchema": { "!type": "string", "string": {} }, "keySchema": { "!type": "string", "string": {} } }
                   },
-                  "name": "sessionId",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {}
-                  },
-                  "name": "verifiedAt",
-                  "protoField": [
-                    3
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {}
-                  },
-                  "name": "authenticatedAt",
-                  "protoField": [
-                    4
-                  ]
+                  "name": "actorTags",
+                  "protoField": [5]
                 }
               ]
             }
@@ -1535,27 +778,24 @@
             "object": {
               "name": "Fingerprint",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "ipAddress", "explicitlyOptional": true, "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "userAgent", "explicitlyOptional": true, "protoField": [2] }
+              ]
+            }
+          },
+          "AuthenticationMethod_External": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_External",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "systemName", "protoField": [1] },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {}
+                    "!type": "map",
+                    "map": { "itemSchema": { "!type": "string", "string": {} }, "keySchema": { "!type": "string", "string": {} } }
                   },
-                  "name": "ipAddress",
-                  "explicitlyOptional": true,
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "userAgent",
-                  "explicitlyOptional": true,
-                  "protoField": [
-                    2
-                  ]
+                  "name": "metadata",
+                  "protoField": [2]
                 }
               ]
             }
@@ -1565,36 +805,42 @@
             "object": {
               "name": "AuthenticationMethod_JWT",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "jwtId", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "issuer", "protoField": [2] },
+                { "schema": { "!type": "timestamp", "timestamp": {} }, "name": "issuedAt", "protoField": [3] }
+              ]
+            }
+          },
+          "AuthenticationMethod_Session": {
+            "!type": "object",
+            "object": {
+              "name": "AuthenticationMethod_Session",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "sessionManager", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "sessionId", "protoField": [2] },
+                { "schema": { "!type": "timestamp", "timestamp": {} }, "name": "verifiedAt", "protoField": [3] },
+                { "schema": { "!type": "timestamp", "timestamp": {} }, "name": "authenticatedAt", "protoField": [4] }
+              ]
+            }
+          },
+          "Action": {
+            "!type": "object",
+            "object": {
+              "name": "Action",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "method", "required": true, "protoField": [1] },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "jwtId",
-                  "protoField": [
-                    1
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "Actor" } } },
+                  "name": "actor",
+                  "required": true,
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "issuer",
-                  "protoField": [
-                    2
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "Fingerprint" } } },
+                  "name": "fingerprint",
+                  "protoField": [3]
                 },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {}
-                  },
-                  "name": "issuedAt",
-                  "protoField": [
-                    3
-                  ]
-                }
+                { "schema": { "!type": "string", "string": {} }, "name": "idempotencyKey", "protoField": [4] }
               ]
             }
           },
@@ -1604,136 +850,19 @@
               "name": "AuthenticationMethod",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "AuthenticationMethod_JWT"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "AuthenticationMethod_JWT" } } },
                   "name": "jwt",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "AuthenticationMethod_Session"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "AuthenticationMethod_Session" } } },
                   "name": "session",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "AuthenticationMethod_External"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "AuthenticationMethod_External" } } },
                   "name": "external",
-                  "protoField": [
-                    3
-                  ]
-                }
-              ]
-            }
-          },
-          "Action": {
-            "!type": "object",
-            "object": {
-              "name": "Action",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "method",
-                  "required": true,
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Actor"
-                      }
-                    }
-                  },
-                  "name": "actor",
-                  "required": true,
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Fingerprint"
-                      }
-                    }
-                  },
-                  "name": "fingerprint",
-                  "protoField": [
-                    3
-                  ]
-                }
-              ]
-            }
-          },
-          "AuthenticationMethod_External": {
-            "!type": "object",
-            "object": {
-              "name": "AuthenticationMethod_External",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "systemName",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {}
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
-                  },
-                  "name": "metadata",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [3]
                 }
               ]
             }
@@ -1743,133 +872,10 @@
             "object": {
               "name": "Claim",
               "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "realmId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {
-                      "rules": {
-                        "pattern": "^[a-z0-9_]+$"
-                      }
-                    }
-                  },
-                  "name": "tenantType",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "tenantId",
-                  "protoField": [
-                    3
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
-                  },
-                  "name": "scopes",
-                  "protoField": [
-                    4
-                  ]
-                }
-              ]
-            }
-          },
-          "Actor": {
-            "!type": "object",
-            "object": {
-              "name": "Actor",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "subjectId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "subjectType",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "AuthenticationMethod"
-                      }
-                    }
-                  },
-                  "name": "authenticationMethod",
-                  "protoField": [
-                    3
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Claim"
-                      }
-                    }
-                  },
-                  "name": "claim",
-                  "required": true,
-                  "protoField": [
-                    4
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "map",
-                    "map": {
-                      "itemSchema": {
-                        "!type": "string",
-                        "string": {}
-                      },
-                      "keySchema": {
-                        "!type": "string",
-                        "string": {}
-                      }
-                    }
-                  },
-                  "name": "actorTags",
-                  "protoField": [
-                    5
-                  ]
-                }
+                { "schema": { "!type": "string", "string": {} }, "name": "realmId", "protoField": [1] },
+                { "schema": { "!type": "string", "string": { "rules": { "pattern": "^[a-z0-9_]+$" } } }, "name": "tenantType", "protoField": [2] },
+                { "schema": { "!type": "string", "string": {} }, "name": "tenantId", "protoField": [3] },
+                { "schema": { "!type": "array", "array": { "items": { "!type": "string", "string": {} } } }, "name": "scopes", "protoField": [4] }
               ]
             }
           }
@@ -1884,47 +890,10 @@
             "object": {
               "name": "MessageCause",
               "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "method",
-                  "required": true,
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "messageId",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "sourceApp",
-                  "protoField": [
-                    3
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "sourceEnv",
-                  "protoField": [
-                    4
-                  ]
-                }
+                { "schema": { "!type": "string", "string": {} }, "name": "method", "required": true, "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "messageId", "protoField": [2] },
+                { "schema": { "!type": "string", "string": {} }, "name": "sourceApp", "protoField": [3] },
+                { "schema": { "!type": "string", "string": {} }, "name": "sourceEnv", "protoField": [4] }
               ]
             }
           }
@@ -1934,102 +903,6 @@
         "name": "j5.list.v1",
         "indirect": true,
         "schemas": {
-          "And": {
-            "!type": "object",
-            "object": {
-              "name": "And",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "oneof",
-                        "oneof": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Filter"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "name": "filters",
-                  "protoField": [
-                    1
-                  ]
-                }
-              ]
-            }
-          },
-          "QueryRequest": {
-            "!type": "object",
-            "object": {
-              "name": "QueryRequest",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "object",
-                        "object": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Search"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "name": "searches",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "object",
-                        "object": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Sort"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "name": "sorts",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "oneof",
-                        "oneof": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Filter"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "name": "filters",
-                  "protoField": [
-                    3
-                  ]
-                }
-              ]
-            }
-          },
           "Or": {
             "!type": "object",
             "object": {
@@ -2038,50 +911,26 @@
                 {
                   "schema": {
                     "!type": "array",
-                    "array": {
-                      "items": {
-                        "!type": "oneof",
-                        "oneof": {
-                          "ref": {
-                            "package": "j5.list.v1",
-                            "schema": "Filter"
-                          }
-                        }
-                      }
-                    }
+                    "array": { "items": { "!type": "oneof", "oneof": { "ref": { "package": "j5.list.v1", "schema": "Filter" } } } }
                   },
                   "name": "filters",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 }
               ]
             }
           },
-          "Sort": {
+          "And": {
             "!type": "object",
             "object": {
-              "name": "Sort",
+              "name": "And",
               "properties": [
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {}
+                    "!type": "array",
+                    "array": { "items": { "!type": "oneof", "oneof": { "ref": { "package": "j5.list.v1", "schema": "Filter" } } } }
                   },
-                  "name": "field",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "bool",
-                    "bool": {}
-                  },
-                  "name": "descending",
-                  "protoField": [
-                    2
-                  ]
+                  "name": "filters",
+                  "protoField": [1]
                 }
               ]
             }
@@ -2091,147 +940,12 @@
             "object": {
               "name": "PageRequest",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "token", "explicitlyOptional": true, "protoField": [1] },
                 {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "token",
-                  "explicitlyOptional": true,
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "integer",
-                    "integer": {
-                      "format": "INT64",
-                      "rules": {
-                        "exclusiveMinimum": true,
-                        "minimum": "0"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "integer", "integer": { "format": "INT64", "rules": { "exclusiveMinimum": true, "minimum": "0" } } },
                   "name": "pageSize",
                   "explicitlyOptional": true,
-                  "protoField": [
-                    2
-                  ]
-                }
-              ]
-            }
-          },
-          "PageResponse": {
-            "!type": "object",
-            "object": {
-              "name": "PageResponse",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "nextToken",
-                  "explicitlyOptional": true,
-                  "protoField": [
-                    1
-                  ]
-                }
-              ]
-            }
-          },
-          "FieldType": {
-            "!type": "object",
-            "object": {
-              "name": "FieldType",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "value",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "Range"
-                      }
-                    }
-                  },
-                  "name": "range",
-                  "protoField": [
-                    3
-                  ]
-                }
-              ]
-            }
-          },
-          "Range": {
-            "!type": "object",
-            "object": {
-              "name": "Range",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "min",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "max",
-                  "protoField": [
-                    2
-                  ]
-                }
-              ]
-            }
-          },
-          "Field": {
-            "!type": "object",
-            "object": {
-              "name": "Field",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "name",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "FieldType"
-                      }
-                    }
-                  },
-                  "name": "type",
-                  "required": true,
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 }
               ]
             }
@@ -2242,49 +956,29 @@
               "name": "Filter",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "Field"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "Field" } } },
                   "name": "field",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "And"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "And" } } },
                   "name": "and",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
+                { "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "Or" } } }, "name": "or", "protoField": [3] }
+              ]
+            }
+          },
+          "FieldType": {
+            "!type": "object",
+            "object": {
+              "name": "FieldType",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "value", "protoField": [2] },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.list.v1",
-                        "schema": "Or"
-                      }
-                    }
-                  },
-                  "name": "or",
-                  "protoField": [
-                    3
-                  ]
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "Range" } } },
+                  "name": "range",
+                  "protoField": [3]
                 }
               ]
             }
@@ -2294,25 +988,81 @@
             "object": {
               "name": "Search",
               "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "field", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "value", "protoField": [2] }
+              ]
+            }
+          },
+          "Sort": {
+            "!type": "object",
+            "object": {
+              "name": "Sort",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "field", "protoField": [1] },
+                { "schema": { "!type": "bool", "bool": {} }, "name": "descending", "protoField": [2] }
+              ]
+            }
+          },
+          "Range": {
+            "!type": "object",
+            "object": {
+              "name": "Range",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "min", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "max", "protoField": [2] }
+              ]
+            }
+          },
+          "Field": {
+            "!type": "object",
+            "object": {
+              "name": "Field",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "name", "protoField": [1] },
+                {
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "FieldType" } } },
+                  "name": "type",
+                  "required": true,
+                  "protoField": [2]
+                }
+              ]
+            }
+          },
+          "PageResponse": {
+            "!type": "object",
+            "object": {
+              "name": "PageResponse",
+              "properties": [{ "schema": { "!type": "string", "string": {} }, "name": "nextToken", "explicitlyOptional": true, "protoField": [1] }]
+            }
+          },
+          "QueryRequest": {
+            "!type": "object",
+            "object": {
+              "name": "QueryRequest",
+              "properties": [
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {}
+                    "!type": "array",
+                    "array": { "items": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "Search" } } } }
                   },
-                  "name": "field",
-                  "protoField": [
-                    1
-                  ]
+                  "name": "searches",
+                  "protoField": [1]
                 },
                 {
                   "schema": {
-                    "!type": "string",
-                    "string": {}
+                    "!type": "array",
+                    "array": { "items": { "!type": "object", "object": { "ref": { "package": "j5.list.v1", "schema": "Sort" } } } }
                   },
-                  "name": "value",
-                  "protoField": [
-                    2
-                  ]
+                  "name": "sorts",
+                  "protoField": [2]
+                },
+                {
+                  "schema": {
+                    "!type": "array",
+                    "array": { "items": { "!type": "oneof", "oneof": { "ref": { "package": "j5.list.v1", "schema": "Filter" } } } }
+                  },
+                  "name": "filters",
+                  "protoField": [3]
                 }
               ]
             }
@@ -2323,216 +1073,35 @@
         "name": "j5.state.v1",
         "indirect": true,
         "schemas": {
-          "ExternalEventCause": {
-            "!type": "object",
-            "object": {
-              "name": "ExternalEventCause",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "systemName",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "eventName",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "externalId",
-                  "explicitlyOptional": true,
-                  "protoField": [
-                    3
-                  ]
-                }
-              ]
-            }
-          },
-          "InitCause": {
-            "!type": "object",
-            "object": {
-              "name": "InitCause"
-            }
-          },
           "Cause": {
             "!type": "oneof",
             "oneof": {
               "name": "Cause",
               "properties": [
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "PSMEventCause"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.state.v1", "schema": "PSMEventCause" } } },
                   "name": "psmEvent",
-                  "protoField": [
-                    1
-                  ]
+                  "protoField": [1]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.auth.v1",
-                        "schema": "Action"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.auth.v1", "schema": "Action" } } },
                   "name": "command",
-                  "protoField": [
-                    2
-                  ]
+                  "protoField": [2]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.messaging.v1",
-                        "schema": "MessageCause"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.messaging.v1", "schema": "MessageCause" } } },
                   "name": "message",
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "ExternalEventCause"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.state.v1", "schema": "ExternalEventCause" } } },
                   "name": "externalEvent",
-                  "protoField": [
-                    4
-                  ]
+                  "protoField": [4]
                 },
                 {
-                  "schema": {
-                    "!type": "object",
-                    "object": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "InitCause"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "object", "object": { "ref": { "package": "j5.state.v1", "schema": "InitCause" } } },
                   "name": "init",
-                  "protoField": [
-                    5
-                  ]
-                }
-              ]
-            }
-          },
-          "PSMEventCause": {
-            "!type": "object",
-            "object": {
-              "name": "PSMEventCause",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      }
-                    }
-                  },
-                  "name": "eventId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "string",
-                    "string": {}
-                  },
-                  "name": "stateMachine",
-                  "protoField": [
-                    2
-                  ]
-                }
-              ]
-            }
-          },
-          "StateMetadata": {
-            "!type": "object",
-            "object": {
-              "name": "StateMetadata",
-              "properties": [
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-                      "listRules": {
-                        "sorting": {
-                          "sortable": true,
-                          "defaultSort": true
-                        }
-                      }
-                    }
-                  },
-                  "name": "createdAt",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "timestamp",
-                    "timestamp": {
-                      "listRules": {
-                        "sorting": {
-                          "sortable": true
-                        }
-                      }
-                    }
-                  },
-                  "name": "updatedAt",
-                  "protoField": [
-                    2
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "integer",
-                    "integer": {
-                      "format": "UINT64"
-                    }
-                  },
-                  "name": "lastSequence",
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [5]
                 }
               ]
             }
@@ -2542,77 +1111,69 @@
             "object": {
               "name": "EventMetadata",
               "properties": [
-                {
-                  "schema": {
-                    "!type": "key",
-                    "key": {
-                      "format": {
-                        "!type": "uuid",
-                        "uuid": {}
-                      }
-                    }
-                  },
-                  "name": "eventId",
-                  "protoField": [
-                    1
-                  ]
-                },
-                {
-                  "schema": {
-                    "!type": "integer",
-                    "integer": {
-                      "format": "UINT64"
-                    }
-                  },
-                  "name": "sequence",
-                  "protoField": [
-                    2
-                  ]
-                },
+                { "schema": { "!type": "string", "string": {} }, "name": "eventId", "protoField": [1] },
+                { "schema": { "!type": "integer", "integer": { "format": "UINT64" } }, "name": "sequence", "protoField": [2] },
                 {
                   "schema": {
                     "!type": "timestamp",
-                    "timestamp": {
-                      "listRules": {
-                        "filtering": {
-                          "filterable": true
-                        },
-                        "sorting": {
-                          "sortable": true,
-                          "defaultSort": true
-                        }
-                      }
-                    }
+                    "timestamp": { "listRules": { "filtering": { "filterable": true }, "sorting": { "sortable": true, "defaultSort": true } } }
                   },
                   "name": "timestamp",
                   "required": true,
-                  "protoField": [
-                    3
-                  ]
+                  "protoField": [3]
                 },
                 {
-                  "schema": {
-                    "!type": "oneof",
-                    "oneof": {
-                      "ref": {
-                        "package": "j5.state.v1",
-                        "schema": "Cause"
-                      }
-                    }
-                  },
+                  "schema": { "!type": "oneof", "oneof": { "ref": { "package": "j5.state.v1", "schema": "Cause" } } },
                   "name": "cause",
-                  "protoField": [
-                    4
-                  ]
+                  "protoField": [4]
                 }
+              ]
+            }
+          },
+          "InitCause": { "!type": "object", "object": { "name": "InitCause" } },
+          "PSMEventCause": {
+            "!type": "object",
+            "object": {
+              "name": "PSMEventCause",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "eventId", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "stateMachine", "protoField": [2] }
+              ]
+            }
+          },
+          "ExternalEventCause": {
+            "!type": "object",
+            "object": {
+              "name": "ExternalEventCause",
+              "properties": [
+                { "schema": { "!type": "string", "string": {} }, "name": "systemName", "protoField": [1] },
+                { "schema": { "!type": "string", "string": {} }, "name": "eventName", "protoField": [2] },
+                { "schema": { "!type": "string", "string": {} }, "name": "externalId", "explicitlyOptional": true, "protoField": [3] }
+              ]
+            }
+          },
+          "StateMetadata": {
+            "!type": "object",
+            "object": {
+              "name": "StateMetadata",
+              "properties": [
+                {
+                  "schema": { "!type": "timestamp", "timestamp": { "listRules": { "sorting": { "sortable": true, "defaultSort": true } } } },
+                  "name": "createdAt",
+                  "protoField": [1]
+                },
+                {
+                  "schema": { "!type": "timestamp", "timestamp": { "listRules": { "sorting": { "sortable": true } } } },
+                  "name": "updatedAt",
+                  "protoField": [2]
+                },
+                { "schema": { "!type": "integer", "integer": { "format": "UINT64" } }, "name": "lastSequence", "protoField": [3] }
               ]
             }
           }
         }
       }
     ],
-    "metadata": {
-      "builtAt": "2025-04-11T23:54:40Z"
-    }
+    "metadata": { "builtAt": "2025-06-30T20:49:55.277622953Z" }
   }
 }

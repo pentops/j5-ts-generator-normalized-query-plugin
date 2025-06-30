@@ -31,7 +31,6 @@ export function findEntityPropertyReference(
   accessVariableName: string,
   entityName: string,
   primaryKey: string,
-  allowStringKeys = true,
 ): ts.PropertyAccessExpression | undefined {
   const parts = primaryKey.split('.');
   let currentProperties = properties;
@@ -49,23 +48,18 @@ export function findEntityPropertyReference(
       });
 
       if (property) {
-        let keySchema = Boolean(
-          match({ allowStringKeys, property })
-            .with({ property: { schema: { key: { entity: entityName } } } }, (s) => s)
-            .with({ allowStringKeys: true, property: { schema: { string: P.not(P.nullish) } } }, (s) => s)
+        let hasKeySchema = Boolean(
+          match(property.entityKey)
+            .with({ primary: entityName }, (s) => s)
             .otherwise(() => undefined),
         );
 
-        // Back-up check if there's a matching key that didn't specify an entity
-        if (!keySchema) {
-          keySchema = Boolean(
-            match(property)
-              .with({ schema: { key: { primary: true } } }, (s) => s)
-              .otherwise(() => undefined),
-          );
+        // TODO: remove this when API definitions are fixed to conform
+        if (!hasKeySchema) {
+          hasKeySchema = Boolean(property.schema);
         }
 
-        if (keySchema) {
+        if (hasKeySchema) {
           return createPropertyAccessChain(accessVariableName, true, consumedParts);
         }
 
